@@ -1,135 +1,21 @@
-    1  uname -r
-    2  wget linux-headers-4.13.10-041310_4.13.10-041310.201710270531_all.deb
-    3  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/ linux-headers-4.13.10-041310_4.13.10-041310.201710270531_all.deb .
-    4  wget https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/ linux-headers-4.13.10-041310_4.13.10-041310.201710270531_all.deb .
-    5  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/ linux-headers-4.13.10-041310_4.13.10-041310.201710270531_all.deb .
-    6  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/ linux-headers-4.13.10-041310_4.13.10-041310.201710270531_all.deb 
-    7  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/linux-headers-4.13.10-041310_4.13.10-041310.201710270531_all.deb .
-    8  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/linux-headers-4.13.10-041310-generic_4.13.10-041310.201710270531_amd64.deb
-    9  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.13.10/linux-image-4.13.10-041310-generic_4.13.10-041310.201710270531_amd64.deb
-   10  sudo dpkg -i *.deb
-   11  reboot
-   12  uname -sr
-   13  ls
-   14  mkdir k4.13.10
-   15  mv *deb k4.13.10/
-   16  ls
-   17  rm index.html*
-   18  ls
-   19  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14-rc7/linux-headers-4.14.0-041400rc7_4.14.0-041400rc7.201710292231_all.deb
-   20  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14-rc7/
-   21  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14-rc7/ linux-headers-4.14.0-041400rc7-generic_4.14.0-041400rc7.201710292231_amd64.deb
-   22  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14-rc7/linux-image-4.14.0-041400rc7-generic_4.14.0-041400rc7.201710292231_amd64.deb
-   23  ls k4.13.10/
-   24  sudo dpkg -i *.deb
-   25  reboot
-   26  uname -sr
-   27  ls
-   28  wget http://kernel.ubuntu.com/~kernel-ppa/mainline/v4.14-rc7/linux-headers-4.14.0-041400rc7-generic_4.14.0-041400rc7.201710292231_amd64.deb
-   29  sudo dpkg -i *.deb
-   30  reboot
-   31  ls
-   32  mkdir k4.14.0rc7
-   33  mv *deb k4.14.0rc7/
-   34  ls
-   35  rm index.html*
-   36  ls
-   37  scp -r fhc@$172.16.12.111:Bk/mydoc .
-   38  scp -r fhc@172.16.12.111:Bk/mydoc .
-   39  ls
-   40  cd mydoc/
-   41  ls
-   42  vi forcopy 
-   43  cd
-   44  apt update
-   45  sudo apt update
-   46  java
-   47  apt install openjdk7
-   48  sudo apt install openjdk7
-   49  sudo apt search openjdk
-   50  ls
-   51  cd mydoc/
-   52  ls
-   53  cd ..
-   54  apt install git
-   55  sudo apt install git
-   56  apt install wine
-   57  sudo apt install wine
-   58  sudo apt install wine-development 
-   59  cd Dow
-   60  cd
-   61  ls
-   62  cd Downloads/
-   63  ls
-   64  wine TIM1.2.0.exe 
-   65  git clone https://github.com/lslx/note.git
-   66  ls
-   67  cd note
-   68  ls
-   69  vi README.md 
-   70  cd ..
-   71  rm note/ -fr
-   72  cd
-   73  sudo apt install adb 
-   74  adb shell
-   75  cd .ssh
-   76  ls
-   77  adb shell
-   78  adb pull /sdcard/id_rsa
-   79  adb pull /sdcard/authorized_keys
-   80  adb pull /sdcard/known_hosts
-   81  ls
-   82  ll
-   83  ls
-   84  ll
-   85  chmod o -r authorized_keys 
-   86  chmod o-r authorized_keys 
-   87  chmod o-r id_rsa 
-   88  chmod g-r id_rsa 
-   89  ls
-   90  ll
-   91  chmod +r authorized_keys 
-   92  ll
-   93  chmod o-r authorized_keys 
-   94  ll
-   95  cd ..
-   96  cd .ssh
-   97  ls
-   98  vi id_rsa 
-   99  vi authorized_keys 
-  100  sudo vi authorized_keys 
-  101  cd ..
-  102  cd
-  103  adb pull /sdcard/authorized_keys
-  104  vi authorized_keys 
-  105  ll
-  106  chmod 777 authorized_keys 
-  107  vi authorized_keys 
-  108  cd
-  109  cd mydoc/
-  110  ls
-  111  git init
-  112  git add README.md
-  113  git add .
-  114  git status
-  115  git commit -m "first commit"
-  116  git config --global user.email "zz00zz.9774@gmail.com"
-  117  git config --global user.email "fhc"
-  118  git commit -m "first commit"
-  119  git remote add origin git@github.com:lslx/note.git
-  120  git push -u origin master
-  121  git pull
-  122  git remote add origin git@github.com:lslx/note2.git
-  123  git remote add origin git@github.com:lslx/note3.git
-  124  git remote delete origin
-  125  ls
-  126  rm -fr .git
-  127  git init
-  128  ls
-  129  ll
-  130  history 
-  131  git add .
-  132  git commit -m "first commit"
-  133  git remote add origin git@github.com:lslx/note2.git
-  134  git push -u origin master
-  135  history > gitcmd.txt
+# on new machine , on github exsits proj
+sudo apt install git
+git config --global user.email "zz00zz.9774@gmail.com"
+git config --global user.email "fhc"
+git clone https://github.com/lslx/note2.git
+cd note
+vi README.md 
+git status
+git add .
+git commit -m "some chge"
+git push -u origin master
+
+
+# create new , no github not exsits proj
+git init
+git add README.md
+git add .
+git status
+git commit -m "first commit"
+git remote add origin git@github.com:lslx/note.git
+git push -u origin master
