@@ -1,0 +1,89 @@
+
+anti debug
+
+http://www.droidsec.cn/anti-debugging-skills-in-apk/
+
+rtld_db_dlactivity
+
+
+1.  ida tracing
+
+2. android src debug
+http://www.jianshu.com/p/b0b55c90737e
+scp -r fhc@${buildsvr}:/home/fhc/src/out/target/product/armv7-a-neon/symbols/ ~/dexhtnew/
+
+add-dsym /Users/hongchaofu/dexhtnew/symbols-4.4.4_r1/system/bin/linker
+add-dsym /Users/hongchaofu/dexhtnew/symbols-4.4.4_r1/system/bin/app_process
+add-dsym /Users/hongchaofu/dexhtnew/symbols-4.4.4_r1/system/lib/libc.so
+add-dsym /Users/hongchaofu/dexhtnew/symbols-4.4.4_r1/system/lib/libdvm.so
+add-dsym /Users/hongchaofu/dexhtnew/symbols-4.4.4_r1/system/lib/libart.so
+add-dsym /Users/hongchaofu/dexhtnew/symbols-4.4.4_r1/system/lib/libandroid_runtime.so
+
+settings set target.source-map /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/dexhtnew/android-4.4.4_r1/
+br s -n __libc_init
+/Users/hongchaofu/dexhtnew/android-4.4.4_r1/frameworks/base/cmds/app_process/app_main.cpp
+
+
+in gdb:
+symbol-file ~/dexhtnew/symbols/system/bin/linker
+symbol-file ~/dexhtnew/symbols/system/bin/app_process
+symbol-file ~/dexhtnew/symbols/system/lib/libc.so
+
+
+image lookup -r -s open libc.so
+
+
+KernelArgumentBlock
+debug:
+https://toutiao.io/subjects/73076
+
+
+http://blog.sina.com.cn/s/blog_6dce99b10101jt79.html
+gdb
+handle SIGPIPE nostop
+lldb
+process handle SIGPIPE -s false
+
+strace -o straceout.txt -e trace=all -p 19445
+
+
+chge debuggble
+http://blog.csdn.net/hu3167343/article/details/45223767
+
+------------------
+aapt dump xmltree YourApp.apk AndroidManifest.xml | grep debuggable
+
+cd;find 竞品分析包 | grep .apk$ | xargs -I % /Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i package: | grep -o "name='[^']*'" | cat -n
+cd;find 竞品分析包 | grep .apk$ | xargs -I % /Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i package: | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2
+
+
+pakpath_para
+cd;find ~/竞品分析包 | grep \.apk$ > ~/bin/apkpath_para
+md5_para
+cd;find ~/竞品分析包 | grep \.apk$ | xargs -I % md5 -q '%' > ~/bin/md5_para
+
+#put to xxx_para
+cd;find 竞品分析包 | grep .apk$ | xargs -I % /Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i package: | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2 > ~/bin/package_para
+
+cd;find 竞品分析包 | grep .apk$ | xargs -t -I % /Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%'
+cd;find 竞品分析包 | grep .apk$ | xargs -I % /Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i activity: | grep -o "name='[^']*'" | cat -n
+
+# maybe has multi activity in one package
+cd;find 竞品分析包 | grep .apk$ | xargs -I % /Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i activity: | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2
+
+# get uniq activity
+cd;find 竞品分析包 | grep .apk$ | xargs -I %  sh -c "/Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i activity: | sed -n '1p'" | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2
+
+# put to xxx_para
+cd;find 竞品分析包 | grep .apk$ | xargs -I %  sh -c "/Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2/aapt d badging '%' | grep -i activity: | sed -n '1p'" | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2 > ~/bin/activity_para
+
+---------
+cd;paste -d ' ' bin/md5_para bin/package_para bin/activity_para bin/apkpath_para > bin/all_para
+
+for one apk:
+aapt d badging LatteAdvisor_1492335618.26_sec.apk | grep activity
+aapt d badging LatteAdvisor_1492335618.26_sec.apk | grep package
+
+
+
+

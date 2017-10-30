@@ -1,0 +1,140 @@
+
+定制rom 注意事项
+
+
+
+
+
+
+刷原版
+pwn + vol sub    ------> start
+./flash-all.sh
+双清                (如果不双清，系统将不稳定。)  （  不双清，下一步将在开机时候卡死， 是不准确的，曾经的卡死是因为源码中缺少驱动，导致编译的system.img不对）
+pwn + vol Down    ------> start     
+vol Down ----> vol Down --->  ...   ---> pwn    ------> recovery mode
+pwn + vol up  ---------> recoverry menu
+
+
+刷编译的system.img （没有屏蔽开机优化）
+刷修改版system.img  (已屏蔽开机优化)
+
+
+root
+修改/data/local/tmp 清空tmp，目录权限设为777 （否则脱壳时，将不能写入）
+
+
+
+没有debuggable 时，可以使用 setpropex    
+(source code: /Users/hongchaofu/rootadb)
+make
+/Users/hongchaofu/rootadb/libs/armeabi-v7a/
+adb push setpropex /data/local/tmp/
+
+
+
+getprop ro.debuggable
+./setpropex ro.debuggable 1 
+
+
+
+
+
+apk 信息确认
+aapt d badging xxx.apk | grep package
+aapt d badging xxx.apk | grep activity
+aapt d badging xxx.apk | grep debug
+
+
+gdb debug:
+
+gdbclient app_process :5040 zygote
+
+set follow-fork-mode child
+set detach-on-fork on
+
+
+
+replace /system/lib/libdvm.so  
+
+. build/env*.sh
+lunch
+9
+cd dalvik/vm
+m
+cd
+mkdir worktmp
+cd worktmp
+scp fhc@$buildsvr:/home/fhc/android-4.4.4_r1/out/target/product/hammerhead/system/lib/libdvm.so . 
+
+in device:
+mount -o rw,remount /system
+
+
+adb push libdvm.so /system/lib/
+
+
+anti debug:
+http://www.evil0x.com/posts/26301.html
+
+
+
+
+rtld_db_dlactivity
+
+
+
+------------------------------
+Android Toolchain 
+mkdir android-toolchain && cd android-toolchain 
+repo init -u git://android.git.kernel.org/toolchain/manifest.git -b master
+repo sync manifest 
+cd build
+./build-sysroot <Android-Build-Product- Directory> <sysroot-directory> 
+./configure –sysroot=<sysroot-directory>
+
+
+android internal
+http://shyluo.blog.51cto.com/5725845/1229258
+
+jdb java source
+http://blog.csdn.net/span76/article/details/8766404
+
+gdb command
+http://blog.chinaunix.net/uid-24020646-id-2419921.html
+
+dalvik
+http://blog.csdn.net/omnispace/article/details/72802502
+http://shyluo.blog.51cto.com/5725845/1229256
+
+elf load
+http://jzhihui.iteye.com/blog/1447570
+
+python in gdb
+https://segmentfault.com/a/1190000005718889
+
+pwndbg
+https://github.com/pwndbg/pwndbg
+gef
+https://github.com/hugsy/gef
+
+
+脱壳方法
+http://www.tuicool.com/articles/fUFJbaB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,353 @@
+compile
+
+
+
+grep status * | grep open
+
+
+fuzzy elf
+https://www.blackhat.com/docs/us-14/materials/arsenal/us-14-Hernandez-Melkor-Slides.pdf
+
+
+to do
+基础工作：
+android工具链构建
+android内核构建    http://wiki.jikexueyuan.com/project/android-source/build-kernels.html
+android源码构建
+android刷机boot，system
+android root脚本
+
+高层：
+android工具链构建，（自指调试脚本）
+android内核构建，（加入硬件调试功能，修改无调试标志版本的strace，gdb调试android内核）
+android源码构建，（修改dalvik自动脱壳，或者gdb脚本自动脱壳）
+android刷机boot，system （解包，修改，打包，刷写脚本）
+android root脚本 （自动root，安装super su，busybox等）
+
+工具
+volatility LiME (逆向信息抽取)（hook查找）
+pwndbg          （gdb 安全相关的插件，脚本） http://blog.csdn.net/szhhck/article/details/45170785
+
+其它to do
+ApiDemos
+android独立工具链 （非ndk版）
+
+third ndk:
+https://www.crystax.net/cn/android/ndk
+
+
+lldb dbg
+https://www.youtube.com/watch?v=R1SsByHiMWQ
+
+
+sudo sed -e 's/OPTIONS="auto_xattr,defer_permissions"/OPTIONS="auto_xattr,defer_permissions,rw+"/' -i /System/Library/Filesystems/fuse-ext2.fs/fuse-ext2.util
+
+on linux mk img:
+https://forum.xda-developers.com/showthread.php?t=1974014
+
+
+
+
+
+http://trendblog.net/guide-to-android-rooting-custom-roms-apps/
+
+http://trendblog.net/fix-soft-bricked-android-device-first-aid-guide/
+
+http://www.droidviews.com/how-to-boot-android-devices-in-fastboot-download-bootloader-or-recovery-mode/
+
+
+
+
+
+aosp rom:
+https://developers.google.com/android/images#hammerhead
+
+open rom:
+https://docs.omnirom.org/Index
+
+
+
+
+jdk down 
+
+acount 373843028@qq.com
+pw:MyOrcPw1
+
+android 4.x 需使用jdk 1.6
+需设置环境变量：
+export JAVA_HOME=/usr/local/java/jdk1.6.0_45
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+
+android 5.x 6.x  需使用openjdk 7， 
+sudo apt-get install openjdk-7-jdk
+sudo apt-get install openjdk-7-jre
+或者
+solve_dpkg_error openjdk-7-jdk
+solve_dpkg_error openjdk-7-jre
+
+
+
+
+
+
+compile 6.0.1:
+vi ./external/selinux/checkpolicy/checkpolicy.c 
+/Invalid
+errno=0;
+
+compile 5.1.1 for nexus 7 2012 wifi 驱动有7g 而不是3个（nexus7 wifi 2013 有3个驱动）
+
+https://developers.google.com/android/drivers  中 有两个相同标题的nexus 7 驱动，
+上边的是 nexus 7 二代，  下边的是一代。 如果驱动搞错了， 编译system.img 刷机后会卡在google 界面。
+Nexus 7 (Wi-Fi) binaries for Android 5.1.1 (LMY47V)
+
+Nexus7 2012： 
+刷出厂镜像时，初次启动时，15至20秒开始播放动画，大约7分钟后进入系统。以后的启动过程会很快。
+刷编译镜像时，初次启动时，15至20秒开始播放动画，大约3分钟后进入系统。以后启动过程大概20秒左右。
+
+编译镜像没有回复twrp到原始recovery
+
+
+nexus 5 
+出厂镜像10秒开始播放动画，10+15秒后进入系统
+
+nexus 6p
+出厂镜像没有7.1.0 版。 这样就驱动就难找。
+7.1.0对于nexus 6p，是预览版， 这样就有驱动可找到
+https://developers.google.com/android/blobs-preview
+编译并刷机成功。
+
+
+
+
+wget -c --referer=https://pan.baidu.com/s/1pLz98En -O 7.1.2.7z "https://d.pcs.baidu.com/file/8567fc2674f96041a346e848e4228a2b?fid=3930062166-250528-167217997161538&time=1501846268&rt=sh&sign=FDTAERV-DCb740ccc5511e5e8fedcff06b081203-GQIYm9IhuJq6hQIRmIugrK%2BPPfc%3D&expires=8h&chkv=1&chkbd=0&chkpc=&dp-logid=5005319413604286169&dp-callid=0&r=278508780" &
+
+make_ext4fs -l 512M -s -a system system.img ./system
+
+make_ext4fs -s -l 1024M systemlf.img systemLiveFilek
+
+make_ext4fs -s -l 1024M systemlm.img /system
+
+mount -t ext4 -o loop system.ext4.img mnt_system/
+
+lm/media/audio/notifications/Arcturus.ogg
+lm/media/audio/notifications/Vega.ogg
+adb push lm/media/audio/ringtones/ANDROMEDA.ogg     /system/media/audio/ringtones/ANDROMEDA.ogg
+adb push lm/media/audio/ringtones/CANISMAJOR.ogg    /system/media/audio/ringtones/CANISMAJOR.ogg
+adb push lm/media/audio/ringtones/Hydra.ogg         /system/media/audio/ringtones/Hydra.ogg
+adb push lm/media/audio/ringtones/PERSEUS.ogg       /system/media/audio/ringtones/PERSEUS.ogg
+adb push lm/media/audio/ringtones/URSAMINOR.ogg     /system/media/audio/ringtones/URSAMINOR.ogg
+
+adb pull 
+
+android 源码 all
+https://pan.baidu.com/s/1ngsZs#list/path=%2FAndroid源码
+7z x   xxx.7z
+7.1.2.7z  解压有一个文件提示覆盖, 跳过后，最后解压失败， lunch ， 20， 编译失败
+7.1.1.7z  解压有一个文件提示覆盖, 跳过后，最后解压失败， lunch ， 20， 编译失败
+7.1.0 lunch ， 20， 编译失败
+
+编译失败 tail
+[ 39% 19386/49155] Building with Jack: out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/with-local/classes.dex
+FAILED: /bin/bash out/target/common/obj/JAVA_LIBRARIES/framework_intermediates/with-local/classes.dex.rsp
+Communication error with Jack server (52). Try 'jack-diagnose'
+ninja: build stopped: subcommand failed.
+make: *** [ninja_wrapper] Error 1
+
+#### make failed to build some targets (01:12:13 (hh:mm:ss)) ####
+
+修复方法：http://blog.csdn.net/luvzhan/article/details/53282968
+---------
+
+-------------  boot.img op -------------
+abootimg -i boot.img
+abootimg -x boot.img
+abootimg --create bootnew.img -f bootimg.cfg -k Image.gz-dtb -r initrd.img
+abootimg --create bootnew9.img -f bootimg.cfg -k ../msm/arch/arm/boot/zImage-dtb -r initrd.img
+fastboot flash boot bootnew.img
+
+
+
+-------------- switch java version ----------------
+sudo update-alternatives --install /usr/bin/java java /usr/local/java/jdk1.6.0_45/bin/java 1
+sudo update-alternatives --install /usr/bin/javac javac /usr/local/java/jdk1.6.0_45/bin/javac 1
+sudo update-alternatives --install /usr/bin/javaws javaws /usr/local/java/jdk1.6.0_45/bin/javaws 1
+sudo update-alternatives --install /usr/bin/jar jar /usr/local/java/jdk1.6.0_45/bin/jar 1
+sudo update-alternatives --install /usr/bin/javadoc javadoc /usr/local/java/jdk1.6.0_45/bin/javadoc 1
+sudo update-alternatives --install /usr/bin/javap javap /usr/local/java/jdk1.6.0_45/bin/javap 1 
+
+sudo update-alternatives --config java
+sudo update-alternatives --config javac
+sudo update-alternatives --config javaws
+sudo update-alternatives --config jar
+sudo update-alternatives --config javadoc
+sudo update-alternatives --config javap
+
+出门到公交站8， 等车2～10，公交24～30，下车到公司楼下10，到b1层2，吃饭10，上楼到公司5
+8 + 2 + 24 + 10 + 2 + 10 + 5
+
+compile android7.1.1
+14:25---->
+download: 这里的包，都包含最新安全补丁
+https://source.android.com/source/build-numbers#source-code-tags-and-builds
+（NUF26N	android-7.1.1_r27	Nougat	Nexus 6P）
+由此得到版本号 NUF26N ，据此下载出场镜像，和驱动
+https://developers.google.com/android/nexus/images
+https://developers.google.com/android/nexus/drivers
+由此得到源码版本android-7.1.1_r27
+
+
+kernel
+
+git reset --hard e0bfb9b
+
+set substitute-path /home/fhc/kernel/msm6p/ /Users/hongchaofu/andenv/angler-nuf26n/gitbk/
+
+cd /sys/class/android_usb/android0/
+echo 0 > enable
+echo tty > f_acm/acm_transports
+echo acm > functions
+echo 1 > enable
+echo kgdb > f_acm/acm_transports
+
+./aarch64-linux-android-gdb vmlinux -ex 'target remote /dev/tty.usbmodem14121'
+
+./aarch64-linux-android-gdb vmlinux
+target remote /dev/tty.usbmodem14121
+
+echo g > /proc/sysrq-trigger
+
+
+
+-------- v1 dump: 
+1. ida  dump 脚本 （ptrace）
+2. gdb  dump 命令 （ptrace）
+3. kgdb dump 命令  （内核kgdb功能）
+4. hijack注入后（搜索dex头）定位dump， （进程内读写内存）
+5. zjdroid，及类似基于xposed的工具    （进程内读写内存）
+6. virtualapp 脱壳。（虚拟化环境进程内读写内存）
+7. 修改libdvm.so, 脱壳。（进程内读写内存）
+8. dump 优化版的dex， 然后转换成非优化版本。（/proc/xxx/maps）
+
+
+# 64bit:
+./configure --target=arm-none-linux-gnueabi --prefix=/opt/termcap 
+sudo cp termcap.h /usr/include/
+sudo cp libtermcap.a /usr/lib/
+# 32bit:
+CC="gcc -m32 -march=i686" ./configure --target=arm-none-linux-gnueabi --prefix=/opt/termcap 
+sudo cp termcap.h /usr/include/
+sudo cp libtermcap.a /usr/lib32/
+
+
+./configure --host=arm-none-linux-androideabi --prefix=~/prefixdir  CFLAGS="-I/home/surge/build/arm-none-linux-gnueabi/libc"
+ 
+./configure --host=arm-none-linux-androideabi --prefix=~/prefixdir  CFLAGS="-I/home/surge/build/arm-none-linux-gnueabi/libc"
+
+LDFLAGS="-L/home/fhc/ndk/android-ndk-r11c/platforms/android-19/arch-arm/usr/lib  
+./configure --host=arm-linux-androideabi --prefix=/home/fhc/prefixdir
+
+---------------  
+kernel debug:
+https://www.slideshare.net/libfetion/linux-kernel-debugging?next_slideshow=2
+kdb vs kgdb
+http://www.360doc.com/content/12/0621/16/9171956_219645234.shtml
+
+New location of last_kmsg on Android 6.0 and above: /sys/fs/pstore/console-ramoops
+
+/sys/module/kgdboc/parameters
+
+cd /sys/kernel/debug/tracing
+echo :mod:kgdb > set_ftrace_filter
+echo function_graph > current_tracer
+
+# need root :
+echo 1 > /proc/sys/kernel/kptr_restrict                       
+cat /proc/kallsyms
+
+dd if=/dev/mem skip=$((0x804660c)) bs=$((0x10)) count=1 2> /dev/null | hexdump
+
+dd if=/dev/mem skip=$((0xde8514)) bs=$((0x10)) count=1 | hexdump
+
+hammerhead serial kgdb patch:
+https://gist.github.com/jduck/caf1eddcd4c9ac27d818
+
+Galaxy Nexus (I9250) Serial Console:
+https://redmine.replicant.us/projects/replicant/wiki/GalaxyNexusI9250SerialConsole
+
+
+
+git checkout -b serverfix origin/serverfix
+
+-----------------------  kernel config
++# add by fhc
++#CONFIG_MODULES=y
++#CONFIG_MODULE_UNLOAD=y
+
++#CONFIG_STRICT_MEMORY_RWX=n
++#CONFIG_DEVMEM=y
++#CONFIG_DEVKMEM=y
++#CONFIG_KALLSYMS=y
++#CONFIG_KALLSYMS_ALL=y
+
++#CONFIG_HAVE_KPROBES=y
++#CONFIG_HAVE_KRETPROBES=y
++#CONFIG_HAVE_FUNCTION_TRACER=y
++#CONFIG_HAVE_FUNCTION_GRAPH_TRACER=y
++?canot sel?CONFIG_TRACING=y
++?old?CONFIG_FTRACE=y
++?old?CONFIG_KDB=y
++
++?canot sel?CONFIG_HAVE_HW_BREAKPOINT=y
++
++?canot sel?CONFIG_ANDROID_RAM_CONSOLE=y
++?canot sel?CONFIG_ANDROID_RAM_CONSOLE_ENABLE_VERBOSE=y
++?canot find?CONFIG_APANIC=y
++?canot find?CONFIG_APANIC_PLABEL="oem_log"
+
++CONFIG_IKCONFIG=y
++CONFIG_IKCONFIG_PROC=y
+------------------ manul op
++#CONFIG_MAGIC_SYSRQ=y
++CONFIG_KGDB=y------------------------
++#?CONFIG_MSM_WATCHDOG_V2=n
+
+
+----- 死机分析
+http://blog.csdn.net/jinlu7611/article/details/50592385
+
+
+
+-------------------- minicom  work
+http://blog.csdn.net/u010285246/article/details/72354038
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

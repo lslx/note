@@ -1,0 +1,93 @@
+安全性改进建议及逆向分析方法
+
+
+1. anti static analysis
+1.1 apktool  and anti
+1.2 演示
+1.3 原理
+1.4 改进建议
+加入resource.arsc文件，AndroidManifest.xml文件，dex文件的反编译干扰
+
+参考 http://blog.csdn.net/qq_15807167/article/details/51673671
+http://www.freebuf.com/articles/terminal/75944.html
+http://www.freebuf.com/sectool/76884.html
+file:///Users/hongchaofu/analysis/init01/ss.html
+
+2. anti dynamic analysis（anti debug）
+2.1 debug tool and anti
+2.2 演示
+2.3 原理
+2.4 改进建议
+
+init init_array
+将原 JNI_Onload 
+signasehanl
+代码移入更早的执行点。且执行使用异常来触发，隐藏真正的入口
+关键函数调用使用svc硬编码，防止hook和显式断点，（只能ptrace追踪，即使用调试器，或strace）
+so使用反射加载， 核心so用反射壳包裹，反射壳加载自身后，手动映射其它so，并对soinfo链表做必要的修复
+参考 http://www.droidsec.cn/anti-debugging-skills-in-apk/
+
+3. anti dex unpack
+3.1.1 zjdroid 脱壳演示：
+3.1.2 zjdroid 脱壳原理：
+3.1.3 zjdroid 检测和防止的建议：
+zjdroid 基于xposed，检测xposed即可，进程内会映射含有xposed名称的模块
+
+
+3.2.1 dexhunter 脱壳演示：
+3.2.2 dexhunter脱壳原理：
+3.2.3 dexhunter检测和防止的建议：
+	1. 检查配置文件的路径 ／data/dexname,  内有两行，第一行是包名的子串，第二行是输出dump文件的路径，
+	2. 检查脱壳结果文件的名称 ／包名／whole.dex
+	3. libdvm.so 字符串表含有多项以 GOT IT 开始的字符串
+    4. libdvm.so 由于增加了脱壳代码而增加了的函数，DumpClass (_Z9DumpClassPv)
+
+4. anti so unpack
+4.1 so 脱壳演示
+4.2 so 脱壳原理
+4.3 so 脱壳的检测和防止的建议：
+
+在init 中检测进程可执行模块是否为app_process,如果不是则执行非正常路径（不解密so，或改变密钥）
+
+---   http://blogs.360.cn/blog/android_escape/
+
+如果有时间，介绍下源码级跟踪android系统级代码
+附加
+源码级别，跟踪脱壳过程的操作方法。
+1. 演示
+2. 必备知识 （系统启动，进程fork，调试原理）
+3. 修改，替换，以及源码调试libdvm.so
+3.1 快速迭代脚本（修改，编译，下载，替换，设置符号，源码，二进制模块。）
+3.2 关键命令 （）
+3.3 坑及其跳过 （刷机包驱动，双清，编译，替换，屏蔽dex优化）
+3.4 没有符号和源码的模块的跟踪
+
+逆向方法总结
+信息 + 信息抽取  =  逆向目标 + debugger
+基础模型 ------ 》 高层概念 ---------》 定义可能性空间  ---------》 缩减可能性空间 （控制论方法）
+计算机基本模型（冯诺伊曼架构，哈弗架构） --》函数 ——》模块 -》 子系统 --》 高层概念（进程，线程，dalvik，调试器）
+调试器的能力，和可回答的问题。
+可在指令执行序列的任何点停下来，读写任意内存和寄存器。这保证了调试器可抽取逆向目标的所有信息。
+其它大量功能都由此衍生出来，如模块加载时停止并执行指定操作，自动单步到某内存值为某个值后修改某地址值。
+比较两个断点处罚时候的内存，从而抽象出两个断点间执行的指令序列的功能，（系统调用暂且排除）
+
+海森堡测不准原理与反调试。
+理想调试器是硬件仿真器，或者jtag硬件调试器，彻底消除海森堡问题。
+
+关键问题（抽取什么信息），及解答方法（如何抽取）
+未加固的dex 如何运行，调试dalvik运行过程
+加固的dex 如何运行，调试加固dex运行过程
+
+待解决：
+1.  数据追踪 
+1.1  自动单步 （ida android 平台不可用， gdb 可用python追踪，gdb原始脚本单步不可靠）
+1.2  直接定位（硬件断点，需armv5以上，需重新编译内核）http://blog.csdn.net/lingxf/article/details/50994645
+1.3  从源码构建gdb调试工具，google 针对anroid分支的修改版
+1.4  可以catch android系统调用的版本。
+1.5  高级功能 pwndbg 框架
+
+
+
+
+
+

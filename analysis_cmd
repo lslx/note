@@ -1,0 +1,55 @@
+adv_rev
+
+Grab the data using any method that fits your target
+• Instrument execution (eg. PIN, Valgrind)
+• Capture stack snapshots per crypto round (Hooking,
+debugger)
+• Use emulators and record (QEMU, Unicorn, PANDA)
+• Capture any information during execution that might leak
+• All reads/writes to memory
+• Lower bits of addresses of memory accesses
+• All register contents
+
+
+Code Analysis
+• IDA Pro / IDA Python
+• radare
+• ERESI
+• Coverity, Fortify, SonarQube
+• LLVM, BitBlaze, Insight, Jakstab, PANDA, DECAF
+Program Introspection
+• Debugging, Instrumentation, Emulation • Windbg
+• Immunity Debugger
+• gdb / ptrace
+• vtrace / vdb / vivisect • PIN, DynamoRIO
+• qemu
+
+
+
+---------- filter--------
+Valgrind   ----  ?
+
+PANDA  DECAF(droidscope)
+
+
+---------- install ubuntu to macbook pro:
+当前macbookpro 13.3 inc
+2016年12月：linux内核对macbook 的支持情况
+https://www.infoworld.com/article/3147664/linux/how-well-does-the-linux-kernel-support-mac-hardware.html
+当前支持状态：（持续更新）-------- 由此可知内核需4.11及以上才支持mac内部ssd，此为安装ubuntu的必要条件，而ubuntu16.04，17.04内核均为4.10
+https://github.com/Dunedan/mbp-2016-linux
+可能的解决：使用新内核自定义iso
+https://help.ubuntu.com/community/LiveCDCustomization
+
+
+模拟器启动 arm ， 4.4   
+ubuntu时间 90s
+mac时间 	120s
+
+
+
+
+
+
+
+

@@ -1,0 +1,23 @@
+nexus_root
+
+reboot:
+adb reboot
+adb reboot bootlaoder
+fastboot reboot bootloader
+
+root the nexus:
+cd /Users/hongchaofu/Downloads/hammerhead-ktu84p_bk
+./flash-all.sh
+<open usb debug>
+adb reboot bootloader
+https://dl.twrp.me/hammerhead/twrp-3.1.1-0-hammerhead.img.html
+fastboot flash recovery twrp-2.8.7.1-hammerhead.img
+fastboot reboot bootloader
+twrp --> wipe --> swipe to factory reset
+twrp --> reboot --> bootloader
+cd /Users/hongchaofu/Downloads/hammerhead-ktu84p
+fastboot flash system system_clean.img
+need startup ?
+https://forum.xda-developers.com/apps/supersu/stable-2016-09-01supersu-v2-78-release-t3452703
+adb push SuperSU-v2.82-201705271822.zip /sdcard/
+twrp --> install --> swipe to confirm flash --> reboot system

@@ -1,0 +1,141 @@
+forcopy
+
+
+https://jira.bangcle.net/login.jsp?permissionViolation=true&os_destination=%2Fsecure%2FTempoUserBoard%21timesheet.jspa&page_caps=&user_role=
+
+
+git clone http://android.googlesource.com/kernel/goldfish.git
+git branch -a
+git checkout android-goldfish-3.4
+git reset --hard d3ffcc7
+
+
+# android less 4.0 (will cause blackscreen)
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_defconfig
+# android above 4.0
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_armv7_defconfig
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm -j4
+
+cd /home/fhc/Android/Sdk/system-images/android-19/default/armeabi-v7a
+cp kernel-qemu ~/androidstuff/
+cp ramdisk.img  ~/androidstuff/
+cp system.img ~/androidstuff/
+cp userdata.img ~/androidstuff/
+
+
+qemu-img convert -f raw -O qcow2 system.img system.qcow2
+qemu-img convert -f raw -O qcow2 userdata.img userdata.qcow2
+
+qemu-img create -f qcow2 cache.img.qcow2 1G
+qemu-img create -f qcow2 sdcard.img.qcow2 1G
+# or
+~/Android/Sdk/tools/mksdcard -l sdcard 512M sdcard.img
+qemu-img convert -f raw -O qcow2 sdcard.img sdcard.qcow2
+
+# convert qcow2 v3 to v2 
+qemu-img amend -f qcow2 -o compat=0.10 system.qcow2 
+qemu-img amend -f qcow2 -o compat=0.10 userdata.qcow2 
+qemu-img amend -f qcow2 -o compat=0.10 cache.qcow2 
+qemu-img amend -f qcow2 -o compat=0.10 sdcard.qcow2 
+
+use avd ctreate vm and convert
+python ~/oldpanda/panda/scripts/pandroidConverter.py Nexus_5_API_19_2
+../scripts/runandroid.py /home/fhc/androidstuff2 19
+-----------cmdline is: -----------
+arm-softmmu/qemu-system-arm -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -append console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1 -m 2G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -android -S -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on
+
+----------------------------------
+
+
+install Beyond Compare 
+http://blog.csdn.net/bingyu9875/article/details/52856675
+install wine (is too old version)
+https://wiki.winehq.org/Ubuntu
+
+arm board on qemu
+http://www.bkjia.com/Androidjc/1027005.html
+goldfish kernel
+http://blog.csdn.net/leopard21/article/details/21715905
+
+panda 1.x
+https://github.com/moyix/panda
+
+Temu plugin for return-oriented rootkit
+https://github.com/huydhn/Detector
+
+all reverse engineering tools:
+http://wiki.yobi.be/wiki/Reverse-Engineering
+android source build for qemu
+https://github.com/robherring/generic_device/wiki/Building
+
+
+------------------------------
+
+https://gist.github.com/bridgeythegeek/d7a6c449287c6e32187be2639a7920bf
+
+
+
+$ pwd
+/home/fhc/oldpanda/panda/qemu
+
+../scripts/runandroid.py /home/fhc/androidstuff2 19 -loadvm ff
+
+# for qemu cmd, type ? for help, type q for exit(also exit vm)
+# for quit telnet , type '^]' to enter telnet  then type quit (or ? for help)
+telnet localhost 4321
+
+# type ? for help
+telnet localhost 4421
+
+
+
+
+
+kernel version 3.4.67-01422-gd3ffcc7-dirty
+git reset --hard d3ffcc7
+git clean  -d  -fx ""
+
+
+
+http://www.linuxidc.com/Linux/2012-10/72284.htm
+https://codeyarns.com/2015/02/26/how-to-switch-gcc-version-using-update-alternatives/
+
+sudo update-alternatives --install /usr/bin/arm-linux-gnueabi-gcc arm-linux-gnueabi-gcc /usr/bin/arm-linux-gnueabi-gcc-4.9 40
+sudo update-alternatives --config arm-linux-gnueabi-gcc
+
+
+
+cd ~/android-volatility/tools/linux
+$ zip ~/android-volatility/volatility/plugins/overlays/linux/Golfish-3.4.0.zip module.dwarf ~/goldfishnew/System.map
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

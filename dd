@@ -1,0 +1,65 @@
+dd
+
+
+
+dd if=/proc/pid/mem ibs=1 obs=1 skip=0xxxx of=/data/local/tmp/
+
+dd if=/proc/23568/mem ibs=1 obs=1 skip=0x6b251000 count=1 of=/data/local/tmp/ffff.so
+
+
+
+dd if=/proc/15270/mem ibs=1 obs=1 skip=3069300736 count=1 of=/data/local/tmp/xxx.so
+
+
+adb shell "am start -D -n cn.eeepay.brcb.act/cn.eeepay.brcb.act.ActIndex"
+
+
+
+jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
+
+
+
+
+auto fp, xxAddress;  
+fp = fopen("C:\\libexec_mem.so", "wb");  
+for ( xxAddress=0x7526b000;xxAddress < 0x7526b000+0x149000;xxAddress++ )  
+fputc(Byte(xxAddress), fp);
+
+
+auto fp, xxAddress;  
+fp = fopen("C:\\libexec_mem3.so", "wb");  
+for ( xxAddress=0x7526b000;xxAddress < 0x7526b000+0x149000;xxAddress=xxAddress+4 )  
+writelong(fp,Dword(xxAddress),0);
+
+
+libexec.so:7532F5DA ALIGN 4
+libexec.so:7532F5DC CODE32
+libexec.so:7532F5DC
+libexec.so:7532F5DC loc_7532F5DC                            ; CODE XREF: libexec.so:7532F5D8j
+libexec.so:7532F5DC STMFD           SP!, {R2,R4,R6-R9}
+libexec.so:7532F5E0
+libexec.so:7532F5E0 loc_7532F5E0                            ; CODE XREF: libexec.so:7532F5ECj
+libexec.so:7532F5E0 LDMIA           R1!, {R2-R4,R6-R9,R12}
+libexec.so:7532F5E4 SUBS            R5, R5, #1
+libexec.so:7532F5E8 STMIA           R0!, {R2-R4,R6-R9,R12}
+libexec.so:7532F5EC BNE             loc_7532F5E0
+libexec.so:7532F5F0 LDMFD           SP!, {R2,R4,R6-R9}
+libexec.so:7532F5F4 BX              LR
+
+libexec.so:7532F326 CODE16
+libexec.so:7532F326 LDR             R4, [R1,#4]
+libexec.so:7532F328 ADDS            R1, #0xC
+libexec.so:7532F32A ADDS            R1, R1, R4
+
+
+
+
+
+
+
+
+
+
+
+
+

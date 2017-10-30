@@ -1,0 +1,16 @@
+minshengyinhang_check
+
+
+
+minsheng:
+
+
+  501  apktool d -o dirnrs2 -r -s -f cmbc1_3.63_123357_s_r.apk
+  502  ls dirnrs2
+  503  cp classes.dex dirnrs2/
+  504  ls
+  505  md5sum cmbc1_3.63_123357_s_r.apk 
+  506  md5sum old.apk
+  507  cp old.apk dirnrs2/assets/
+  508  apktool b dirnrs2 -o abc2.apk
+  509  signapk abc2.apk abc2signed.apk

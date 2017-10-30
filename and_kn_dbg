@@ -1,0 +1,109 @@
+and_kn_dbg
+
+重要资料入口（内含重要资料链接）其中的二级链接更为重磅
+http://www.vantagepoint.sg/blog/89-more-android-anti-debugging-fun
+
+
+内核调试线缆
+android uart 模型
+http://gqdy365.iteye.com/blog/2188846
+rs232 vs ttl
+https://www.crifan.com/summary_ttl_vs_rs232/
+nexus x debug cable （内含重要资料链接）
+http://www.pabr.org/consolejack/consolejack.en.html
+
+
+cross gdb （run on arm)
+http://blog.csdn.net/edwardlulinux/article/details/8070224
+
+process core dump
+https://chengyihe.wordpress.com/2015/10/27/android-coredump-how-to-make-kernel-dump-core-file-after-some-process-crashes/
+
+内核trace工具概览
+http://www.wzxue.com/linux-tracing-tools-soap-opera/
+kprobes jprobes rtkprobes /-----/ kprobes ftrace 
+kprobes doc
+http://elixir.free-electrons.com/linux/latest/source/Documentation/kprobes.txt
+jprobe demo
+http://elixir.free-electrons.com/linux/v3.4/source/samples/kprobes/jprobe_example.c
+Systemtap
+https://sourceware.org/systemtap/tutorial.pdf
+
+深入探索 Kdump，第 1 部分：带你走进 Kdump 的世界
+https://www.ibm.com/developerworks/cn/linux/l-cn-kdump1/index.html
+kdump 原理
+http://lse.sourceforge.net/kdump/documentation/ols2oo5-kdump-paper.pdf
+
+使用 kdump 分析 内核crash
+http://www.thegeekstuff.com/2014/05/kdump/
+kdump 底层机制 kexec
+https://github.com/Surge1223/kexec-tools-2.08-android
+
+crush utility
+https://wiki.linaro.org/KenWerner/Sandbox/crash-utility
+redhat crash util usage
+http://www.chengxuyuans.com/Android/83687.html
+Kernel Crash Dump Guide
+https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/pdf/Kernel_Crash_Dump_Guide/Red_Hat_Enterprise_Linux-7-Kernel_Crash_Dump_Guide-en-US.pdf
+
+Hook android系统调用
+http://www.bijishequ.com/detail/306036?p=
+android 内核hook 框架
+https://github.com/ne2der/ASyScallHookFrame/blob/master/hook_syscalltable/kernel_hook.c
+android 内核 rootkit
+https://github.com/rbertin/basic-rootkit/blob/master/rootkit.c
+
+Enabling KGDB for Android
+http://bootloader.wikidot.com/android:kgdb
+
+
+
+
+64位ubuntu 兼容32位
+http://www.cnblogs.com/leaven/p/5084902.html
+
+
+安卓源码+内核修改编译(修改内核调试标志绕过反调试)
+http://blog.csdn.net/QQ1084283172/article/details/55509714
+
+strace 原理
+http://blog.csdn.net/jasonchen_gbd/article/details/44044539
+ptrace
+http://blog.csdn.net/shen332401890/article/details/17302843
+http://www.jianshu.com/p/50be31abab8a
+
+linux内核中的信号机制--信号处理
+http://blog.csdn.net/ce123_zhouwei/article/details/8570616
+http://blog.csdn.net/potor9/article/details/43191503
+
+内核线程、轻量级进程、用户线程
+http://www.cnblogs.com/zhaoyl/p/3620204.html
+
+android 3.4 kernel
+http://androidxref.com/kernel_3.4/xref/
+
+bionic fix：
+https://android.googlesource.com/platform/external/elfutils/+/b6f4a7a/bionic-fixup/AndroidFixup.h
+android / platform / external / elfutils / b6f4a7a / . / bionic-fixup / AndroidFixup.h
+
+Linux initial RAM disk (initrd) overview
+https://www.ibm.com/developerworks/library/l-initrd/
+
+Crash Utility: How to view user space back trace
+http://hackers4hackers.blogspot.hk/2014/03/crash-utility-how-to-view-user-space.html
+
+
+
+
+
+
+dex2odex odex2dex
+http://www.cnblogs.com/Reyzal/p/5452453.html
+
+
+236700906058
+
+
+
+
+
