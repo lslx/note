@@ -1,0 +1,7 @@
+# make :
+zip -r -P yourgitpw x.zip .ssh
+zip -P yourgitpw xx.zip x.zip
+# use:
+cd ~
+unzip xx.zip
+unzip x.zip
