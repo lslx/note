@@ -1,0 +1,943 @@
+PS1='$ '
+alias ee='vim ~/.bash_profile_port'
+alias bb='. ~/.bash_profile_port'
+export MARKPATH=$HOME/.marks
+
+function jump {
+cd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
+}
+
+function mark {
+mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
+}
+
+function unmark {
+rm -i "$MARKPATH/$1"
+}
+
+function marks {
+#for mac 
+ls -l "$MARKPATH" | tail -n +2 | sed 's/ / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %sn", $1, $2}'
+# for linux
+# ls -l "$MARKPATH" | sed 's/ / /g' | cut -d' ' -f9- | sed 's/ -/t-/g' && echo
+}
+#ADDED BY 010 EDITOR
+extract() { 
+    if [ -f $1 ] ; then 
+      case $1 in 
+        *.tar.bz2)   tar xjf $1     ;; 
+        *.tar.gz)    tar xzf $1     ;; 
+        *.bz2)       bunzip2 $1     ;; 
+        *.rar)       unrar e $1     ;; 
+        *.gz)        gunzip $1      ;; 
+        *.tar)       tar xf $1      ;; 
+        *.tbz2)      tar xjf $1     ;; 
+        *.tgz)       tar xzf $1     ;; 
+        *.zip)       unzip $1       ;; 
+        *.Z)         uncompress $1  ;; 
+        *.7z)        7z x $1        ;; 
+        *)     echo "'$1' cannot be extracted via extract()" ;; 
+         esac 
+     else 
+         echo "'$1' is not a valid file" 
+     fi 
+}
+ANDROID_HOME=/Users/hongchaofu/android-sdks
+#export PATH="/Applications/010_bk.app/Contents/CmdLine$PATH"
+alias 010e='~/010editor/010editor'
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+PATH="/usr/local/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/Cellar/binutils/2.28/x86_64-apple-darwin16.4.0/bin/:$PATH"
+MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
+PATH="~/bin:~/andtool/bin:/Users/hongchaofu/dex2jar-2.0/:$PATH"
+ulimit -S -n 1024
+
+#for android sdk
+export PATH="~/Library/Android/sdk/platform-tools:~/Library/Android/sdk/tools:~/Library/Android/sdk/build-tools/26.0.0:~/Library/Android/sdk/ndk-bundle:$PATH"
+export PATH="~/dbgtool/4.7:$PATH"
+#export PATH="~/Library/Android/sdk/ndk-bundle/prebuilt/darwin-x86_64/bin:$PATH"
+
+
+alias ida='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq.exe'
+alias idaa='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq64.exe'
+alias ll='ls -l'
+alias la='ls -a'
+alias l1='tree -N -L 1'
+alias l2='tree -N -L 2'
+alias l3='tree -N -L 3'
+alias l4='tree -N -L 4'
+alias l5='tree -N -L 5'
+alias l6='tree -N -L 6'
+alias l7='tree -N -L 7'
+alias l8='tree -N -L 8'
+alias l9='tree -N -L 9'
+alias 'o'='nautilus'
+
+# complex cmd
+alias avd='~/Android/Sdk/tools/android' 
+alias sdk='android sdk' 
+alias edexht='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/dexhtnew/kernel-qemu-armv7 -partition-size 128 -sysdir /Users/hongchaofu/dexhtnew -system system.img -avd dexht2 -datadir /Users/hongchaofu/dexhtnew/ -data userdata.img -ramdisk /Users/hongchaofu/dexhtnew/ramdisk.img' 
+
+# for debug
+alias edexht2='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/andenv/kqemu/zImage -partition-size 128 -sysdir /Users/hongchaofu/dexhtnew -system system.img -avd N5_19 -datadir /Users/hongchaofu/dexhtnew/ -data userdata.img -ramdisk /Users/hongchaofu/dexhtnew/ramdisk.img -qemu -serial pty' 
+
+alias edexht3='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/andenv/kqemu/zImage -partition-size 128 -sysdir /Users/hongchaofu/dexhtnew -system system.img -avd N5_19 -datadir /Users/hongchaofu/dexhtnew/ -data userdata.img -ramdisk /Users/hongchaofu/dexhtnew/ramdisk.img' 
+
+
+alias xs='xcode-select -print-path'
+alias x4='sudo xcode-select -s /Applications/Xcode4.6.app/'
+alias x5='sudo xcode-select -s /Applications/Xcode5.1.app/'
+alias x8='sudo xcode-select -s /Applications/Xcode8.app/'
+
+alias libp='export DYLD_PRINT_LIBRARIES=1'
+alias libpd='export -n DYLD_PRINT_LIBRARIES'
+
+
+#export JAVA_6_HOME=`/usr/libexec/java_home -v 1.6`  
+#export JAVA_7_HOME=`/usr/libexec/java_home -v 1.7`  
+#export JAVA_8_HOME=`/usr/libexec/java_home -v 1.8`  
+#  
+#export JAVA_HOME=$JAVA_8_HOME  
+#  
+#alias jdk6="export JAVA_HOME=$JAVA_6_HOME"  
+#alias jdk7="export JAVA_HOME=$JAVA_7_HOME"  
+#alias jdk8="export JAVA_HOME=$JAVA_8_HOME"  
+
+# ssh-add -l
+# ssh-add ./ssh/fkey
+# MyKeyPw
+export buildsvr=192.168.138.32
+export vmsvr=192.168.60.129
+export ubt=172.16.18.9
+alias fhcssh='ssh fhc@${buildsvr}'
+alias fhcsshvm='ssh fhc@${vmsvr}'
+alias fhcsshubt='ssh fhc@${ubt}'
+alias clyssh='ssh cly@${buildsvr}'
+function getimg {
+scp fhc@${buildsvr}:/home/fhc/src/out/target/product/generic/system.img dexhtnew/
+scp fhc@${buildsvr}:/home/fhc/src/out/target/product/generic/userdata.img dexhtnew/
+scp fhc@${buildsvr}:/home/fhc/src/out/target/product/generic/ramdisk.img dexhtnew/
+scp fhc@${buildsvr}:/home/fhc/src/prebuilts/qemu-kernel/arm/kernel-qemu-armv7 dexhtnew/
+}
+function getimg2 {
+	scp fhc@${buildsvr}:/home/fhc/android-4.4.4_r1/out/target/product/hammerhead/system.img .
+	scp fhc@${buildsvr}:/home/fhc/android-4.4.4_r1/out/target/product/hammerhead/userdata.img .
+	scp fhc@${buildsvr}:/home/fhc/android-4.4.4_r1/out/target/product/hammerhead/ramdisk.img .
+	scp fhc@${buildsvr}:/home/fhc/src/prebuilts/qemu-kernel/arm/kernel-qemu-armv7 .
+}
+function getdbgtool(){
+	mkdir ~/dbgtool
+	#scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/x86/i686-linux-android-4.7/bin ~/dbgtool
+	scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.7/bin ~/dbgtool/4.7
+	scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.6/bin ~/dbgtool/4.6
+}
+export CLASSPATH=~/bin
+export anddbgsvr=/Users/hongchaofu/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv/android_server
+function signapk(){
+#$1 ori.apk $2 signed.apk
+jarsigner -verbose -keystore ~/demo.keystore -storepass MyKeyPw -digestalg SHA1 -sigalg MD5withRSA -tsa http://timestamp.digicert.com -signedjar $2 $1 mykey
+}
+function getapppid(){
+local pid=`adb shell ps | grep $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2`
+echo $pid
+}
+function ganti(){
+kill -9 `getapppid qls`
+adb shell "am start -D -n com.qlscupgrade/com.zztzt.android.simple.app.MainActivity"
+sleep 2
+pro_id=`getapppid qls`
+adb forward --remove tcp:8777 2>/dev/null
+adb forward tcp:8777 jdwp:$pro_id
+adb forward --list
+adb shell "rm /data/local/tmp/straceout.txt"
+adb shell "strace -o /data/local/tmp/straceout.txt -e trace=all -p $pro_id" &
+echo $pro_id has strace 
+jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
+#adb shell "strace -o /data/local/tmp/straceout.txt -e trace=all -p $pro_id 2>&1 >/data/local/tmp/sss.txt &"
+if [ ! -d straceout ];then
+   mkdir straceout
+fi
+wait %1
+adb pull /data/local/tmp/straceout.txt straceout/
+}
+
+function andsvrinit(){
+	adb forward --remove-all
+	adb forward tcp:23946 tcp:23999
+	dbg_svr_name=andsvr
+	pro_id=`adb shell ps | grep $dbg_svr_name | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2`
+	adb shell "su -c kill -9 $pro_id"
+	#if [ ! -f /data/local/tmp/$dbg_svr_name ];then
+	adb push "`find ~/.wine/ -name android_server`" /data/local/tmp/$dbg_svr_name
+	adb shell "su -c chmod 777 /data/local/tmp/$dbg_svr_name"
+	#fi
+	adb shell "su -c /data/local/tmp/$dbg_svr_name -p23999" &
+#	sleep 1s
+#	kill -9 `getapppid eee`
+#	adb shell "am start -D -n cn.eeepay.brcb.act/cn.eeepay.brcb.act.ActIndex"
+#	sleep 2s
+#	pro_id=`getapppid eee`
+#	adb forward --remove tcp:8777 2>/dev/null
+#	adb forward tcp:8777 jdwp:$pro_id
+#	adb forward --list
+#	echo $pro_id has strace 
+#	jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
+#	wait %1
+}
+function slldbsvr(){
+	adb shell mount -o rw,remount rootfs /
+	adb shell su -c /data/local/tmp/lldb-server platform --server --listen unix-abstract:///data/local/tmp/debug.sock
+
+}
+#alias andsvrinit='adb shell "su -c /data/local/tmp/andd -p23999"'
+alias aapt='/Users/hongchaofu/Library/Android/sdk/build-tools/26.0.0/aapt'
+function csv2html(){
+	for line in `cat $1`; do
+		echo "<tr bgcolor=@ffffff><td>${line//,/</td><td>}</td></tr>" ;
+	done
+}
+function gtb(){
+	echo '<!doctype html>'
+	echo "<HTML>"
+	echo "<HEAD>"
+	echo '<meta http-equiv="content-type" content="txt/html; charset=utf-8" />'
+	echo "  <TITLE>"
+	echo "  analysis apk result"
+	echo "  </TITLE>"
+	echo "</HEAD>"
+	echo ""
+	echo "<BODY>"
+	echo "<table boder=0 cellspacing=1 bgcolor=#000000>" ;
+	for i in "$@" ;do
+		 <$i cut -d ' ' -f 3 | tr '\n' ',' | sed s/,$// | sed `echo s/^/$i,/`
+	echo
+	done > ~/bin/tmp
+	csv2html ~/bin/tmp
+	echo "</table>"
+	echo "</BODY>"
+	echo "</HTML>"
+}
+function initanadata(){
+	linenum=`cat $1 | wc -l`
+	#echo $linenum
+	workpath=analysis/init
+	mkdir -p $workpath 
+
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 6)>$workpath/apk_path
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 3)>$workpath/apk_md5
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 4)>$workpath/apk_pkg_name
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 5)>$workpath/apk_act_name
+
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(for ((i=1; i<= $linenum; i++));do echo unknown;done) >$workpath/anti_apk_decode
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(for ((i=1; i<= $linenum; i++));do echo unknown;done)>$workpath/anti_debug
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(for ((i=1; i<= $linenum; i++));do echo unknown;done)>$workpath/anti_debug_method 
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(for ((i=1; i<= $linenum; i++));do echo unknown;done)>$workpath/policy 
+	paste -d ' ' <(cat -n $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2,3)  <(for ((i=1; i<= $linenum; i++));do echo unknown;done)>$workpath/anti_simulator 
+}
+
+#gtb apk_path apk_md5 apk_pkg_name apk_act_name anti* policy>ss.html;open ss.html
+
+
+#export NVPACK_ROOT="/Users/hongchaofu/NVPACK"
+#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/tools"
+#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/platform-tools"
+#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/build-tools"
+#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/tools"
+#export ANDROID_HOME="/Users/hongchaofu/NVPACK/android-sdk-macosx"
+#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/platform-tools"
+#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/build-tools"
+#export PATH=$PATH:"/User/hongchaofu/Downloads/jadx-0/bin"
+#export PATH=$PATH:"/Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2"
+
+#export PYTHONHOME=/usr/bin/python
+#export PYTHONPATH=.:$PYTHONHOME:$PYTHONHOME/site-packages
+#export PYTHONPATH=.:$PYTHONHOME:/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7:~/Library/Python/2.7/lib/python/site-packages
+
+#export PYTHONHOME=/usr/local/Cellar/python/2.7.13/bin
+#export PYTHONPATH=.:$PYTHONHOME:/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7:/usr//local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages
+#export PATH=$PYTHONHOME:$PYTHONPATH:$PATH
+#export PYTHONPATH=.:$PYTHONPATH:/usr/local/lib/python2.7/site-packages/
+function pid()
+{
+    local prepend=''
+    local append=''
+    if [ "$1" = "--exact" ]; then
+        prepend=' '
+        append='$'
+        shift
+    fi
+    local EXE="$1"
+    if [ "$EXE" ] ; then
+        local PID=`adb shell ps \
+            | tr -d '\r' \
+            | \grep "$prepend$EXE$append" \
+            | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'`
+        echo "$PID"
+    else
+        echo "usage: pid [--exact] <process name>"
+                return 255
+    fi
+}
+
+
+function _apk_get_pkg_name()
+{
+	echo `aapt d badging $1 | grep package: | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2`
+}
+function _apk_get_act_name()
+{
+	echo `aapt d badging $1 | grep activity:| grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2`
+}
+function getapkinfo()
+{
+    local PKG=`_apk_get_pkg_name $1`
+    local ACT=`_apk_get_act_name $1`
+    echo $PKG
+    echo $ACT
+    echo $PKG/$ACT
+    aapt d badging $1 | grep debug 
+
+}
+function apkfilelist(){
+ jar tf $1 | cat -n
+}
+
+
+function apkinstall()
+{
+	adb install -r $1
+}
+function apkuninstall()
+{
+	local pkg=`_apk_get_pkg_name $1`
+	echo packagename:$pkg
+	adb uninstall $pkg
+} 
+function apkrun()
+{
+	local PKG=`_apk_get_pkg_name $1`
+	local ACT=`_apk_get_act_name $1`
+	adb shell "am start $PKG/$ACT"
+}
+function dostrace()
+{
+# $1:xx.apk
+	local PKG=`_apk_get_pkg_name $1`
+	local ACT=`_apk_get_act_name $1`
+	local MD5=`md5sum $1 | cut -d ' ' -f 1`
+	echo md5 is:$MD5
+	local PID=`pid $PKG`
+	if [ -n "$PID" ]; then
+		echo kill alive apk pid:$PID
+		adb shell "su -c kill -9 $PID"
+	fi
+	adb shell "am start -D -n $PKG/$ACT"
+	local PID=`pid $PKG`
+	echo -------------new pid:$PID
+	sleep 0.5s
+	if [ -z "$PID" ]; then
+	    echo start apk failed, pid is null
+	    return
+	fi
+	adb shell "su -c chmod 777 /data/local/tmp"
+	adb shell "rm /data/local/tmp/$MD5.trace.txt"
+	# -i will cause jdb not quit, and target process pause, doc say: -i weekly suport
+	#adb shell "su -c \"strace -f -F -tt -v -a 100 -i -o /data/local/tmp/$MD5.trace.txt -p $PID -e trace=open\"" &
+	# to find which api to trace:
+	#adb shell "su -c \"strace -c -f -o /data/local/tmp/$MD5.trace.txt -p $PID \"" &
+	# get all syscall log
+	adb shell "su -c \"strace -f -o /data/local/tmp/$MD5.trace.txt -p $PID \"" &
+	# template used:
+	#adb shell "su -c \"strace -f -F -tt -v -a 100 -i -o /data/local/tmp/$MD5.trace.txt -p $PID -e trace=process\"" &
+	#adb shell "su -c \"strace -f -F -tt -v -a 100 -i -o /data/local/tmp/$MD5.trace.txt -p $PID -e trace=open,close,read,write\"" &
+	jdwpexit $PID
+	trap "echo exec cmd and clear trap; adb shell \"su -c kill -9 $PID\";trap - SIGINT" SIGINT
+	wait %1
+	# must wait, maybe strace have not write the tail:
+	sleep 1s
+	adb shell "su -c chmod 777 /data/local/tmp/$MD5.trace.txt"
+	adb pull /data/local/tmp/$MD5.trace.txt .
+}
+function gdbwrapper()
+{
+	#use system gdb
+	#gdb -x "$@"
+
+	# use src prebuilts
+	#local gdbpathfile=/Users/hongchaofu/android-4.4.4_r1/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.7/bin/arm-linux-androideabi-gdb
+
+	# use local
+	#local gdbpathfile=/usr/local/bin/gdb
+
+	# use android stdio sdk gdb
+	local gdbpathfile=~/Library/Android/sdk/ndk-bundle/prebuilt/darwin-x86_64/bin/gdb
+
+
+	# use cryxx
+	#local gdbpathfile=~/cryndk/crystax-ndk-10.3.2/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gdb
+	$gdbpathfile -x "$@"
+}
+
+# gdbclient app_process :5040 xxx
+function gdbclient()
+{
+	local GDB
+	case "$ARCH" in
+		x86) GDB=i686-linux-android-gdb;;
+		arm) GDB=arm-linux-androideabi-gdb;;
+		mips) GDB=mipsel-linux-android-gdb;;
+		*) echo "Unknown arch $ARCH"; return 1;;
+	esac
+
+	if [ -z "$EXEPATHFILE" ] ; then
+		echo EXE is null
+		return;
+	fi
+
+	gdbwrapper "$GDBCMDS" "$EXEPATHFILE"
+}
+
+# to do: 
+# kill all sub process
+#
+#
+#
+#
+
+function apkdbg()
+{
+	local debugutil=
+	local debugutil=`adb shell "su -c if [ -f /data/local/tmp/setpropex ]\; then echo findit\; fi"`
+	if [ -z "$debugutil" ]; then
+		# donot need chmod, what every adbd run as root
+		adb push ~/rootadb/libs/armeabi-v7a/setpropex /data/local/tmp/
+	fi
+        adb shell "su -c /data/local/tmp/setpropex ro.debuggable 1"
+	local PKG=`_apk_get_pkg_name $1`
+	local ACT=`_apk_get_act_name $1`
+	local PID=
+	local PID=`pid $PKG`
+	if [ -n "$PID" ];then
+		adb shell "su -c kill -9 $PID"
+	fi
+	sleep 0.5s
+	adb shell "am start -D -n $PKG/$ACT"
+	sleep 0.3s
+
+	local PID=
+	for i in {1..300}
+	do
+		local PID=`pid $PKG`
+		if [ -n "$PID" ];then
+		    break
+		fi
+	done
+	if [ -z "$PID" ]; then
+		echo get pid failed
+		return
+	fi
+	# echo pid : $PID
+	local PORT=:5040
+	adb forward --remove "tcp$PORT"
+	adb forward "tcp$PORT" "tcp$PORT"
+	gdbsvrpid=`pid gdbserver`
+	# echo xxxxxxx  $gdbsvrpid
+	if [ "$gdbsvrpid" ] ; then
+		adb shell "su -c kill -9 $gdbsvrpid"
+	fi
+	adb shell "su -c gdbserver $PORT --attach $PID" &
+	sleep 1s
+
+	local OUT_ROOT=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead
+	local OUT_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols
+	local OUT_SO_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/lib
+	local OUT_EXE_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/bin
+	local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+	local ARCH=arm
+	local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
+
+	echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/android-4.4.4_r1/"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "define ss"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "b dlopen"
+	# must have bash   and  > /dev/null   ,  otherwise will stuck 
+	echo >>"$OUT_ROOT/gdbclient.cmds" "shell bash jdwpexitsh $PID >/dev/null &"
+	# c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck
+	echo >>"$OUT_ROOT/gdbclient.cmds" "c"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "end"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+	echo >>"$OUT_ROOT/gdbclient.cmds" ""
+	local GDBCMDS=$OUT_ROOT/gdbclient.cmds
+	gdbclient
+}
+
+function gdbattch()
+{
+	local debugutil=
+	local debugutil=`adb shell "su -c if [ -f /data/local/tmp/setpropex ]\; then echo findit\; fi"`
+	if [ -z "$debugutil" ]; then
+		# donot need chmod, what every adbd run as root
+		adb push ~/rootadb/libs/armeabi-v7a/setpropex /data/local/tmp/
+	fi
+        adb shell "su -c /data/local/tmp/setpropex ro.debuggable 1"
+	local PKG=`_apk_get_pkg_name $1`
+	local ACT=`_apk_get_act_name $1`
+	local PID=
+	local PID=`pid $PKG`
+	if [ -n "$PID" ];then
+		adb shell "su -c kill -9 $PID"
+	fi
+	sleep 0.5s
+	adb shell "am start $PKG/$ACT"
+	sleep 3s
+
+	local PID=
+	for i in {1..300}
+	do
+		adb shell "su -c ps | grep $PKG"
+		echo -n "attch pid="
+		read PID
+		if [ -z "$PID" ]; then
+			echo get pid failed
+			continue
+		fi
+		echo has read PID:$PID
+		# echo pid : $PID
+		local PORT=:5050
+		adb forward --remove "tcp$PORT"
+		adb forward "tcp$PORT" "tcp$PORT"
+		gdbsvrpid=`pid gdbserver`
+		# echo xxxxxxx  $gdbsvrpid
+		if [ "$gdbsvrpid" ] ; then
+			adb shell "su -c kill -9 $gdbsvrpid"
+		fi
+		adb shell "su -c gdbserver $PORT --attach $PID" &
+		sleep 2
+
+		local OUT_ROOT=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead
+		local OUT_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols
+		local OUT_SO_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/lib
+		local OUT_EXE_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/bin
+		local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+		local ARCH=arm
+		local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
+
+		echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/android-4.4.4_r1/"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "define ss"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "b dlopen"
+		# must have bash   and  > /dev/null   ,  otherwise will stuck 
+		echo >>"$OUT_ROOT/gdbclient.cmds" "shell bash jdwpexitsh $PID >/dev/null &"
+		# c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck
+		echo >>"$OUT_ROOT/gdbclient.cmds" "c"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "end"
+		echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+		echo >>"$OUT_ROOT/gdbclient.cmds" ""
+		local GDBCMDS=$OUT_ROOT/gdbclient.cmds
+		gdbclient
+	done
+}
+
+
+function nativedbg()
+{
+	local rootdir=`pwd`
+	local execfile=`ls $rootdir/libs/armeabi-v7a/`
+	local EXEPATHFILE=$rootdir/obj/local/armeabi-v7a/$execfile
+	local PID=`pid $execfile`
+	if [ -n "$PID" ];then
+		adb shell "su -c kill -9 $PID"
+	fi
+	local PORT=:5060
+	adb forward --remove "tcp$PORT"
+	adb forward "tcp$PORT" "tcp$PORT"
+	gdbsvrpid=`pid gdbserver`
+	# echo xxxxxxx  $gdbsvrpid
+	if [ "$gdbsvrpid" ] ; then
+		adb shell "su -c kill -9 $gdbsvrpid"
+	fi  
+
+	adb push $rootdir/obj/local/armeabi-v7a/$execfile /data/local/tmp/
+	adb shell "su -c chmod 777 /data/local/tmp/$execfile"
+	#adb shell "gdbserver $PORT /data/local/tmp/$execfile" &
+	adb shell "gdbserver $PORT /data/local/tmp/$execfile -L2 ./libexec.so" &
+	sleep 1s
+	local OUT_ROOT=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead
+	local OUT_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols
+	local OUT_SO_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/lib
+	local OUT_EXE_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/bin
+	local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+	local ARCH=arm
+	# local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
+
+	echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/android-4.4.4_r1/"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
+	echo >>"$OUT_ROOT/gdbclient.cmds" ""
+	local GDBCMDS=$OUT_ROOT/gdbclient.cmds
+	gdbclient
+}
+function dbgtest()
+{
+    local rootdir=`pwd`
+    local execfile="$rootdir/libs/armeabi-v7a/setpropex"
+    local PID=`pid $execfile`
+    if [ -n "$PID" ];then
+        adb shell "su -c kill -9 $PID"
+    fi  
+    local PORT=:5050
+    adb forward --remove "tcp$PORT"
+    adb forward "tcp$PORT" "tcp$PORT"
+    gdbsvrpid=`pid gdbserver`
+    # echo xxxxxxx  $gdbsvrpid
+    if [ "$gdbsvrpid" ] ; then
+        adb shell "su -c kill -9 $gdbsvrpid"
+    fi  
+
+    #adb push $rootdir/obj/local/armeabi-v7a/$execfile /data/local/tmp/
+    #adb shell "su -c chmod 777 /data/local/tmp/$execfile"
+    #adb shell "gdbserver $PORT /data/local/tmp/$execfile" &
+    adb shell "gdbserver $PORT /data/local/tmp/$execfile ro.debuggable 1" &
+    sleep 2s
+    gdbclient $execfile $PORT
+}
+function inter_putbin()
+{
+#$1:srcdir      $2:srcfile    $3:dstdir   $4:dstfile
+	echo adb push $1/$2 $3
+	adb push "$1/$2" "$3"
+	adb shell "su -c chmod 777 $3/$2"
+	adb shell "su -c mv $3/$2 $3/$4"
+}
+function initdbgenv()
+{
+	local targetdir=/data/local/tmp
+	adb shell "su -c chmod 777 $targetdir"
+	inter_putbin ~/rootadb/libs/armeabi-v7a/ setpropex $targetdir setpropex
+	inter_putbin ~/Library/Android/sdk/ndk-bundle/prebuilt/android-arm/gdbserver gdbserver $targetdir gdbserver
+	inter_putbin ~/haihang_analysis/everisk hijack $targetdir hijack
+	inter_putbin ~/haihang_analysis/everisk libexample.so $targetdir libexample.so
+	inter_putbin ~/haihang_analysis/everisk inject $targetdir inject
+	inter_putbin ~/.wine//drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv android_server $targetdir andsvr
+	inter_putbin ~/Downloads/so_unpacker_adv/libs/armeabi-v7a so_unpacker_adv $targetdir so_unpacker_adv
+	adb shell "su -c /data/local/tmp/setpropex ro.debuggable 1"
+}
+function jdwpexit()
+{
+    adb forward --remove tcp:8777
+    adb forward tcp:8777 jdwp:$1
+    echo quit | jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
+}
+function getfile()
+{
+	local myfilename=`basename $1`
+	adb shell "su rm /data/local/tmp/$myfilename"
+	adb shell "su -c cp $1 /data/local/tmp/"
+	adb shell "su -c chmod 777 /data/local/tmp/$myfilename"
+	adb pull "/data/local/tmp/$myfilename"
+	adb shell "su -c rm /data/local/tmp/$myfilename"
+
+}
+function testunpackrom()
+{
+	local savedir=`pwd`
+	local tmpdir=.you_can_del_dir$RANDOM
+	cd
+	mkdir $tmpdir
+	cd $tmpdir
+	getfile /system/lib/libdvm.so
+	readelf -s libdvm.so | grep dump_class
+	local findunpckerflag=$?
+	rm -rf $tmpdir
+	cd $savedir
+	if [ $findunpckerflag -eq 0 ]; then
+		echo rom is unpacker >&2
+		return 0
+	else
+		echo rom is clean >&2
+		return 1
+	fi
+}
+function replaceso()
+{
+#$1:srcdir      $2:srcfile    $3:dstdir   $4:dstfile
+	adb shell "su -c chmod 777 /data/local/tmp"
+	local tmppath=/data/local/tmp/del_me_$RANDOM
+	adb shell "su -c mkdir $tmppath"
+	adb shell "su -c chmod 777 $tmppath"
+	adb push "$1/$2" $tmppath
+	adb shell "su -c mount -o rw,remount /system"
+	adb shell "su -c cp $tmppath/$2 $3/$4"
+	adb shell "su -c mount -o ro,remount /system"
+	adb shell "su -c rm -rf $tmppath"
+}
+function chgerom()
+{
+	local basepath=~/dbgbase/so_bk
+	local debugpath=~/android-4.4.4_r1
+	testunpackrom
+	if [ $? -eq 0 ]; then # now is unpacker
+		echo device now is unpacker
+		if [ $# -ge 1 ] && [ "clean" == "$1" ]; then
+			echo now chge to clean
+			replaceso $basepath libdvm_ori.so /system/lib libdvm.so
+			cp $basepath/dalvik_system_DexFile_ori.cpp $debugpath/dalvik/vm/native/dalvik_system_DexFile.cpp
+			cp $basepath/Class_ori.cpp $debugpath/dalvik/vm/oo/Class.cpp
+			cp $basepath/Optimize_ori.cpp $debugpath/dalvik/vm/analysis/Optimize.cpp
+			cp $basepath/libdvm_sym_ori.so $debugpath/out/target/product/hammerhead/symbols/system/lib/libdvm.so
+			adb reboot
+		else
+			echo nothing to do
+		fi
+	else
+		echo device now is clean
+		if [ $# -ge 1 ] && [ "clean" == "$1" ]; then
+			echo nothing to do
+		else
+			echo now chge to uppacker
+			replaceso $basepath libdvm_unpacker.so /system/lib libdvm.so
+			cp $basepath/dalvik_system_DexFile_unpack.cpp $debugpath/dalvik/vm/native/dalvik_system_DexFile.cpp
+			cp $basepath/Class.cpp $debugpath/dalvik/vm/oo/Class.cpp
+			cp $basepath/Optimize.cpp $debugpath/dalvik/vm/analysis/Optimize.cpp
+			cp $basepath/libdvm_sym_unpacker.so $debugpath/out/target/product/hammerhead/symbols/system/lib/libdvm.so
+			adb reboot
+		fi
+	fi
+}
+#~/bin/apktool d -f -o "/Users/hongchaofu/jpfxb/$1"  "/Users/hongchaofu/$1.apk"
+function unpackapk()
+{
+	local unpackpath=`pwd`/unpack
+	apktool d -f -o $unpackpath $1 2>&1 >unpack.log
+
+}
+function getapkunpackdir()
+{
+	local pkg=`_apk_get_pkg_name $1`
+	adb pull /data/local/tmp/$pkg
+}
+alias adbn7='adb -s 015d4906062bfc05'
+alias adbn6p='adb -s ENU5T15C17000579'
+alias adbn52='adb -s 03209e5208eaf01d'
+alias adbn51='adb -s 03be21df437dc6a3'
+alias adben7='adb -s emulator-5554'
+alias jadx='/Users/hongchaofu/Downloads/jadx-0/bin/jadx-gui'
+
+function getsigninfo()
+{
+local workdir=`pwd`
+local tempdir=.temp_for_certificate
+mkdir $tempdir
+count=0 
+while [ -n "$1" ] 
+do 
+count=$[$count+1] 
+echo "(#$count) "`basename "$1"`":" 
+echo "" 
+path=`jar tf "$1" | grep RSA` #查找apk中RSA文件, maybe multi rsa ,fix me 
+echo $path
+cd $tempdir
+jar xf $workdir/$1 $path #把RSA文件解压出来 if realpath fixe me (start with /)
+cd ..
+keytool -printcert -file $tempdir/$path #查看指纹证书 
+rm -r $tempdir/$path #删除之前解压的文件 
+echo "--------------------------------------------" 
+shift 
+done 
+rm -r $tempdir
+}
+# or use:
+# jarsigner -verify -verbose -certs xxx.apk
+
+
+
+
+function repacktest()
+{
+echo apktool d -o $2 -r -s -f $1
+apktool d -o $2 -r -s -f $1
+echo cp classes.dex $2
+cp  $5 $2
+mv $2/$5 $2/classes.dex
+echo cp $1 $2/assets/
+cp $1 $2/assets/
+echo mv $2/assets/$1 $2/assets/old.apk
+mv $2/assets/$1 $2/assets/old.apk
+echo apktool b -o $3 $2
+apktool b -o $3 $2
+signapk $3 $4
+apkuninstall $4
+apkinstall $4
+}
+
+
+
+function repacktest2()
+{
+echo apktool d -o $2 -r -s -f $1
+apktool d -o $2 -r -s -f $1
+echo cp classes.dex $2
+cp classes_az.dex $2
+mv $2/classes_az.dex $2/classes.dex
+echo cp $1 $2/assets/
+cp old.apk  $2/assets/
+echo mv $2/assets/$1 $2/assets/old.apk
+#mv $2/assets/$1 $2/assets/old.apk
+echo apktool b -o $3 $2
+apktool b -o $3 $2
+signapk $3 $4
+apkuninstall $4
+apkinstall $4
+}
+
+function dex2smali()
+{
+	local dexfile=$1
+	local outdir=$2
+	java -jar ~/bin/baksmali-2.2.1.jar d -o $outdir $dexfile
+}
+function smali2dex
+{
+	local smali_file_or_dir=$1
+	local dexfile=$2
+	java -jar ~/bin/smali-2.2.1.jar a -o $2 $1
+}
+function java2smali()
+{
+	local javapathfile=$1
+	local javafile=`basename $javapathfile`
+	local filename="${javafile%.*}"
+	local wkdir=wkdir_will_del
+	mkdir $wkdir
+	cp $javapathfile $wkdir
+	javac $wkdir/$javafile
+	#java Test
+	dx --no-strict --dex --output=$wkdir/test.dex $wkdir/$filename.class
+	dex2smali $wkdir/test.dex $wkdir
+	cat $wkdir/$filename.smali
+}
+#apkinstall com.skeinglobe.global.enneassaga.apk 
+#adb push com.skeinglobe.global.enneassaga/ /sdcard/Android/obb/
+
+function apkunpack()
+{
+	local prefix=$2
+	apktool d -o "$prefix"dirnrs -r -s -f $1 2>&1 >unpack.log
+	echo ---------------------------------------  >>unpack.log
+	apktool d -o "$prefix"dir -f $1 2>&1 >>unpack.log
+}
+
+function getscr()
+{
+	local pngname=scr.png
+	if [ $# -gt 0 ];then
+		local pngname=$1
+	fi	
+	adb shell /system/bin/screencap -p /sdcard/$pngname
+	adb pull /sdcard/$pngname
+	open $pngname
+}
+
+
+
+
+#export DOCKER_HOST=tcp://127.0.0.1:4243
+#export DOCKER_HOST=tcp://192.168.59.103:2376
+#export DOCKER_CERT_PATH=/Users/hongchaofu/.boot2docker/certs/boot2docker-vm
+#export DOCKER_TLS_VERIFY=1
+
+# to delete some file dirs :
+# /bin/ls -lO 
+# sudo chflags -R nosappnd dirs
+# sudo rm -r dirs 
+export NEWVERSIONSU=SuperSU-v2.82-201705271822.zip
+function rtbysu(){
+adb push $NEWVERSIONSU /sdcard/
+adb shell twrp install /sdcard/$NEWVERSIONSU
+}
+
+function opentmux()
+{
+	local cmd=$(which tmux) # tmux path
+	local session=codefun   # session name
+
+	if [ -z $cmd ]; then
+	  echo "You need to install tmux."
+	  exit 1
+	fi
+
+	$cmd has -t $session
+
+	if [ $? != 0 ]; then
+	  $cmd new -d -n vim -s $session "vim"
+	  $cmd splitw -v -p 20 -t $session "pry"
+	  $cmd neww -n mutt -t $session "mutt"
+	  $cmd neww -n irssi -t $session "irssi"
+	  $cmd neww -n cmus -t $session "cmus"
+	  $cmd neww -n zsh -t $session "zsh"
+	  $cmd splitw -h -p 50 -t $session "zsh"
+	  $cmd selectw -t $session:5
+	fi
+
+	$cmd att -t $session
+
+	exit 0
+}
+
+alias as='~/android-studio/bin/studio.sh'
+# goldfish_nand.xxx_path=yyyy     yyyy must use abs path
+
+# need recompile for android   android_arm: unsupported machine type
+alias q0='~/panda/build/arm-softmmu/qemu-system-arm -M android_arm -cpu cortex-a9  -kernel ~/androidstuff/kernel-qemu -initrd ~/androidstuff/ramdisk.img  -global goldfish_nand.system_path=~/androidstuff/system.img.qcow2 -global goldfish_nand.user_data_path=~/androidstuff/userdata.img.qcow2  -global goldfish_nand.cache_path=~/androidstuff/cache.img.qcow2 -append  "console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -net nic,vlan=1 -net user,vlan=1,hostfwd=tcp::5555-:5555,hostfwd=tcp::5039-:5039 -global goldfish_mmc.sd_path=~/androidstuff/sdcard.qcow2'
+
+alias qq='~/panda/build/arm-softmmu/qemu-system-arm -M integratorcp -cpu cortex-a9  -kernel ~/androidstuff/kernel-qemu -initrd ~/androidstuff/ramdisk.img  -global goldfish_nand.system_path=~/androidstuff/system.img.qcow2 -global goldfish_nand.user_data_path=~/androidstuff/userdata.img.qcow2  -global goldfish_nand.cache_path=~/androidstuff/cache.img.qcow2 -append  "console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -net nic,vlan=1 -net user,vlan=1,hostfwd=tcp::5555-:5555,hostfwd=tcp::5039-:5039 -global goldfish_mmc.sd_path=~/androidstuff/sdcard.qcow2'
+
+
+PANDA='/home/fhc/oldpanda/panda/qemu/arm-softmmu/qemu-system-arm'
+alias qok="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -loadvm ff"
+# for no loadvm
+alias qok2="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+# for replay
+alias qok3="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -replay opentest -panda callstack_instr -panda stringsearch:str=Test,callers=2"
+# for test
+alias qok4="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/goldfishnew/arch/arm/boot/zImage -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qqt2="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff/kernel-qemu -initrd /home/fhc/androidstuff/ramdisk.img -global goldfish_nand.system_path=/home/fhc/androidstuff/system.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff/cache.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -global goldfish_mmc.sd_path=/home/fhc/androidstuff/sdcard.qcow2 -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+# no graphic
+alias qqt="$PANDA -M android_arm -cpu cortex-a9  -kernel ~/androidstuff/kernel-qemu -nographic -initrd ~/androidstuff/ramdisk.img  -global goldfish_nand.system_path=~/androidstuff/system.img.qcow2 -global goldfish_nand.user_data_path=~/androidstuff/userdata.img.qcow2  -global goldfish_nand.cache_path=~/androidstuff/cache.img.qcow2 -append  \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -net nic,vlan=1 -net user,vlan=1,hostfwd=tcp::5555-:5555,hostfwd=tcp::5039-:5039 -global goldfish_mmc.sd_path=~/androidstuff/sdcard.qcow2 -android"
+
+
+
+#____________________________________________________________________________________________________
+# for andN5_23x86  port from qok4
+alias qn="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_23x86/kernel-qemu -initrd /home/fhc/andN5_23x86/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_23x86/system.qcow2 -global goldfish_nand.user_data_path=/home/fhc/andN5_23x86/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_23x86/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_23x86/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qn2="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_23arm/kernel-qemu -initrd /home/fhc/andN5_23arm/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_23arm/system.qcow2 -global goldfish_nand.user_data_path=/home/fhc/andN5_23arm/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_23arm/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_23arm/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1 androidboot.selinux=disabled androidboot.dm_verity=disabled\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+# for debug
+alias qnd="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_23arm/kernel-qemu -initrd /home/fhc/andN5_23arm/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_19arm/system.img -global goldfish_nand.user_data_path=/home/fhc/andN5_23arm/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_23arm/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_23arm/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qnd2="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_23arm/kernel-qemu -initrd /home/fhc/andN5_23arm/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_23arm/system.img -global goldfish_nand.user_data_path=/home/fhc/andN5_19arm/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_19arm/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_19arm/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+# for 19 arm test
+alias qn3="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_19arm/kernel-qemu -initrd /home/fhc/andN5_19arm/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_19arm/system.qcow2 -global goldfish_nand.user_data_path=/home/fhc/andN5_19arm/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_19arm/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_19arm/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+# for 21 arm test
+alias qn4="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_21arm/kernel-qemu -initrd /home/fhc/andN5_21arm/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_21arm/system.qcow2 -global goldfish_nand.user_data_path=/home/fhc/andN5_21arm/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_21arm/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_21arm/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qn5="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/andN5_22arm/kernel-qemu -initrd /home/fhc/andN5_22arm/ramdisk.img -global goldfish_nand.system_path=/home/fhc/andN5_22arm/system.qcow2 -global goldfish_nand.user_data_path=/home/fhc/andN5_22arm/userdata.qcow2 -global goldfish_nand.cache_path=/home/fhc/andN5_22arm/cache.qcow2 -global goldfish_mmc.sd_path=/home/fhc/andN5_22arm/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+#____________________________________________________________________________________________________
+# for soc , not need recompile
+alias q1='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kernel ~/linux/arch/arm/boot/zImage -dtb ~/linux/arch/arm/boot/dts/vexpress-v2p-ca9.dtb -nographic -append "root=/dev/mmcblk0  console=ttyAMA0" -sd ~/a9rootfs.ext3'
+alias q3='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 1024M -kernel ~/goldfish/arch/arm/boot/zImage -dtb ~/goldfish/arch/arm/boot/dts/vexpress-v2p-ca9.dtb -append "root=/dev/mmcblk0  console=ttyAMA0" -sd ~/a9rootfs.ext3'
+alias q2='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kernel ~/linux/arch/arm/boot/zImage -dtb ~/linux/arch/arm/boot/dts/vexpress-v2p-ca9.dtb -append "root=/dev/mmcblk0  console=ttyAMA0" -sd ~/a9rootfs.ext3'
+
+
+
+
