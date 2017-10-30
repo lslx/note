@@ -1,7 +1,7 @@
 # on new machine , on github exsits proj
 sudo apt install git
 git config --global user.email "zz00zz.9774@gmail.com"
-git config --global user.email "fhc"
+git config --global user.name "fhc"
 git clone https://github.com/lslx/note2.git
 cd note
 vi README.md 
