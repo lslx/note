@@ -709,6 +709,40 @@ function chgerom()
 		fi
 	fi
 }
+# just replace so
+function chgerom2()
+{
+	local basepath=~/dbgbase/so_bk
+	# local debugpath=~/android-4.4.4_r1
+	testunpackrom
+	if [ $? -eq 0 ]; then # now is unpacker
+		echo device now is unpacker
+		if [ $# -ge 1 ] && [ "clean" == "$1" ]; then
+			echo now chge to clean
+			replaceso $basepath libdvm_ori.so /system/lib libdvm.so
+			# cp $basepath/dalvik_system_DexFile_ori.cpp $debugpath/dalvik/vm/native/dalvik_system_DexFile.cpp
+			# cp $basepath/Class_ori.cpp $debugpath/dalvik/vm/oo/Class.cpp
+			# cp $basepath/Optimize_ori.cpp $debugpath/dalvik/vm/analysis/Optimize.cpp
+			# cp $basepath/libdvm_sym_ori.so $debugpath/out/target/product/hammerhead/symbols/system/lib/libdvm.so
+			adb reboot
+		else
+			echo nothing to do
+		fi
+	else
+		echo device now is clean
+		if [ $# -ge 1 ] && [ "clean" == "$1" ]; then
+			echo nothing to do
+		else
+			echo now chge to uppacker
+			replaceso $basepath libdvm_unpacker.so /system/lib libdvm.so
+			# cp $basepath/dalvik_system_DexFile_unpack.cpp $debugpath/dalvik/vm/native/dalvik_system_DexFile.cpp
+			# cp $basepath/Class.cpp $debugpath/dalvik/vm/oo/Class.cpp
+			# cp $basepath/Optimize.cpp $debugpath/dalvik/vm/analysis/Optimize.cpp
+			# cp $basepath/libdvm_sym_unpacker.so $debugpath/out/target/product/hammerhead/symbols/system/lib/libdvm.so
+			adb reboot
+		fi
+	fi
+}
 #~/bin/apktool d -f -o "/Users/hongchaofu/jpfxb/$1"  "/Users/hongchaofu/$1.apk"
 function unpackapk()
 {
