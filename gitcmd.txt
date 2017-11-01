@@ -20,7 +20,8 @@ git commit -m "first commit"
 git remote add origin git@github.com:lslx/note.git
 git push -u origin master
 
-for ssh key
+# for ssh key
 # copy .ssh/authorized_keys content to gedit and del some blank
 # copy result to github profile ssh key ---> New ssh key
+# for test
 ssh -T git@github.com
