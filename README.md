@@ -1,12 +1,12 @@
-# note2
+# note
 record work for working env migration easily, just personal
 
 ---
 before install git , exec:
-
-- sudo apt update
-- sudo apt -f install 
-
+```
+sudo apt update
+sudo apt -f install 
+```
 otherwise, maybe get error:
 
 ```
