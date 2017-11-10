@@ -16,6 +16,38 @@ make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_defconfig
 make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_armv7_defconfig
 make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm -j4
 
+panda1 compile:
+get panda_install.bash, and comment the build.sh call line, otherwise, all file will owner is root
+sudo panda_install.bash
+sudo apt-get install libsdl1.2-dev
+or build.sh get error: fatal error: SDL/SDL.h: No such file or directory
+cd panda/qemu
+chge build.sh content: (for android support)
+
+ 36 #./configure --target-list=x86_64-softmmu,i386-softmmu,arm-softmmu \
+ 37 #--prefix=`pwd`/install \
+ 38 #--disable-pie \
+ 39 #--disable-xen \
+ 40 #--disable-libiscsi \
+ 41 #$LLVM_BIT \
+ 42 #--extra-cflags="-O2 -I/usr/local/include" \
+ 43 #--extra-cxxflags="-O2" \
+ 44 #--extra-ldflags="-L/usr/local/lib -L/usr/local/lib64 -lprotobuf-c -lprotobuf -lpthread"
+ 45 
+ 46 ./configure --target-list=arm-softmmu \
+ 47 --prefix=`pwd`/install \
+ 48 --enable-android \
+ 49 --disable-pie \
+ 50 --disable-xen \
+ 51 --disable-libiscsi \
+ 52 $LLVM_BIT \
+ 53 --extra-cflags="-O2 -I/usr/local/include" \
+ 54 --extra-cxxflags="-O2" \
+ 55 --extra-ldflags="-L/usr/local/lib -L/usr/local/lib64 -L/usr/local/lib -lprotobuf-c -lprotobuf -lpthre    ad"
+
+
+./build.sh
+
 cd /home/fhc/Android/Sdk/system-images/android-19/default/armeabi-v7a
 cp kernel-qemu ~/androidstuff/
 cp ramdisk.img  ~/androidstuff/
