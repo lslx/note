@@ -21,7 +21,6 @@ ls -l "$MARKPATH" | tail -n +2 | sed 's/ / /g' | cut -d' ' -f9- | awk -F ' -> ' 
 # for linux
 # ls -l "$MARKPATH" | sed 's/ / /g' | cut -d' ' -f9- | sed 's/ -/t-/g' && echo
 }
-#ADDED BY 010 EDITOR
 extract() { 
     if [ -f $1 ] ; then 
       case $1 in 
@@ -42,20 +41,12 @@ extract() {
          echo "'$1' is not a valid file" 
      fi 
 }
-ANDROID_HOME=/Users/hongchaofu/android-sdks
-#export PATH="/Applications/010_bk.app/Contents/CmdLine$PATH"
 alias 010e='~/010editor/010editor'
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-PATH="/usr/local/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/Cellar/binutils/2.28/x86_64-apple-darwin16.4.0/bin/:$PATH"
-MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
-PATH="~/bin:~/andtool/bin:/Users/hongchaofu/dex2jar-2.0/:$PATH"
-ulimit -S -n 1024
+#PATH="~/bin:~/andtool/bin:/Users/hongchaofu/dex2jar-2.0/:$PATH"
+#ulimit -S -n 1024
 
 #for android sdk
-export PATH="~/Library/Android/sdk/platform-tools:~/Library/Android/sdk/tools:~/Library/Android/sdk/build-tools/26.0.0:~/Library/Android/sdk/ndk-bundle:$PATH"
 export PATH="~/dbgtool/4.7:$PATH"
-#export PATH="~/Library/Android/sdk/ndk-bundle/prebuilt/darwin-x86_64/bin:$PATH"
-
 
 alias ida='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq.exe'
 alias idaa='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq64.exe'
@@ -71,10 +62,10 @@ alias l7='tree -N -L 7'
 alias l8='tree -N -L 8'
 alias l9='tree -N -L 9'
 alias 'o'='nautilus'
+alias gsm='gnome-system-monitor'
 
 # complex cmd
-alias avd='~/Android/Sdk/tools/android' 
-alias sdk='android sdk' 
+alias andcmd='~/Android/Sdk/tools/android' 
 alias edexht='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/dexhtnew/kernel-qemu-armv7 -partition-size 128 -sysdir /Users/hongchaofu/dexhtnew -system system.img -avd dexht2 -datadir /Users/hongchaofu/dexhtnew/ -data userdata.img -ramdisk /Users/hongchaofu/dexhtnew/ramdisk.img' 
 
 # for debug
@@ -82,25 +73,18 @@ alias edexht2='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/andenv/kq
 
 alias edexht3='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/andenv/kqemu/zImage -partition-size 128 -sysdir /Users/hongchaofu/dexhtnew -system system.img -avd N5_19 -datadir /Users/hongchaofu/dexhtnew/ -data userdata.img -ramdisk /Users/hongchaofu/dexhtnew/ramdisk.img' 
 
+export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
 
-alias xs='xcode-select -print-path'
-alias x4='sudo xcode-select -s /Applications/Xcode4.6.app/'
-alias x5='sudo xcode-select -s /Applications/Xcode5.1.app/'
-alias x8='sudo xcode-select -s /Applications/Xcode8.app/'
+function chgejava()
+{
+sudo update-alternatives --config java
+sudo update-alternatives --config javac
+sudo update-alternatives --config javaws
+sudo update-alternatives --config jar
+sudo update-alternatives --config javadoc
+sudo update-alternatives --config javap
+}
 
-alias libp='export DYLD_PRINT_LIBRARIES=1'
-alias libpd='export -n DYLD_PRINT_LIBRARIES'
-
-
-#export JAVA_6_HOME=`/usr/libexec/java_home -v 1.6`  
-#export JAVA_7_HOME=`/usr/libexec/java_home -v 1.7`  
-#export JAVA_8_HOME=`/usr/libexec/java_home -v 1.8`  
-#  
-#export JAVA_HOME=$JAVA_8_HOME  
-#  
-#alias jdk6="export JAVA_HOME=$JAVA_6_HOME"  
-#alias jdk7="export JAVA_HOME=$JAVA_7_HOME"  
-#alias jdk8="export JAVA_HOME=$JAVA_8_HOME"  
 
 # ssh-add -l
 # ssh-add ./ssh/fkey
@@ -131,7 +115,7 @@ function getdbgtool(){
 	scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.6/bin ~/dbgtool/4.6
 }
 export CLASSPATH=~/bin
-export anddbgsvr=/Users/hongchaofu/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv/android_server
+export anddbgsvr=/home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv/android_server
 function signapk(){
 #$1 ori.apk $2 signed.apk
 jarsigner -verbose -keystore ~/demo.keystore -storepass MyKeyPw -digestalg SHA1 -sigalg MD5withRSA -tsa http://timestamp.digicert.com -signedjar $2 $1 mykey
@@ -189,7 +173,7 @@ function slldbsvr(){
 
 }
 #alias andsvrinit='adb shell "su -c /data/local/tmp/andd -p23999"'
-alias aapt='/Users/hongchaofu/Library/Android/sdk/build-tools/26.0.0/aapt'
+alias aapt='/home/fhc/Android/Sdk/build-tools/27.0.0/aapt'
 function csv2html(){
 	for line in `cat $1`; do
 		echo "<tr bgcolor=@ffffff><td>${line//,/</td><td>}</td></tr>" ;
@@ -236,26 +220,6 @@ function initanadata(){
 
 #gtb apk_path apk_md5 apk_pkg_name apk_act_name anti* policy>ss.html;open ss.html
 
-
-#export NVPACK_ROOT="/Users/hongchaofu/NVPACK"
-#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/tools"
-#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/platform-tools"
-#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/build-tools"
-#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/tools"
-#export ANDROID_HOME="/Users/hongchaofu/NVPACK/android-sdk-macosx"
-#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/platform-tools"
-#export PATH=$PATH:"/Users/hongchaofu/NVPACK/android-sdk-macosx/build-tools"
-#export PATH=$PATH:"/User/hongchaofu/Downloads/jadx-0/bin"
-#export PATH=$PATH:"/Users/hongchaofu/Library/Android/sdk/build-tools/25.0.2"
-
-#export PYTHONHOME=/usr/bin/python
-#export PYTHONPATH=.:$PYTHONHOME:$PYTHONHOME/site-packages
-#export PYTHONPATH=.:$PYTHONHOME:/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7:~/Library/Python/2.7/lib/python/site-packages
-
-#export PYTHONHOME=/usr/local/Cellar/python/2.7.13/bin
-#export PYTHONPATH=.:$PYTHONHOME:/usr/local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7:/usr//local/Cellar/python/2.7.13/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages
-#export PATH=$PYTHONHOME:$PYTHONPATH:$PATH
-#export PYTHONPATH=.:$PYTHONPATH:/usr/local/lib/python2.7/site-packages/
 function pid()
 {
     local prepend=''
@@ -369,7 +333,7 @@ function gdbwrapper()
 	#local gdbpathfile=/usr/local/bin/gdb
 
 	# use android stdio sdk gdb
-	local gdbpathfile=~/Library/Android/sdk/ndk-bundle/prebuilt/darwin-x86_64/bin/gdb
+	local gdbpathfile=~/Android/sdk/ndk-bundle/prebuilt/darwin-x86_64/bin/gdb
 
 
 	# use cryxx
@@ -760,7 +724,7 @@ alias adbn6p='adb -s ENU5T15C17000579'
 alias adbn52='adb -s 03209e5208eaf01d'
 alias adbn51='adb -s 03be21df437dc6a3'
 alias adben7='adb -s emulator-5554'
-alias jadx='/Users/hongchaofu/Downloads/jadx-0/bin/jadx-gui'
+alias jadx='/home/fhc/Downloads/jadx-0.6.1/bin/jadx-gui'
 
 function getsigninfo()
 {
@@ -877,14 +841,6 @@ function getscr()
 	open $pngname
 }
 
-
-
-
-#export DOCKER_HOST=tcp://127.0.0.1:4243
-#export DOCKER_HOST=tcp://192.168.59.103:2376
-#export DOCKER_CERT_PATH=/Users/hongchaofu/.boot2docker/certs/boot2docker-vm
-#export DOCKER_TLS_VERIFY=1
-
 # to delete some file dirs :
 # /bin/ls -lO 
 # sudo chflags -R nosappnd dirs
@@ -932,10 +888,14 @@ alias q0='~/panda/build/arm-softmmu/qemu-system-arm -M android_arm -cpu cortex-a
 alias qq='~/panda/build/arm-softmmu/qemu-system-arm -M integratorcp -cpu cortex-a9  -kernel ~/androidstuff/kernel-qemu -initrd ~/androidstuff/ramdisk.img  -global goldfish_nand.system_path=~/androidstuff/system.img.qcow2 -global goldfish_nand.user_data_path=~/androidstuff/userdata.img.qcow2  -global goldfish_nand.cache_path=~/androidstuff/cache.img.qcow2 -append  "console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -net nic,vlan=1 -net user,vlan=1,hostfwd=tcp::5555-:5555,hostfwd=tcp::5039-:5039 -global goldfish_mmc.sd_path=~/androidstuff/sdcard.qcow2'
 
 
-PANDA='/home/fhc/oldpanda/panda/qemu/arm-softmmu/qemu-system-arm'
+PANDA='/home/fhc/panda1dev/panda/qemu/arm-softmmu/qemu-system-arm'
+IMGPATH='/home/fhc/pandaimg/n5a19arma44'
+
 alias qok="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -loadvm ff"
 # for no loadvm
-alias qok2="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+alias qok2="$PANDA -M android_arm -cpu cortex-a9 -kernel $IMGPATH/kernel-qemu -initrd $IMGPATH/ramdisk.img -global goldfish_nand.system_path=$IMGPATH/system.qcow2 -global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 -global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 -global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qok2_bk="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 3G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
 # for replay
 alias qok3="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -replay opentest -panda callstack_instr -panda stringsearch:str=Test,callers=2"
 # for test
@@ -974,4 +934,6 @@ alias q2='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kern
 
 
 
+#-------------
+alias gitset='git config --global user.email "zz00zz.9774@gmail.com" && git config --global user.name "lslx"'
 
