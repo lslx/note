@@ -1,0 +1,155 @@
+
+
+install openjdk7
+(swich to source.list.old)
+http://blog.csdn.net/csm_qz/article/details/51510667
+
+sudo add-apt-repository ppa:openjdk-r/ppa  
+sudo apt-get update   
+sudo apt-get install openjdk-7-jdk
+
+
+install openjdk8
+sudo apt-get install openjdk-8-jdk
+
+
+
+install java 6
+~/jdkBk/jdk-6u45-linux-x64.bin
+mv jdk1.6.0_45 ~
+
+sudo update-alternatives --install /usr/bin/java java /home/fhc/jdk1.6.0_45/bin/java 1060
+sudo update-alternatives --install /usr/bin/javac javac /home/fhc/jdk1.6.0_45/bin/javac 1060
+sudo update-alternatives --install /usr/bin/javaws javaws /home/fhc/jdk1.6.0_45/bin/javaws 1060
+sudo update-alternatives --install /usr/bin/jar jar /home/fhc/jdk1.6.0_45/bin/jar 1060
+sudo update-alternatives --install /usr/bin/javadoc javadoc /home/fhc/jdk1.6.0_45/bin/javadoc 1060
+sudo update-alternatives --install /usr/bin/javap javap /home/fhc/jdk1.6.0_45/bin/javap 1060
+
+
+
+export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
+
+function chgejava()
+{
+ sudo update-alternatives --config java
+ sudo update-alternatives --config javac
+ sudo update-alternatives --config javaws
+ sudo update-alternatives --config jar
+ sudo update-alternatives --config javadoc
+ sudo update-alternatives --config javap
+}
+
+ref:  https://source.android.com/source/initializing
+sudo apt-get install git-core gnupg flex bison gperf build-essential \
+  zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 \
+  lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev ccache \
+  libgl1-mesa-dev libxml2-utils xsltproc unzip
+
+make 4.1 to make 3.81
+wget http://ftp.osuosl.org/pub/ubuntu/pool/main/m/make-dfsg/make_3.81-8.2ubuntu3_amd64.deb
+dpkg -i make_3.81-8.2ubuntu3_amd64.deb
+
+
+参考：https://source.android.com/source/initializing
+mkdir ~/CCACHE
+$ export USE_CCACHE=1
+$ export CCACHE_DIR=/home/fhc/CCACHE/.ccache
+$ prebuilts/misc/linux-x86/ccache/ccache -M 50G
+
+16:42 start to compile
+17:56 end
+
+
+
+从32copy repo，后checkout
+不能使用scp因为，scp不能实现
+rsync -avucz -e ssh fhc@$buildsvr:android-6.0.1_r77/.repo ./
+du -h -d 1
+now 38G
+repo sync --local-only
+du -h -d 1
+now 50G
+patch source code : https://groups.google.com/forum/#!topic/android-rpi/W2hMX7jB-s0
+or get error : (... x86_64.o: unsupported reloc 42 ... )
+cd build/core/clang/
+patch < ~/Downloads/0001-Ubuntu-16.04-adaption.patch
+cd ../..
+lunch aosp_x86
+make j5
+now 78G (out:28G)
+close vbox vm
+or get error : (ko:failed to initialize KVM)
+emulator
+
+版本选择，如果刷真机，则
+从源代码标记和细分版本中https://source.android.com/source/build-numbers#source-code-tags-and-builds，
+根据nexus型号选择分支，根据对应的细分版本号，下载对应的驱动。
+https://developers.google.com/android/nexus/drivers
+如果没有驱动，编译后，刷机，系统将卡在android启动界面，无法进入home
+
+
+主版本选定后，小版本一定要最新，因为小版本会修正错误，否则可能有问题，例如：
+android-4.4.4_r1
+compoile and run emulator,stuck on the android screen
+adb shell, dmesg,and get error:
+(e2fsck: executing /system/bin/e2fsck failed: No such file or directory)
+(reson:https://android-review.googlesource.com/#/c/platform/build/+/73226/)
+because its a bug which not fix on android-4.4.4_r1
+
+
+use repo : https://source.android.com/source/using-repo
+repo internal : http://blog.csdn.net/Luoshengyang/article/details/18195205
+
+如果没有本地镜像，且想快速拿到一个指定版本，则
+
+repo init -u https://android.googlesource.com/platform/manifest -b android-4.4_r1.1
+mkdir android-4.4_r1.1
+cd android-4.4_r1.1
+repo sync
+如果有某个近似版本，则（这比从零开始要快)
+cd android-5.x 
+repo init -u https://android.googlesource.com/platform/manifest -b android-4.4_r1.1
+repo sync
+结果可能.repo文件夹略大
+
+
+如果想快速切换任意版本，则以下两种方案不能做到
+参考1:https://source.android.com/source/downloading
+参考2:https://mirrors.tuna.tsinghua.edu.cn/help/AOSP/
+1. 使用特定分支获取的repo
+   repo init -u https://android.googlesource.com/platform/manifest -b android-4.4_r1.1
+   虽然git --git-dir .repo/manifests/.git/ branch -a　　可显示出某些分支，但不能确定是否会联网下载分支
+　　即使仅仅不联网切换android-4.4_r1.1都可能失败，如　repo init -b android-4.4_r1.1　即不联网执行切换，
+　　这意味这仅切换分支的过程就可能联网。
+2. 使用每月更新包，https://mirrors.tuna.tsinghua.edu.cn/aosp-monthly/aosp-latest.tar　(40G,2017-11-08)，
+  结果跟以上没什么区别。
+copy repo from tsinghua
+https://mirrors.tuna.tsinghua.edu.cn/help/AOSP/
+wget -c -t 0 https://mirrors.tuna.tsinghua.edu.cn/aosp-monthly/aosp-latest.tar
+aosp-latest.tar     100%[===================>]  39.11G   202KB/s    in 23h 1m 
+
+
+所以切换源码大多数不能避免更新，所以，最好有本地镜像，这样更新速度极快。本地镜像保证一个月甚至
+几个月更新一次即可，切不可频繁更新本地镜像。
+local mirror:
+mkdir -p aosp/mirror
+cd aosp/mirror
+repo init -u https://aosp.tuna.tsinghua.edu.cn/mirror/manifest --mirror
+cp ~/bin/loopsync .
+./loopsync 
+2017-11-08, total:164G,time 2d, speed:200~500k
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

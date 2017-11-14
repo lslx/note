@@ -1,0 +1,30 @@
+
+
+
+https://askubuntu.com/questions/88063/how-to-invert-fn-keys-on-dell-laptop
+
+halted restart:
+ctl + alt + prtscr  reisub
+
+
+关闭触摸板
+设置-》鼠标和触摸板-》触摸板—》关闭
+
+
+打开终端，在终端中输入命令:  
+export LANG=en_US
+xdg-user-dirs-gtk-update
+跳出对话框询问是否将目录转化为英文路径,同意并关闭.
+在终端中输入命令:
+export LANG=zh_CN
+关闭终端,并重起.下次进入系统,系统会提示是否把转化好的目录改回中文.选择不再提示,并取消修改.主目录的中文转英文就完成了~ 
+
+
+
+
+资源消耗
+alias gsm='gnome-system-monitor'
+
+温度传感器
+sudo apt-get install psensor
+psensor
