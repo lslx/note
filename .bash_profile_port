@@ -84,6 +84,46 @@ sudo update-alternatives --config jar
 sudo update-alternatives --config javadoc
 sudo update-alternatives --config javap
 }
+sudoautoinfo=/home/fhc/sudoautoinfo
+function chgejava2()
+{
+	case $1 in
+	6)
+	local javaindex=1
+	;;
+	7)
+	local javaindex=2
+	;;
+	8)
+	local javaindex=3
+	;;
+	*)
+	local javaindex=1
+	;;
+	esac
+
+	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config java )
+	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javac )
+	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javaws )
+	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config jar )
+	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javadoc )
+	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javap )
+
+	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config java 
+	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javac 
+	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javaws 
+	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config jar 
+	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javadoc 
+	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javap 
+
+#	cat  $sudoautoinfo | sudo echo need root
+	#echo $javaindex | sudo update-alternatives --config java
+	#echo $javaindex | sudo update-alternatives --config javac
+	#echo $javaindex | sudo update-alternatives --config javaws
+	#echo $javaindex | sudo update-alternatives --config jar
+	#echo $javaindex | sudo update-alternatives --config javadoc
+	#echo $javaindex | sudo update-alternatives --config javap
+}
 
 
 # ssh-add -l
@@ -114,7 +154,7 @@ function getdbgtool(){
 	scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.7/bin ~/dbgtool/4.7
 	scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/arm/arm-linux-androideabi-4.6/bin ~/dbgtool/4.6
 }
-export CLASSPATH=~/bin
+# export CLASSPATH=~/bin # this will cause android 5 compile failed see https://groups.google.com/forum/#!topic/android-building/HoNt0qixSfI
 export anddbgsvr=/home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv/android_server
 function signapk(){
 #$1 ori.apk $2 signed.apk
@@ -879,6 +919,257 @@ function opentmux()
 	exit 0
 }
 
+# full heavy env base work
+# create local android source code mirror, many year maybe run once
+# once this done, you can sync android source code from local which cost a few minute( for android 4.0.1, is 6.5min)
+# if you sync from tsinghua, or google, will cost a few hours, maybe 5,6hours(good net), or 5,6 days(bad net)
+function create_local_android_src_mirror(){
+
+	return # exec for careful , to avoid overwrite your have done
+
+	local and_src_url=https://aosp.tuna.tsinghua.edu.cn/mirror/manifest # use tsinghua
+	# local and_src_url=https://android.googlesource.com/mirror/manifest # use google is slowly or not access
+
+	mkdir -p aosp/mirror_dir
+	cd aosp/mirror_dir
+	repo init -u https://aosp.tuna.tsinghua.edu.cn/mirror/manifest --mirror
+	cp ~/bin/loopsync .
+	./loopsync  # this will cost four days (in 2017,11,06~09) and get 201G data, in the futrue must be cost more 
+
+	# if this work done, your can use cp to get a copy for work, and cp command work fine at copy soft link, not like
+	# scp which copy soft link as real content(the result is scp get the copy is not a right clone) 
+	# the clone one use for working, the ori one will sync the new version update, once new version update is work fine,
+	# just copy and replace the clone one
+} 
+# back up as tar, 
+# time tar -czvf aosp.tgz aosp    #198G   cost : real	105m31.690s   compress is not useful
+# time tar -cvf aosp.tar          #201G   cost : real	20m52.734s 
+# time md5sum aosp.tar            #929a6a55f34d52ffe690999f8005cf38  aosp.tar , cost : real	8m42.242s
+# time cp aosp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar /media/fhc/sg2t/  #cost : real	36m0.121s
+
+REPO_URL_WORKING=/media/fhc/ext800/aospbk/mirror
+
+HSTDIR=~/heavyscripttmp
+# after local android source code mirror create, you can do big thing quckly
+function getandver(){
+# get android source code version that you can sync from local
+
+	local pwdtmp=`pwd`
+	if [ ! -e "$HSTDIR/andrepo_4getinfo" ];then
+		mkdir -p $HSTDIR/andrepo_4getinfo
+	fi
+	cd $HSTDIR/andrepo_4getinfo
+	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle
+	git --git-dir .repo/manifests/.git/ branch -a | cut -d / -f 3
+	cd $pwdtmp
+
+}
+
+function _begincall(){
+	local begintime=$(date +%s)
+	echo $begintime
+}
+
+LOGDIRX=~/longCmdLogDir
+function _endcall(){
+
+	if [ ! -e "$LOGDIRX" ];then
+		mkdir $LOGDIRX
+	fi
+
+	local curcmd="${FUNCNAME[1]} $2"
+	local time1=$1
+	local time2=$(date +%s)
+	local secs=$(($time2-$time1))
+
+	local logfile=$LOGDIRX/$(date -d @$time1 "+%Y%m%d").log
+	echo '---------------------------------------------------------' >>$logfile
+	echo -n 执行命令:>>$logfile
+	echo $curcmd >>$logfile
+	echo -n 开始时间:>>$logfile
+	date -d @$time1 "+%Y-%m-%d %H:%M:%S">>$logfile
+	echo -n 花费时间:>>$logfile
+	printf '%dd:%dh:%dm:%ds\n' $(($secs/86400)) $(($secs/3600)) $(($secs%3600/60)) $(($secs%60))>>$logfile
+	echo -n 结束时间:>>$logfile
+	date -d @$time2 "+%Y-%m-%d %H:%M:%S">>$logfile
+
+}
+
+alias log='cat $LOGDIRX/$(date "+%Y%m%d").log'
+
+function xxtest(){
+
+	local beginstr=`_begincall`
+	
+	echo exec some command ...
+	sleep 1.8s
+
+	_endcall $beginstr
+
+}
+
+# use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
+# compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 
+CCACHE_TOOL_X=/media/fhc/ext800/androidcode/android-/prebuilts/misc/linux-x86/ccache/ccache
+function swcache(){
+
+	local C4ROM=~/CCACHE4ROM/.ccache
+	local C4OTH=~/CCACHE4OTH/.ccache
+	if [ ! -e "$C4ROM" ];then
+		mkdir -p $C4ROM
+	fi
+	if [ ! -e "$C4OTH" ];then
+		mkdir -p $C4OTH
+	fi
+	export USE_CCACHE=1
+	case $1 in
+	rom) # for rom (android 4,5,6,7,8)
+	export CCACHE_DIR=$C4ROM
+	echo ccache for rom
+	;;
+	oth) # for other
+	export CCACHE_DIR=$C4OTH
+	echo ccache for oth
+	;;
+	*)
+	export CCACHE_DIR=$C4ROM
+	echo ccache for rom
+	;;
+	esac
+	$CCACHE_TOOL_X -M 100G
+}
+
+
+function getand444(){
+
+	local beginstr=`_begincall`
+
+	local AND_SRC_PATH=/media/fhc/ext800/androidcode
+	local andvertag=android-4.4.4_r1
+	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+		mkdir $AND_SRC_PATH/$andvertag
+	fi
+	#cd $AND_SRC_PATH/$andvertag
+	cd $AND_SRC_PATH/android-
+	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
+	repo sync
+
+	_endcall $beginstr
+}
+
+function getand601(){
+
+	local beginstr=`_begincall`
+
+	local AND_SRC_PATH=/media/fhc/ext800/androidcode
+	local andvertag=android-6.0.1_r77
+	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+		mkdir $AND_SRC_PATH/$andvertag
+	fi
+	cd $AND_SRC_PATH/$andvertag
+	cd $AND_SRC_PATH/android-
+	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
+	repo sync
+
+	_endcall $beginstr
+
+}
+
+function getand711(){
+
+	local beginstr=`_begincall`
+
+	local AND_SRC_PATH=/media/fhc/ext800/androidcode
+	local andvertag=android-7.1.1_r27
+	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+		mkdir $AND_SRC_PATH/$andvertag
+	fi
+	cd $AND_SRC_PATH/$andvertag
+	cd $AND_SRC_PATH/android-
+	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
+	repo sync
+
+	_endcall $beginstr
+
+}
+# only 601 repo:37G total:78G out:28G
+# only 711 repo:40G total:59G out:19G
+# repo:30G total:56G
+# after get4,6,7 repo:84G total:105G
+# switch 4 to 6 cost: 2m:13s
+AND_SRC_PATH=/media/fhc/ext800/androidcode
+function getand(){
+
+	local beginstr=`_begincall`
+
+	local andvertag=android-
+	case $1 in
+	4)
+		local andvertag=android-4.4.4_r1
+		;;
+	5)
+		local andvertag=android-5.1.1_r14
+		;;
+	6)
+		local andvertag=android-6.0.1_r77
+		;;
+	7)
+		local andvertag=android-7.1.1_r27
+		;;
+	*)
+		local andvertag=android-4.4.4_r1
+		;;
+	esac
+	local anddir=android-
+	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
+		mkdir -p $AND_SRC_PATH/$anddir
+	fi
+	cd $AND_SRC_PATH/$anddir
+	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
+	repo sync
+
+	_endcall $beginstr "$*"
+
+}
+
+# prepare for compile , chagejava, patch , and extract drivers
+function p4compile(){
+
+
+	case $1 in
+	4)
+		local andvertag=android-4.4.4_r1
+		;;
+	5)
+		local andvertag=android-5.1.1_r14
+		;;
+	6)
+		local andvertag=android-6.0.1_r77
+		;;
+	7)
+		local andvertag=android-7.1.1_r27
+		;;
+	android-*)
+		local andvertag=$1
+		;;
+	*)
+		local andvertag=android-4.4.4_r1
+		;;
+	esac
+
+	local anddir=android-
+	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
+		mkdir -p $AND_SRC_PATH/$anddir
+	fi
+	cd $AND_SRC_PATH/$anddir
+
+
+
+
+}
+
+
+
 alias as='~/android-studio/bin/studio.sh'
 # goldfish_nand.xxx_path=yyyy     yyyy must use abs path
 
@@ -894,6 +1185,9 @@ IMGPATH='/home/fhc/pandaimg/n5a19arma44'
 alias qok="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -loadvm ff"
 # for no loadvm
 alias qok2="$PANDA -M android_arm -cpu cortex-a9 -kernel $IMGPATH/kernel-qemu -initrd $IMGPATH/ramdisk.img -global goldfish_nand.system_path=$IMGPATH/system.qcow2 -global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 -global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 -global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qok2re="$PANDA -M android_arm -cpu cortex-a9 -kernel $IMGPATH/kernel-qemu -initrd $IMGPATH/ramdisk.img -global goldfish_nand.system_path=$IMGPATH/system.qcow2 -global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 -global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 -global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on  -replay 360re3 -panda callstack_instr -panda stringsearch:str=7890,callers=2"
+
 
 alias qok2_bk="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 3G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
 # for replay

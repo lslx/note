@@ -122,13 +122,6 @@ telnet localhost 4421
 
 
 
-
-kernel version 3.4.67-01422-gd3ffcc7-dirty
-git reset --hard d3ffcc7
-git clean  -d  -fx ""
-
-
-
 http://www.linuxidc.com/Linux/2012-10/72284.htm
 https://codeyarns.com/2015/02/26/how-to-switch-gcc-version-using-update-alternatives/
 
@@ -139,6 +132,77 @@ sudo update-alternatives --config arm-linux-gnueabi-gcc
 
 cd ~/android-volatility/tools/linux
 $ zip ~/android-volatility/volatility/plugins/overlays/linux/Golfish-3.4.0.zip module.dwarf ~/goldfishnew/System.map
+
+
+
+
+----------------------------------------------------
+# run android emulator
+qok2 
+# root emulator
+https://infosectrek.wordpress.com/2017/03/06/rooting-the-android-emulator/
+# install some thing, prepare env
+apkinstall xxx.apk
+# open qemu terminal
+telnet localhost 4321
+# begin record, need time xx second
+begin_record myreName
+# do some thing
+xxxx
+# end record, need time xx second
+end_record
+# replay with some plug: like:
+cd /home/fhc/panda1dev/panda/qemu
+touch stringsearch_search_strings.txt
+qok2re
+the result in:stringsearch_string_matches.txt
+
+-------------------- use vol
+compile android kernel: version 3.4.67-01422-gd3ffcc7-dirty
+
+kernel：
+参考：http://blog.csdn.net/qiaowei020/article/details/50312311
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6 ~/bin/crossgcc4.6
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 ~/bin/crossgcc4.7
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8 ~/bin/crossgcc4.8
+
+git clone http://android.googlesource.com/kernel/goldfish.git
+git branch -a
+git checkout remotes/origin/android-goldfish-3.4
+git reset --hard d3ffcc7
+git clean  -d  -fx ""
+
+**************************
+create profile for vol
+make menuconfig
+# select and enter this option
+Enable loadable module support -->
+# select this two options
+Forced Module loading
+Module unloading
+--------- not work, just use good .config
+cp ~/importantbk/configBkkok .config
+**************************
+
+make CROSS_COMPILE=/home/fhc/bin/crossgcc4.7/bin/arm-eabi- ARCH=arm     goldfish_armv7_defconfig
+make CROSS_COMPILE=/home/fhc/bin/crossgcc4.7/bin/arm-eabi- ARCH=arm -j4
+
+
+create profile ref:https://github.com/volatilityfoundation/volatility/wiki/Android
+sudo apt install dwarfdump
+git clone https://github.com/volatilityfoundation/volatility.git ~/android-volatility
+cd ~/android-volatility/tools/linux
+# chge Makefile , just use good
+cp ~/importantbk/Makefile .
+make 
+# create the profile:
+zip ~/android-volatility/volatility/plugins/overlays/linux/Golfish-3.4.67.zip module.dwarf ~/goldfish/System.map
+
+----------------use vol.py
+cd /home/fhc/android-volatility
+python vol.py --help
+
+
 
 
 
