@@ -200,8 +200,21 @@ zip ~/android-volatility/volatility/plugins/overlays/linux/Golfish-3.4.67.zip mo
 
 ----------------use vol.py
 cd /home/fhc/android-volatility
-python vol.py --help
+sudo easy_install pycrypto
+sudo easy_install distorm3
+# or use pip:
+sudo apt install python-pip
+sudo pip install pycrypto
+sudo pip install distorm3
 
+python vol.py --help
+python vol.py --info
+python vol.py --info | grep linux
+python vol.py --profile=LinuxGolfish-3_4_67ARM --help
+python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda linux_apihooks
+
+# support poor for arm
+python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_malfind
 
 
 
