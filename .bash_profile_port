@@ -766,6 +766,8 @@ alias adbn51='adb -s 03be21df437dc6a3'
 alias adben7='adb -s emulator-5554'
 alias jadx='/home/fhc/Downloads/jadx-0.6.1/bin/jadx-gui'
 
+alias as='~/android-studio/bin/studio.sh'
+
 function getsigninfo()
 {
 local workdir=`pwd`
@@ -886,6 +888,8 @@ function getscr()
 # sudo chflags -R nosappnd dirs
 # sudo rm -r dirs 
 export NEWVERSIONSU=SuperSU-v2.82-201705271822.zip
+# before: adb reboot recovery
+# after: adb reboot
 function rtbysu(){
 adb push $NEWVERSIONSU /sdcard/
 adb shell twrp install /sdcard/$NEWVERSIONSU
@@ -1009,7 +1013,7 @@ function xxtest(){
 }
 
 # use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
-# compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 
+# compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 27G 
 CCACHE_TOOL_X=/media/fhc/ext800/androidcode/android-/prebuilts/misc/linux-x86/ccache/ccache
 function swcache(){
 
@@ -1132,6 +1136,8 @@ function getand(){
 
 }
 
+# compile for and 5:
+# getand 5;chgejava2 7;. build/envsetup.sh;cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk;lunch 1;make update-api;make -j6
 # prepare for compile , chagejava, patch , and extract drivers
 function p4compile(){
 
@@ -1168,9 +1174,56 @@ function p4compile(){
 
 }
 
+PANDA='/home/fhc/panda1dev/panda/qemu/arm-softmmu/qemu-system-arm'
+IMGPATH='/home/fhc/pandaimg/n5a19arma44'
+PANDA_WORK_DIR=~/pandawork
+function pdr(){
 
+	if [ -z "$1" ];then
+		echo not set projname, select or give a new proj name
+		echo you can select by pass arg1:  pdr xx
+		echo
+		echo
+		cd $PANDA_WORK_DIR
+		ls
+		echo
+		echo
+		return
+	else
+		local projdir=$1
+	fi
+	if [ ! -e "$PANDA_WORK_DIR/$projdir" ];then
+		mkdir -p $PANDA_WORK_DIR/$projdir
+	fi
+	cd $PANDA_WORK_DIR/$projdir
+	echo
+	echo now you are in dir $PANDA_WORK_DIR/$projdir
+	echo
 
-alias as='~/android-studio/bin/studio.sh'
+	$PANDA \
+	-M android_arm \
+	-cpu cortex-a9 \
+	-kernel $IMGPATH/kernel-qemu \
+	-initrd $IMGPATH/ramdisk.img \
+	-global goldfish_nand.system_path=$IMGPATH/system.qcow2 \
+	-global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 \
+	-global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 \
+	-global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 \
+	-append "console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1" \
+	-m 1.5G \
+	-no-reboot \
+	-monitor telnet:localhost:4321,server,nowait \
+	-show-cursor \
+	-serial stdio \
+	-serial telnet:localhost:4421,server,nowait \
+	-display sdl \
+	-android \
+	-net nic,vlan=1 \
+	-net user,vlan=1 \
+	-global goldfish_nand.ext4=on
+
+}
+
 # goldfish_nand.xxx_path=yyyy     yyyy must use abs path
 
 # need recompile for android   android_arm: unsupported machine type
@@ -1179,8 +1232,6 @@ alias q0='~/panda/build/arm-softmmu/qemu-system-arm -M android_arm -cpu cortex-a
 alias qq='~/panda/build/arm-softmmu/qemu-system-arm -M integratorcp -cpu cortex-a9  -kernel ~/androidstuff/kernel-qemu -initrd ~/androidstuff/ramdisk.img  -global goldfish_nand.system_path=~/androidstuff/system.img.qcow2 -global goldfish_nand.user_data_path=~/androidstuff/userdata.img.qcow2  -global goldfish_nand.cache_path=~/androidstuff/cache.img.qcow2 -append  "console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -net nic,vlan=1 -net user,vlan=1,hostfwd=tcp::5555-:5555,hostfwd=tcp::5039-:5039 -global goldfish_mmc.sd_path=~/androidstuff/sdcard.qcow2'
 
 
-PANDA='/home/fhc/panda1dev/panda/qemu/arm-softmmu/qemu-system-arm'
-IMGPATH='/home/fhc/pandaimg/n5a19arma44'
 
 alias qok="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -loadvm ff"
 # for no loadvm
