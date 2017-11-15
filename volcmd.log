@@ -1,0 +1,69 @@
+ 1548  python vol.py --info
+ 1549  python vol.py --help
+ 1554  python vol.py --info | grep Linux
+ 1555  python vol.py --profile=LinuxGolfish-3_4_0ARM --help
+ 1563  python vol.py --profile=LinuxGolfish-3_4_0ARM 
+ 1565  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/abcdfk linux_apihooks
+ 1566  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/abcdfk linux_dmesg
+ 1567  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/abcdfk linux_threads
+ 1569  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_apihooks
+ 1570  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_plthook
+ 1572  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_pstree
+ 1573  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_malfind
+ 1574  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_hidden_modules
+ 1575  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1576  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_memmap
+ 1578  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1579  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_moddump
+ 1581  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_moddump --dump-dir ~/*Img
+ 1584  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_library_list
+ 1585  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem -d linux_library_list
+ 1588  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1589  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_procdump --dump-dir ~/*Img
+ 1590  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_procdump iomem
+ 1591  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_procdump linux_iomem
+ 1592  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_iomem
+ 1593  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_lsmod
+ 1594  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_lsof
+ 1595  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1596  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_library_list
+ 1597  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_check_syscall_arm
+ 1598  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1599  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_check_idt
+ 1600  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_check_evt_arm
+ 1601  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_check_modules
+ 1602  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_check_tty
+ 1603  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ifconfig
+ 1604  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_info_regs
+ 1605  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_elfs
+ 1606  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1607  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_enumerate_files
+ 1609  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_enumerate_files
+ 1610  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1611  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_kernel_opened_files
+ 1612  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules
+ 1613  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_psaux
+ 1614  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_process_hollow
+ 1615  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1616  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump
+ 1617  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump --dump-dir=~/*Img
+ 1618  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump --dump-dir=~/andMemImg
+ 1619  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump 
+ 1620  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump --dump-dir=~/andMemImg2
+ 1621  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump --dump-dir=/home/fhc/andMemImg2
+ 1622  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1623  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_library_list
+ 1624  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_library_list -h
+ 1625  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1626  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_dynamic_env
+ 1627  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_elfs
+ 1628  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem --help
+ 1629  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules
+ 1636  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_librarydump --dump-dir=/home/fhc/andMemImg2
+ 1637  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules
+ 1638  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules | grep dvm
+ 1640  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules | grep libc
+ 1641  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules | grep dvm
+ 1646  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_ldrmodules | grep libc.so
+ 1647  python vol.py --profile=LinuxGolfish-3_4_0ARM -f /home/fhc/oldpanda/panda/qemu/bbmem linux_malfind
+ 2016  history | grep vol.py
