@@ -43,7 +43,7 @@ chge build.sh content: (for android support)
  52 $LLVM_BIT \
  53 --extra-cflags="-O2 -I/usr/local/include" \
  54 --extra-cxxflags="-O2" \
- 55 --extra-ldflags="-L/usr/local/lib -L/usr/local/lib64 -L/usr/local/lib -lprotobuf-c -lprotobuf -lpthre    ad"
+ 55 --extra-ldflags="-L/usr/local/lib -L/usr/local/lib64 -L/usr/local/lib -lprotobuf-c -lprotobuf -lpthread"
 
 
 ./build.sh

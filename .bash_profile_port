@@ -17,9 +17,9 @@ rm -i "$MARKPATH/$1"
 
 function marks {
 #for mac 
-ls -l "$MARKPATH" | tail -n +2 | sed 's/ / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %sn", $1, $2}'
+#ls -l "$MARKPATH" | tail -n +2 | sed 's/ / /g' | cut -d' ' -f9- | awk -F ' -> ' '{printf "%-10s -> %sn", $1, $2}'
 # for linux
-# ls -l "$MARKPATH" | sed 's/ / /g' | cut -d' ' -f9- | sed 's/ -/t-/g' && echo
+ ls -l "$MARKPATH" | sed 's/ / /g' | cut -d' ' -f9-
 }
 extract() { 
     if [ -f $1 ] ; then 
@@ -1101,6 +1101,10 @@ function getand711(){
 # repo:30G total:56G
 # after get4,6,7 repo:84G total:105G
 # switch 4 to 6 cost: 2m:13s
+
+# show version: cd /media/fhc/ext800/androidcode/android-4.4.4_r1; cat build/core/version_defaults.mk
+# kernel path1: ./prebuilts/qemu-kernel/
+# kernel path2: ./device/lge/hammerhead-kernel/   and so on
 AND_SRC_PATH=/media/fhc/ext800/androidcode
 function getand(){
 
@@ -1200,6 +1204,12 @@ function pdr(){
 	echo now you are in dir $PANDA_WORK_DIR/$projdir
 	echo
 
+	local replaycmd="\
+	-replay 360re3 \
+	-panda callstack_instr \
+	-panda stringsearch:str=7890,callers=2
+	"
+
 	$PANDA \
 	-M android_arm \
 	-cpu cortex-a9 \
@@ -1220,10 +1230,81 @@ function pdr(){
 	-android \
 	-net nic,vlan=1 \
 	-net user,vlan=1 \
-	-global goldfish_nand.ext4=on
+	-global goldfish_nand.ext4=on \
+	$replaycmd
+
+
 
 }
 
+
+#-panda syscalls
+#-panda stringsearch:str=7890,callers=2
+# or 
+#-panda callstack_instr -panda stringsearch:str=7890,callers=2
+# pdrt calc2 '-replay newkn -panda osi;osi_linux:kconf_file=kernelinfo.conf,kconf_group=my_kn_info;osi_test'>ositest.txt
+# pdrt calc2 '-replay newkn -panda osi;osi_linux:kconf_file=kernelinfo.conf,kconf_group=my_kn_info;asidstory:width=180'
+
+ANDKN=$IMGPATH/kernel-qemu
+ANDKN2=/home/fhc/goldfish/arch/arm/boot/zImage
+function pdrt(){
+
+	if [ -z "$1" ];then
+		echo not set projname, select or give a new proj name
+		echo you can select by pass arg1:  pdr xx
+		echo
+		echo
+		cd $PANDA_WORK_DIR
+		ls
+		echo
+		echo
+		return
+	else
+		local projdir=$1
+	fi
+	if [ ! -e "$PANDA_WORK_DIR/$projdir" ];then
+		mkdir -p $PANDA_WORK_DIR/$projdir
+	fi
+	cd $PANDA_WORK_DIR/$projdir
+	echo
+	echo now you are in dir $PANDA_WORK_DIR/$projdir
+	echo
+	
+	if [ -n "$2" ];then
+
+		local replaycmd="\
+		$2 \
+		"
+		#-replay $projdir \
+	fi
+
+	$PANDA \
+	-M android_arm \
+	-cpu cortex-a9 \
+	-os linux-32-android \
+	-kernel $ANDKN2 \
+	-initrd $IMGPATH/ramdisk.img \
+	-global goldfish_nand.system_path=$IMGPATH/system.qcow2 \
+	-global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 \
+	-global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 \
+	-global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 \
+	-append "console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1" \
+	-m 1.5G \
+	-no-reboot \
+	-monitor telnet:localhost:4321,server,nowait \
+	-show-cursor \
+	-serial stdio \
+	-serial telnet:localhost:4421,server,nowait \
+	-display sdl \
+	-android \
+	-net nic,vlan=1 \
+	-net user,vlan=1 \
+	-global goldfish_nand.ext4=on \
+	$replaycmd
+
+
+
+}
 # goldfish_nand.xxx_path=yyyy     yyyy must use abs path
 
 # need recompile for android   android_arm: unsupported machine type
@@ -1236,6 +1317,8 @@ alias qq='~/panda/build/arm-softmmu/qemu-system-arm -M integratorcp -cpu cortex-
 alias qok="$PANDA -M android_arm -cpu cortex-a9 -kernel /home/fhc/androidstuff2/kernel -initrd /home/fhc/androidstuff2/initramfs -global goldfish_nand.system_path=/home/fhc/androidstuff2/system-pandroid.qcow2 -global goldfish_nand.user_data_path=/home/fhc/androidstuff2/data-pandroid.qcow2 -global goldfish_nand.cache_path=/home/fhc/androidstuff2/cache-pandroid.qcow2 -global goldfish_mmc.sd_path=/home/fhc/androidstuff2/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on -loadvm ff"
 # for no loadvm
 alias qok2="$PANDA -M android_arm -cpu cortex-a9 -kernel $IMGPATH/kernel-qemu -initrd $IMGPATH/ramdisk.img -global goldfish_nand.system_path=$IMGPATH/system.qcow2 -global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 -global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 -global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on"
+
+alias qok2recalc="$PANDA -M android_arm -cpu cortex-a9 -kernel $IMGPATH/kernel-qemu -initrd $IMGPATH/ramdisk.img -global goldfish_nand.system_path=$IMGPATH/system.qcow2 -global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 -global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 -global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on  -replay calc -panda callstack_instr -panda syscalls"
 
 alias qok2re="$PANDA -M android_arm -cpu cortex-a9 -kernel $IMGPATH/kernel-qemu -initrd $IMGPATH/ramdisk.img -global goldfish_nand.system_path=$IMGPATH/system.qcow2 -global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 -global goldfish_nand.cache_path=$IMGPATH/cache.qcow2 -global goldfish_mmc.sd_path=$IMGPATH/sdcard.qcow2 -append \"console=ttyS0 ndns=2 qemu=1 no_console_suspend=1 qemu.gles=0 android.qemud=ttyS1\" -m 1.5G -no-reboot -monitor telnet:localhost:4321,server,nowait -show-cursor -serial stdio -serial telnet:localhost:4421,server,nowait -display sdl -android -net nic,vlan=1 -net user,vlan=1 -global goldfish_nand.ext4=on  -replay 360re3 -panda callstack_instr -panda stringsearch:str=7890,callers=2"
 
