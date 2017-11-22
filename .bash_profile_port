@@ -88,13 +88,13 @@ sudoautoinfo=/home/fhc/sudoautoinfo
 function chgejava2()
 {
 	case $1 in
-	6)
+	6) # and 4
 	local javaindex=1
 	;;
-	7)
+	7) # and 5, 6
 	local javaindex=2
 	;;
-	8)
+	8) # and 7, 8
 	local javaindex=3
 	;;
 	*)
@@ -944,6 +944,10 @@ function create_local_android_src_mirror(){
 	# scp which copy soft link as real content(the result is scp get the copy is not a right clone) 
 	# the clone one use for working, the ori one will sync the new version update, once new version update is work fine,
 	# just copy and replace the clone one
+
+	# rsync -avuz -e ssh fhc@$buildsvr:android-6.0.1_r77/.repo android-6.0.1_r77/
+	# rsync -avuz -e ssh fhc@$buildsvr:android-7.1.1_r27/.repo android-7.1.1_r27/
+
 } 
 # back up as tar, 
 # time tar -czvf aosp.tgz aosp    #198G   cost : real	105m31.690s   compress is not useful
@@ -1014,7 +1018,7 @@ function xxtest(){
 
 # use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
 # compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 27G 
-CCACHE_TOOL_X=/media/fhc/ext800/androidcode/android-/prebuilts/misc/linux-x86/ccache/ccache
+CCACHE_TOOL_X=/media/fhc/ext800/androidcode/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
 function swcache(){
 
 	local C4ROM=~/CCACHE4ROM/.ccache
@@ -1096,6 +1100,25 @@ function getand711(){
 	_endcall $beginstr
 
 }
+REPO_URL_WORKING_NET=https://android.googlesource.com
+function getandemu(){
+
+	local beginstr=`_begincall`
+
+	local AND_SRC_PATH=/media/fhc/ext800/androidcode
+	local andvertag=emu-master-dev
+	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+		mkdir $AND_SRC_PATH/$andvertag
+	fi
+	cd $AND_SRC_PATH/$andvertag
+	~/bin/repo init -u $REPO_URL_WORKING_NET/platform/manifest --no-clone-bundle -b $andvertag
+	cp ~/bin/loopsync .
+	./loopsync
+
+	_endcall $beginstr
+
+}
+
 # only 601 repo:37G total:78G out:28G
 # only 711 repo:40G total:59G out:19G
 # repo:30G total:56G
@@ -1125,7 +1148,7 @@ function getand(){
 		local andvertag=android-7.1.1_r27
 		;;
 	*)
-		local andvertag=android-4.4.4_r1
+		local andvertag=$1
 		;;
 	esac
 	local anddir=android-
@@ -1136,45 +1159,229 @@ function getand(){
 	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
 	repo sync
 
+	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+		mkdir -p $AND_SRC_PATH/$andvertag
+		mv * $AND_SRC_PATH/$andvertag
+		cd $AND_SRC_PATH/$andvertag
+	else
+		echo $AND_SRC_PATH/$andvertag is exist, remove it and run again
+	fi
 	_endcall $beginstr "$*"
 
 }
 
+function extractdrv(){
+
+	local data_start_num=` grep -ao 'tail -n +[0-9]\+ \$\0 | tar zxv' $1 | grep -ao '[0-9][0-9]\+'`
+	tail -n +$data_start_num $1 | tar zxv
+}
+function extractanddrv(){
+	
+	local anddrvdir=/media/fhc/ext800/nexus_drivers
+	case $1 in
+	n5_ham_KTU84P_44_a19)
+		extractdrv $anddrvdir/n5_ham/KTU84P/extract-lge-hammerhead.sh
+		extractdrv $anddrvdir/n5_ham/KTU84P/extract-broadcom-hammerhead.sh
+		extractdrv $anddrvdir/n5_ham/KTU84P/extract-qcom-hammerhead.sh
+		;;
+	n5_ham_LMY48M_51_a22)
+		extractdrv $anddrvdir/n5_ham/LMY48M/extract-lge-hammerhead.sh
+		extractdrv $anddrvdir/n5_ham/LMY48M/extract-broadcom-hammerhead.sh
+		extractdrv $anddrvdir/n5_ham/LMY48M/extract-qcom-hammerhead.sh
+		;;
+	n5_ham_M4B30Z_60_a23)
+		extractdrv $anddrvdir/n5_ham/M4B30Z/extract-lge-hammerhead.sh
+		extractdrv $anddrvdir/n5_ham/M4B30Z/extract-broadcom-hammerhead.sh
+		extractdrv $anddrvdir/n5_ham/M4B30Z/extract-qcom-hammerhead.sh
+		;;
+	n6p_angler_NUF26N_71_a25)
+		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-broadcom-hammerhead.sh
+		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-qcom-hammerhead.sh
+		;;
+	n5a19)
+		extractdrv xx
+		;;
+	esac
+
+}
 # compile for and 5:
 # getand 5;chgejava2 7;. build/envsetup.sh;cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk;lunch 1;make update-api;make -j6
 # prepare for compile , chagejava, patch , and extract drivers
 function p4compile(){
 
+	swcache
 
 	case $1 in
 	4)
 		local andvertag=android-4.4.4_r1
+		chgejava2 6
+		cd $AND_SRC_PATH/$andvertag
+		# fixme chge make version
+		#return
+		source build/envsetup.sh
+		if [ ! -e "drv_copyed" ];then
+			extractanddrv n5_ham_KTU84P_44_a19
+			touch drv_copyed
+		fi
+		lunch $2
 		;;
 	5)
 		local andvertag=android-5.1.1_r14
+		chgejava2 7
+		cd $AND_SRC_PATH/$andvertag
+		cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk
+		source build/envsetup.sh
+		if [ ! -e "drv_copyed" ];then
+			extractanddrv n5_ham_LMY48M_51_a22
+			touch drv_copyed
+		fi
+		lunch $2
+		# and 5 need 
+		make update-api
 		;;
 	6)
 		local andvertag=android-6.0.1_r77
+		chgejava2 7
+		cd $AND_SRC_PATH/$andvertag
+		cd build/core/clang/
+		patch < ~/importantbk/0001-Ubuntu-16.04-adaption.patch
+		cd $AND_SRC_PATH/$andvertag
+		source build/envsetup.sh
+		if [ ! -e "drv_copyed" ];then
+			extractanddrv n5_ham_M4B30Z_60_a23
+			touch drv_copyed
+		fi
+		lunch $2
 		;;
 	7)
 		local andvertag=android-7.1.1_r27
+		chgejava2 8
+		source build/envsetup.sh
+		if [ ! -e "drv_copyed" ];then
+			extractanddrv n6p_angler_NUF26N_71_a25
+			touch drv_copyed
+		fi
+		lunch $2
 		;;
 	android-*)
 		local andvertag=$1
 		;;
 	*)
 		local andvertag=android-4.4.4_r1
+		chgejava2 6
 		;;
 	esac
 
-	local anddir=android-
-	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
-		mkdir -p $AND_SRC_PATH/$anddir
-	fi
-	cd $AND_SRC_PATH/$anddir
+	make -j12
 
 
 
+
+}
+
+function compileall(){
+
+local logpath=`pwd`
+# ----------android 4
+#     1. aosp_arm-eng
+#     2. aosp_x86-eng
+#     3. aosp_mips-eng
+#     4. vbox_x86-eng
+#     5. aosp_hammerhead-userdebug
+#     6. aosp_mako-userdebug
+#     7. aosp_manta-userdebug
+#     8. mini_x86-userdebug
+#     9. mini_armv7a_neon-userdebug
+#     10. mini_mips-userdebug
+#     11. aosp_flo-userdebug
+#     12. aosp_grouper-userdebug
+#     13. aosp_deb-userdebug
+#     14. aosp_tilapia-userdebug
+
+	p4compile 4 aosp_arm-eng | tee $logpath/a4emu_arm.log
+	p4compile 4 aosp_x86-eng | tee $logpath/a4emu_x86.log
+	p4compile 4 aosp_hammerhead-userdebug | tee $logpath/a4ham.log
+# ------------android 5
+#     1. aosp_arm-eng
+#     2. aosp_arm64-eng
+#     3. aosp_mips-eng
+#     4. aosp_mips64-eng
+#     5. aosp_x86-eng
+#     6. aosp_x86_64-eng
+#     7. aosp_hammerhead-userdebug
+#     8. aosp_mako-userdebug
+#     9. aosp_flounder-userdebug
+#     10. aosp_shamu-userdebug
+#     11. aosp_manta-userdebug
+#     12. mini_emulator_mips-userdebug
+#     13. m_e_arm-userdebug
+#     14. mini_emulator_x86-userdebug
+#     15. mini_emulator_arm64-userdebug
+#     16. mini_emulator_x86_64-userdebug
+#     17. aosp_flo-userdebug
+#     18. aosp_grouper-userdebug
+#     19. aosp_deb-userdebug
+#     20. aosp_tilapia-userdebug
+#     21. full_fugu-userdebug
+#     22. aosp_fugu-userdebug
+#
+	p4compile 5 aosp_arm-eng | tee $logpath/a5emu_arm.log
+	p4compile 5 aosp_x86-eng | tee $logpath/a5emu_x86.log
+	p4compile 5 aosp_hammerhead-userdebug | tee $logpath/a5ham.log
+# --------------android 6
+#     1. aosp_arm-eng
+#     2. aosp_arm64-eng
+#     3. aosp_mips-eng
+#     4. aosp_mips64-eng
+#     5. aosp_x86-eng
+#     6. aosp_x86_64-eng
+#     7. aosp_deb-userdebug
+#     8. aosp_flo-userdebug
+#     9. full_fugu-userdebug
+#     10. aosp_fugu-userdebug
+#     11. mini_emulator_arm64-userdebug
+#     12. m_e_arm-userdebug
+#     13. mini_emulator_mips-userdebug
+#     14. mini_emulator_x86_64-userdebug
+#     15. mini_emulator_x86-userdebug
+#     16. aosp_flounder-userdebug
+#     17. aosp_angler-userdebug
+#     18. aosp_bullhead-userdebug
+#     19. aosp_hammerhead-userdebug
+#     20. aosp_hammerhead_fp-userdebug
+#     21. aosp_shamu-userdebug
+
+	p4compile 6 aosp_arm-eng | tee $logpath/a6emu_arm.log
+	p4compile 6 aosp_x86-eng | tee $logpath/a6emu_x86.log
+	p4compile 6 aosp_hammerhead-userdebug | tee $logpath/a6ham.log
+# -------------- android 7
+#     1. aosp_arm-eng
+#     2. aosp_arm64-eng
+#     3. aosp_mips-eng
+#     4. aosp_mips64-eng
+#     5. aosp_x86-eng
+#     6. aosp_x86_64-eng
+#     7. full_fugu-userdebug
+#     8. aosp_fugu-userdebug
+#     9. mini_emulator_arm64-userdebug
+#     10. m_e_arm-userdebug
+#     11. m_e_mips64-eng
+#     12. m_e_mips-userdebug
+#     13. mini_emulator_x86_64-userdebug
+#     14. mini_emulator_x86-userdebug
+#     15. aosp_dragon-userdebug
+#     16. aosp_dragon-eng
+#     17. aosp_marlin-userdebug
+#     18. aosp_sailfish-userdebug
+#     19. aosp_flounder-userdebug
+#     20. aosp_angler-userdebug
+#     21. aosp_bullhead-userdebug
+#     22. hikey-userdebug
+#     23. aosp_shamu-userdebug
+#
+	p4compile 7 aosp_arm-eng | tee $logpath/a7emu_arm.log
+	p4compile 7 aosp_x86-eng | tee $logpath/a7emu_x86.log
+	p4compile 7 aosp_angler-userdebug | tee $logpath/a7angler.log
 
 }
 
@@ -1244,12 +1451,44 @@ function pdr(){
 #-panda callstack_instr -panda stringsearch:str=7890,callers=2
 # pdrt calc2 '-replay newkn -panda osi;osi_linux:kconf_file=kernelinfo.conf,kconf_group=my_kn_info;osi_test'>ositest.txt
 # pdrt calc2 '-replay newkn -panda osi;osi_linux:kconf_file=kernelinfo.conf,kconf_group=my_kn_info;asidstory:width=180'
-
+function pdr4(){
+	pdrt 4 $*
+}
+function pdr5(){
+	pdrt 5 $*
+}
+function pdr6(){
+	pdrt 6 $*
+}
+function pdr7(){
+	pdrt 7 $*
+}
 ANDKN=$IMGPATH/kernel-qemu
 ANDKN2=/home/fhc/goldfish/arch/arm/boot/zImage
 function pdrt(){
 
-	if [ -z "$1" ];then
+	case $1 in
+	4)
+		local IMGPATH=/home/fhc/pandaimg/n5a19arma44
+		;;
+	5)
+		local IMGPATH=/home/fhc/pandaimg/n5a22arma51
+		;;
+	6)
+		local IMGPATH=/home/fhc/pandaimg/n5a23arma60
+		;;
+	7)
+		local IMGPATH=/home/fhc/pandaimg/n5a25arma71
+		;;
+	*)
+		local IMGPATH=/home/fhc/pandaimg/n5a19arma44
+		;;
+	esac
+	if [ -z "$2" ];then
+		if [ ! -e "$PANDA_WORK_DIR" ];then
+			mkdir -p $PANDA_WORK_DIR
+			echo panda work dir is empty
+		fi
 		echo not set projname, select or give a new proj name
 		echo you can select by pass arg1:  pdr xx
 		echo
@@ -1260,20 +1499,21 @@ function pdrt(){
 		echo
 		return
 	else
-		local projdir=$1
+		local projdir=$2
 	fi
 	if [ ! -e "$PANDA_WORK_DIR/$projdir" ];then
 		mkdir -p $PANDA_WORK_DIR/$projdir
+		touch stringsearch_search_strings.txt
 	fi
 	cd $PANDA_WORK_DIR/$projdir
 	echo
 	echo now you are in dir $PANDA_WORK_DIR/$projdir
 	echo
 	
-	if [ -n "$2" ];then
+	if [ -n "$3" ];then
 
 		local replaycmd="\
-		$2 \
+		$3 \
 		"
 		#-replay $projdir \
 	fi
@@ -1282,7 +1522,7 @@ function pdrt(){
 	-M android_arm \
 	-cpu cortex-a9 \
 	-os linux-32-android \
-	-kernel $ANDKN2 \
+	-kernel $IMGPATH/kernel-qemu \
 	-initrd $IMGPATH/ramdisk.img \
 	-global goldfish_nand.system_path=$IMGPATH/system.qcow2 \
 	-global goldfish_nand.user_data_path=$IMGPATH/userdata.qcow2 \
