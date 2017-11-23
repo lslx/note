@@ -7,7 +7,7 @@ before install git , exec:
 sudo apt update
 sudo apt -f install 
 ```
-otherwise, maybe get error:
+otherwise, maybe get error when install git:
 
 ```
 ...
@@ -18,6 +18,7 @@ otherwise, maybe get error:
 exec git start a new work env:
 ---
 ```
+sudo apt install -y git
 git clone https://github.com/lslx/note.git
 git remote remove origin
 git remote add origin git@github.com:lslx/note.git
