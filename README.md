@@ -28,3 +28,4 @@ E: 无法修正错误，因为您要求某些软件包保持现状，就是它�
 exec git start a new work env:
 ---
 git clone https://github.com/lslx/note.git
+# see gitcmd.txt for next step
