@@ -3,7 +3,7 @@
 
 if [ -e "/etc/apt/sources.list.old" ];then
 	echo not clear, exit
-	return
+	exit
 fi
 
 # replace sources
