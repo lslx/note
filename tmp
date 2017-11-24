@@ -1,8 +1,0 @@
-./configure --target-list=arm-softmmu --prefix=`pwd`/install --enable-android --disable-pie --disable-xen --disable-libiscsi $LLVM_BIT --extra-cflags="-O2 -I/usr/local/include" --extra-cxxflags="-O2" --extra-ldflags="-L/usr/local/lib -L/usr/local/lib64 -L/usr/local/lib -lprotobuf-c -lprotobuf -lpthread"
-
-
-mail:
-http://mail.secneo.com/
-jira:
-https://jira.bangcle.net/login.jsp?permissionViolation=true&os_destination=%2Fsecure%2FTempoUserBoard%21timesheet.jspa&page_caps=&user_role=$ 
-

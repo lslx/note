@@ -1,0 +1,12 @@
+
+# chrome
+sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt -f install
+
+
+# 
+ mail:
+http://mail.bangcle.com/
+jira:
+https://jira.bangcle.net/login.jsp?permissionViolation=true&os_destination=%2Fsecure%2FTempoUserBoard%21timesheet.jspa&page_caps=&user_role=$
+

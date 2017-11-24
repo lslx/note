@@ -1,9 +1,5 @@
 forcopy
 
-
-https://jira.bangcle.net/login.jsp?permissionViolation=true&os_destination=%2Fsecure%2FTempoUserBoard%21timesheet.jspa&page_caps=&user_role=
-
-
 git clone http://android.googlesource.com/kernel/goldfish.git
 git branch -a
 git checkout android-goldfish-3.4
