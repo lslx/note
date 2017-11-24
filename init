@@ -1,0 +1,31 @@
+#!/bin/bash
+
+
+if [ -e "/etc/apt/sources.list.old" ];then
+	echo not clear, exit
+	return
+fi
+
+# replace sources
+cd
+wget https://github.com/lslx/note/raw/master/sources/sources.list.ali
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.old
+sudo cp sources.list.ali /etc/apt/sources.list
+
+
+# update and install
+sudo apt update
+sudo apt -f install 
+sudo apt install -y git
+sudo apt install -y vim
+git clone https://github.com/lslx/note.git
+cd ~/note
+git remote remove origin
+git remote add origin git@github.com:lslx/note.git
+
+
+cp key/xx.zip ~
+upzip xx.zip && unzip x.zip
+
+rm xx.zip x.zip
+
