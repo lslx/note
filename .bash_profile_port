@@ -1,14 +1,12 @@
 PS1='$ '
 alias ee='vim ~/.bash_profile_port'
 alias bb='. ~/.bash_profile_port'
-MYMACHINE=desktop_dell
-#MYMACHINE=laptop_xps
-#MYMACHINE=desktop_home
+MYMACHINE=`hostname`
 case $MYMACHINE in
-desktop_dell)
+fhc-B250M-D3H)
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
-laptop_xps)
+fhc-XPS-15-9560)
 	MAIN_DATA_ROOT=/media/fhc/ext800
 	;;
 desktop_home)
@@ -1363,7 +1361,7 @@ function p4compile(){
 
 function compileall(){
 
-local logpath=`pwd`
+local logpath=$AND_SRC_PATH
 # ----------android 4
 #     1. aosp_arm-eng
 #     2. aosp_x86-eng
