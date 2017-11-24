@@ -184,19 +184,13 @@ function chgejava2()
 	;;
 	esac
 
-	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config java )
-	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javac )
-	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javaws )
-	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config jar )
-	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javadoc )
-	#cat $sudoautoinfo | sudo  ( echo $javaindex | update-alternatives --config javap )
 
-	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config java 
-	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javac 
-	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javaws 
-	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config jar 
-	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javadoc 
-	cat $sudoautoinfo | sudo  -S  echo $javaindex | sudo update-alternatives --config javap 
+	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config java"
+	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config javac" 
+	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config javaws" 
+	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config jar" 
+	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config javadoc"
+	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config javap" 
 
 #	cat  $sudoautoinfo | sudo echo need root
 	#echo $javaindex | sudo update-alternatives --config java
