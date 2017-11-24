@@ -1,6 +1,25 @@
 PS1='$ '
 alias ee='vim ~/.bash_profile_port'
 alias bb='. ~/.bash_profile_port'
+MYMACHINE=desktop_dell
+#MYMACHINE=laptop_xps
+#MYMACHINE=desktop_home
+case $MYMACHINE in
+desktop_dell)
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	;;
+laptop_xps)
+	MAIN_DATA_ROOT=/media/fhc/ext800
+	;;
+desktop_home)
+	MAIN_DATA_ROOT=/media/fhc/ext800
+	;;
+*)
+	MAIN_DATA_ROOT=/home/fhc/needfix__
+	echo err MYMACHINE need fix !!!
+	;;
+esac
+AND_SRC_PATH=$MAIN_DATA_ROOT/androidcode
 export MARKPATH=$HOME/.marks
 
 function jump {
@@ -74,6 +93,69 @@ alias edexht2='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/andenv/kq
 alias edexht3='~/android-sdks/tools/emulator -kernel /Users/hongchaofu/andenv/kqemu/zImage -partition-size 128 -sysdir /Users/hongchaofu/dexhtnew -system system.img -avd N5_19 -datadir /Users/hongchaofu/dexhtnew/ -data userdata.img -ramdisk /Users/hongchaofu/dexhtnew/ramdisk.img' 
 
 export ANDROID_JACK_VM_ARGS="-Dfile.encoding=UTF-8 -XX:+TieredCompilation -Xmx4g"
+
+function get_all_soft(){
+
+	return
+	cd;cd Downloads
+	wget http://ftp.osuosl.org/pub/ubuntu/pool/main/m/make-dfsg/make_3.81-8.2ubuntu3_amd64.deb
+
+
+
+}
+
+function copy4_new_machine_setup(){
+#	return
+	cd
+	#scp -r fhc@$buildsvr:sharedir/importantbk/ .
+	scp -r fhc@$buildsvr:sharedir/nexus_drivers $MAIN_DATA_ROOT/nexus_drivers
+
+}
+
+function install_pkg4compile_and(){
+	# only run once
+	sudo apt-get update
+	sudo apt-get install -y git-core gnupg flex bison gperf build-essential \
+	  zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 \
+	  lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev ccache \
+	  libgl1-mesa-dev libxml2-utils xsltproc unzip
+
+	# make 4.1 to make 3.81
+	cd ~/Downloads
+	sudo dpkg -i make_3.81-8.2ubuntu3_amd64.deb
+	sudo apt -f install
+	cd
+
+
+
+
+}
+function install_all_java(){
+	# only run once
+	# install openjdk7
+
+	# fix me need enter
+	sudo add-apt-repository ppa:openjdk-r/ppa
+	sudo apt-get update
+	sudo apt-get install -y openjdk-7-jdk
+
+	# install openjdk8
+	sudo apt-get install -y openjdk-8-jdk
+
+	# install java 6
+	~/Downloads/jdkBk/jdk-6u45-linux-x64.bin
+	cd
+	# mv jdk1.6.0_45 ~
+
+	sudo update-alternatives --install /usr/bin/java java /home/fhc/jdk1.6.0_45/bin/java 1060
+	sudo update-alternatives --install /usr/bin/javac javac /home/fhc/jdk1.6.0_45/bin/javac 1060
+	sudo update-alternatives --install /usr/bin/javaws javaws /home/fhc/jdk1.6.0_45/bin/javaws 1060
+	sudo update-alternatives --install /usr/bin/jar jar /home/fhc/jdk1.6.0_45/bin/jar 1060
+	sudo update-alternatives --install /usr/bin/javadoc javadoc /home/fhc/jdk1.6.0_45/bin/javadoc 1060
+	sudo update-alternatives --install /usr/bin/javap javap /home/fhc/jdk1.6.0_45/bin/javap 1060
+
+}
+
 
 function chgejava()
 {
@@ -929,14 +1011,23 @@ function opentmux()
 # if you sync from tsinghua, or google, will cost a few hours, maybe 5,6hours(good net), or 5,6 days(bad net)
 function create_local_android_src_mirror(){
 
-	return # exec for careful , to avoid overwrite your have done
+#	return # exec for careful , to avoid overwrite your have done
+	# use google is slowly or not access
+	case $1 in
+	google)
+		local and_mirror_url=https://android.googlesource.com
+		;;
+	tsinghua)
+		local and_mirror_url=https://aosp.tuna.tsinghua.edu.cn
+		;;
+	*)
+		local and_mirror_url=https://aosp.tuna.tsinghua.edu.cn
+		;;
+	esac
 
-	local and_src_url=https://aosp.tuna.tsinghua.edu.cn/mirror/manifest # use tsinghua
-	# local and_src_url=https://android.googlesource.com/mirror/manifest # use google is slowly or not access
-
-	mkdir -p aosp/mirror_dir
-	cd aosp/mirror_dir
-	repo init -u https://aosp.tuna.tsinghua.edu.cn/mirror/manifest --mirror
+	mkdir -p aosp/mirror
+	cd aosp/mirror
+	repo init -u $and_mirror_url/mirror/manifest --mirror
 	cp ~/bin/loopsync .
 	./loopsync  # this will cost four days (in 2017,11,06~09) and get 201G data, in the futrue must be cost more 
 
@@ -954,6 +1045,9 @@ function create_local_android_src_mirror(){
 # time tar -cvf aosp.tar          #201G   cost : real	20m52.734s 
 # time md5sum aosp.tar            #929a6a55f34d52ffe690999f8005cf38  aosp.tar , cost : real	8m42.242s
 # time cp aosp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar /media/fhc/sg2t/  #cost : real	36m0.121s
+
+# copy  aosp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar from removble disk to dell desktop cost 88m
+# tar xvf osp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar #  on desktop cost 44m
 
 REPO_URL_WORKING=/media/fhc/ext800/aospbk/mirror
 
@@ -1016,9 +1110,10 @@ function xxtest(){
 
 }
 
+
 # use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
 # compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 27G 
-CCACHE_TOOL_X=/media/fhc/ext800/androidcode/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
+CCACHE_TOOL_X=$AND_SRC_PATH/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
 function swcache(){
 
 	local C4ROM=~/CCACHE4ROM/.ccache
@@ -1048,74 +1143,62 @@ function swcache(){
 }
 
 
-function getand444(){
+
+REPO_URL_NET=https://android.googlesource.com
+REPO_URL_LOC=/home/fhc/aosp/mirror
+# get code demo cmd:
+# getandcode emu-master-dev net
+# getandcode emu-master-dev
+# getandcode android-4.4.4_r1
+# getandcode android-5.1.1_r14
+# getandcode android-6.0.1_r77
+# getandcode android-7.1.1_r27
+# getandcode android-4.4.4_r1;getandcode android-5.1.1_r14;getandcode android-6.0.1_r77;getandcode android-7.1.1_r27
+function getandcode(){
 
 	local beginstr=`_begincall`
-
-	local AND_SRC_PATH=/media/fhc/ext800/androidcode
-	local andvertag=android-4.4.4_r1
-	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-		mkdir $AND_SRC_PATH/$andvertag
+	if [ "$1" == "" ];then
+		echo need andvertag as \$1
+		return 1
+	else
+		local andvertag=$1
 	fi
-	#cd $AND_SRC_PATH/$andvertag
-	cd $AND_SRC_PATH/android-
-	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
-	repo sync
-
-	_endcall $beginstr
-}
-
-function getand601(){
-
-	local beginstr=`_begincall`
-
-	local AND_SRC_PATH=/media/fhc/ext800/androidcode
-	local andvertag=android-6.0.1_r77
-	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-		mkdir $AND_SRC_PATH/$andvertag
+	if [ "$2" == "net" ];then
+		local REPO_URL=$REPO_URL_NET
+		local anddir=android-net
+		echo get code from net
+	else
+		local REPO_URL=$REPO_URL_LOC
+		local anddir=android-
+		echo get code from local
 	fi
-	cd $AND_SRC_PATH/$andvertag
-	cd $AND_SRC_PATH/android-
-	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
-	repo sync
-
-	_endcall $beginstr
-
-}
-
-function getand711(){
-
-	local beginstr=`_begincall`
-
-	local AND_SRC_PATH=/media/fhc/ext800/androidcode
-	local andvertag=android-7.1.1_r27
-	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-		mkdir $AND_SRC_PATH/$andvertag
+	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
+		mkdir -p $AND_SRC_PATH/$anddir
 	fi
-	cd $AND_SRC_PATH/$andvertag
-	cd $AND_SRC_PATH/android-
-	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
-	repo sync
-
-	_endcall $beginstr
-
-}
-REPO_URL_WORKING_NET=https://android.googlesource.com
-function getandemu(){
-
-	local beginstr=`_begincall`
-
-	local AND_SRC_PATH=/media/fhc/ext800/androidcode
-	local andvertag=emu-master-dev
-	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-		mkdir $AND_SRC_PATH/$andvertag
-	fi
-	cd $AND_SRC_PATH/$andvertag
-	~/bin/repo init -u $REPO_URL_WORKING_NET/platform/manifest --no-clone-bundle -b $andvertag
+	cd $AND_SRC_PATH/$anddir
+	REPO_URL=$REPO_URL_LOC/git-repo ~/bin/repo init -u $REPO_URL/platform/manifest --no-clone-bundle -b $andvertag
 	cp ~/bin/loopsync .
 	./loopsync
 
-	_endcall $beginstr
+	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+		mkdir -p $AND_SRC_PATH/$andvertag
+		mv * $AND_SRC_PATH/$andvertag
+		cd $AND_SRC_PATH/$andvertag
+	else
+		echo $AND_SRC_PATH/$andvertag is exist, remove it and run again
+		return 1
+	fi
+	_endcall $beginstr "$*"
+
+}
+
+function getallcode(){
+
+	getandcode emu-master-dev
+	getandcode android-4.4.4_r1
+	getandcode android-5.1.1_r14
+	getandcode android-6.0.1_r77
+	getandcode android-7.1.1_r27
 
 }
 
@@ -1128,7 +1211,6 @@ function getandemu(){
 # show version: cd /media/fhc/ext800/androidcode/android-4.4.4_r1; cat build/core/version_defaults.mk
 # kernel path1: ./prebuilts/qemu-kernel/
 # kernel path2: ./device/lge/hammerhead-kernel/   and so on
-AND_SRC_PATH=/media/fhc/ext800/androidcode
 function getand(){
 
 	local beginstr=`_begincall`
@@ -1177,7 +1259,7 @@ function extractdrv(){
 }
 function extractanddrv(){
 	
-	local anddrvdir=/media/fhc/ext800/nexus_drivers
+	local anddrvdir=$MAIN_DATA_ROOT/nexus_drivers
 	case $1 in
 	n5_ham_KTU84P_44_a19)
 		extractdrv $anddrvdir/n5_ham/KTU84P/extract-lge-hammerhead.sh
@@ -1198,8 +1280,8 @@ function extractanddrv(){
 		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-broadcom-hammerhead.sh
 		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-qcom-hammerhead.sh
 		;;
-	n5a19)
-		extractdrv xx
+	*)
+		echo fixme extractanddrv expect right arg !!!
 		;;
 	esac
 

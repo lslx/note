@@ -1,3 +1,8 @@
+
+offen use, all git cmd:
+http://blog.csdn.net/jtracydy/article/details/70402663
+
+
 # on new machine , on github exsits proj
 sudo apt install git
 git config --global user.email "zz00zz.9774@gmail.com"
