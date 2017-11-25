@@ -5,9 +5,13 @@ MYMACHINE=`hostname`
 case $MYMACHINE in
 fhc-B250M-D3H)
 	MAIN_DATA_ROOT=/home/fhc/ext800
+	REPO_URL_NET=https://android.googlesource.com
+	REPO_URL_LOC=/home/fhc/aosp/mirror
 	;;
 fhc-XPS-15-9560)
 	MAIN_DATA_ROOT=/media/fhc/ext800
+	REPO_URL_NET=https://android.googlesource.com
+	REPO_URL_LOC=/media/fhc/ext800/aospbk/mirror
 	;;
 desktop_home)
 	MAIN_DATA_ROOT=/media/fhc/ext800
@@ -1136,8 +1140,6 @@ function swcache(){
 
 
 
-REPO_URL_NET=https://android.googlesource.com
-REPO_URL_LOC=/home/fhc/aosp/mirror
 # get code demo cmd:
 # getandcode emu-master-dev net
 # getandcode emu-master-dev
