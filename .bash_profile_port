@@ -219,12 +219,12 @@ alias fhcsshvm='ssh fhc@${vmsvr}'
 alias fhcsshubt='ssh fhc@${ubt}'
 
 export desktop_dell=172.16.12.122
-alias  fhcsshdtd='ssh -p22022 fhc@${desktop_dell}'
+alias  fhcsshdell='ssh -p22022 fhc@${desktop_dell}'
 export laptop_xps=172.16.12.88
-alias  fhcsshltx='ssh -p22022 fhc@${laptop_xps}'
+alias  fhcsshxps='ssh -p22022 fhc@${laptop_xps}'
 
 export desktop_home=xx.xx.xx.xx
-alias  fhcsshdth='ssh -p22022 fhc@${desktop_home}'
+alias  fhcsshhome='ssh -p22022 fhc@${desktop_home}'
 
 
 function getimg {
