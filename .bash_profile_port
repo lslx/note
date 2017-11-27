@@ -1293,6 +1293,7 @@ function p4compile(){
 	7)
 		local andvertag=android-7.1.1_r27
 		chgejava2 8
+		cd $AND_SRC_PATH/$andvertag
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n6p_angler_NUF26N_71_a25
