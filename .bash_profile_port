@@ -9,12 +9,14 @@ fhc-B250M-D3H)
 	REPO_URL_LOC=/home/fhc/aosp/mirror
 	;;
 fhc-XPS-15-9560)
-	MAIN_DATA_ROOT=/media/fhc/ext800
+	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
-	REPO_URL_LOC=/media/fhc/ext800/aospbk/mirror
+	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
 	;;
 desktop_home)
-	MAIN_DATA_ROOT=/media/fhc/ext800
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	REPO_URL_NET=https://android.googlesource.com
+	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
 	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
@@ -1045,7 +1047,6 @@ function create_local_android_src_mirror(){
 # copy  aosp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar from removble disk to dell desktop cost 88m
 # tar xvf osp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar #  on desktop cost 44m
 
-REPO_URL_WORKING=/media/fhc/ext800/aospbk/mirror
 
 HSTDIR=~/heavyscripttmp
 # after local android source code mirror create, you can do big thing quckly
@@ -1057,7 +1058,7 @@ function getandver(){
 		mkdir -p $HSTDIR/andrepo_4getinfo
 	fi
 	cd $HSTDIR/andrepo_4getinfo
-	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle
+	REPO_URL=$REPO_URL_LOC/git-repo repo init -u $REPO_URL/platform/manifest --no-clone-bundle
 	git --git-dir .repo/manifests/.git/ branch -a | cut -d / -f 3
 	cd $pwdtmp
 
@@ -1186,6 +1187,15 @@ function getandcode(){
 
 }
 
+# only 601 repo:37G total:78G out:28G
+# only 711 repo:40G total:59G out:19G
+# repo:30G total:56G
+# after get4,6,7 repo:84G total:105G
+# switch 4 to 6 cost: 2m:13s
+
+# show version: cd /media/fhc/ext800/androidcode/android-4.4.4_r1; cat build/core/version_defaults.mk
+# kernel path1: ./prebuilts/qemu-kernel/
+# kernel path2: ./device/lge/hammerhead-kernel/   and so on
 function getallcode(){
 
 	getandcode emu-master-dev
@@ -1196,55 +1206,6 @@ function getallcode(){
 
 }
 
-# only 601 repo:37G total:78G out:28G
-# only 711 repo:40G total:59G out:19G
-# repo:30G total:56G
-# after get4,6,7 repo:84G total:105G
-# switch 4 to 6 cost: 2m:13s
-
-# show version: cd /media/fhc/ext800/androidcode/android-4.4.4_r1; cat build/core/version_defaults.mk
-# kernel path1: ./prebuilts/qemu-kernel/
-# kernel path2: ./device/lge/hammerhead-kernel/   and so on
-function getand(){
-
-	local beginstr=`_begincall`
-
-	local andvertag=android-
-	case $1 in
-	4)
-		local andvertag=android-4.4.4_r1
-		;;
-	5)
-		local andvertag=android-5.1.1_r14
-		;;
-	6)
-		local andvertag=android-6.0.1_r77
-		;;
-	7)
-		local andvertag=android-7.1.1_r27
-		;;
-	*)
-		local andvertag=$1
-		;;
-	esac
-	local anddir=android-
-	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
-		mkdir -p $AND_SRC_PATH/$anddir
-	fi
-	cd $AND_SRC_PATH/$anddir
-	REPO_URL=$REPO_URL_WORKING/git-repo repo init -u $REPO_URL_WORKING/platform/manifest --no-clone-bundle -b $andvertag
-	repo sync
-
-	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-		mkdir -p $AND_SRC_PATH/$andvertag
-		mv * $AND_SRC_PATH/$andvertag
-		cd $AND_SRC_PATH/$andvertag
-	else
-		echo $AND_SRC_PATH/$andvertag is exist, remove it and run again
-	fi
-	_endcall $beginstr "$*"
-
-}
 
 function extractdrv(){
 
