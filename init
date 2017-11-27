@@ -1,8 +1,48 @@
 #!/bin/bash
 
+MYMACHINE=`hostname`
+case $MYMACHINE in
+fhc-B250M-D3H)
+        MAIN_DATA_ROOT=/home/fhc/ext800
+        REPO_URL_NET=https://android.googlesource.com
+        REPO_URL_LOC=/home/fhc/aosp/mirror
+        ;;
+fhc-XPS-15-9560)
+        MAIN_DATA_ROOT=/home/fhc/ext800
+        REPO_URL_NET=https://android.googlesource.com
+        REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
+        ;;
+desktop_home)
+        MAIN_DATA_ROOT=/home/fhc/ext800
+        REPO_URL_NET=https://android.googlesource.com
+        REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
+        ;;
+*)
+        MAIN_DATA_ROOT=/home/fhc/needfix__
+        echo err MYMACHINE need fix !!!
+        ;;
+esac
+
+ping -c 3 -w 5 www.baidu.com
+if [[ $? != 0 ]];then
+	echo " can not connect net"
+	exit
+fi
 
 if [ -e "/etc/apt/sources.list.old" ];then
-	echo not clear, exit
+	echo not clean, exit
+	exit
+fi
+if [ -e "~/.ssh" ];then
+	echo not clean, exit
+	exit
+fi
+if [ -e "~/ext800" ];then
+	echo not clean, exit
+	exit
+fi
+if [ -e "/etc/fstab.old" ];then
+	echo not clean, exit
 	exit
 fi
 
@@ -29,4 +69,28 @@ cp key/xx.zip ~
 unzip xx.zip && unzip x.zip
 
 rm xx.zip x.zip
+
+make -p ~/ext800
+sudo cp /etc/fstab /etc/fstab.old
+local fstab_match=`grep -ao ext800 /etc/fstab`
+if [ "$fstab_match" == "" ];then
+	UUID_STR=`sudo blkid | grep ext800 | cut  -d ' ' -f 3 | sed s/\"//g`
+	FS_TYPE=`sudo blkid | grep ext800 | cut  -d ' ' -f 4 | sed s/\"//g | cut -d= -f2`
+	sudo sh -c "echo \"$UUID_STR    /home/fhc/ext800    $FS_TYPE    defaults    0    2\"  >> /etc/fstab"
+	# ---------------   sudo sed -i '$d'  /etc/fstab   # delete last line
+
+else
+	echo err: ext800 has mounted
+	exit
+fi
+
+
+
+
+
+
+
+
+
+
 
