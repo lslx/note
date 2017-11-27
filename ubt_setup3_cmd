@@ -1,0 +1,8 @@
+#!/bin/bash
+# install cmd
+
+# 
+sudo apt install -y tree
+sudo apt install -y adb fastboot
+
+

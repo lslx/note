@@ -1,0 +1,16 @@
+#!/bin/bash
+
+
+SOFTPATH=~/Downloads
+
+# install bcompare
+sudo dpkg -i $SOFTPATH/bcompare-4.1.9.21719_amd64.deb
+sudo apt -f install
+
+
+
+
+
+
+
+

@@ -3,19 +3,22 @@ alias bb='. ~/.bash_profile_port'
 MYMACHINE=`hostname`
 case $MYMACHINE in
 fhc-B250M-D3H)
-	PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
+	#PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
+	PS1='D$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
 	REPO_URL_LOC=/home/fhc/aosp/mirror
 	;;
 fhc-XPS-15-9560)
-	PS1='\033[1;33mx\033[1;32m$:\033[0;00m'
+	#PS1='\033[1;33mx\033[1;32m$:\033[0;00m'
+	PS1='x$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
 	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
 	;;
-desktop_home)
-	PS1='\033[1;33mH\033[1;32m$:\033[0;00m'
+ubt)
+	#PS1='\033[1;33mu\033[1;32m$:\033[0;00m'
+	PS1='u$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
 	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
@@ -67,6 +70,7 @@ extract() {
      fi 
 }
 alias 010e='~/010editor/010editor'
+alias bcmp='nohup bcompare &'
 #PATH="~/bin:~/andtool/bin:/Users/hongchaofu/dex2jar-2.0/:$PATH"
 #ulimit -S -n 1024
 
@@ -87,7 +91,7 @@ alias l7='tree -N -L 7'
 alias l8='tree -N -L 8'
 alias l9='tree -N -L 9'
 alias 'o'='nautilus'
-alias gsm='gnome-system-monitor'
+alias gsm='nohup gnome-system-monitor &'
 
 # complex cmd
 alias andcmd='~/Android/Sdk/tools/android' 
@@ -198,13 +202,6 @@ function chgejava2()
 	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config javadoc"
 	cat $sudoautoinfo | sudo  -S sh -c "echo $javaindex | update-alternatives --config javap" 
 
-#	cat  $sudoautoinfo | sudo echo need root
-	#echo $javaindex | sudo update-alternatives --config java
-	#echo $javaindex | sudo update-alternatives --config javac
-	#echo $javaindex | sudo update-alternatives --config javaws
-	#echo $javaindex | sudo update-alternatives --config jar
-	#echo $javaindex | sudo update-alternatives --config javadoc
-	#echo $javaindex | sudo update-alternatives --config javap
 }
 
 
@@ -213,7 +210,7 @@ function chgejava2()
 # MyKeyPw
 export buildsvr=192.168.138.32
 export vmsvr=192.168.60.129
-export ubt=172.16.18.9
+export ubt=172.16.19.154
 alias fhcssh='ssh fhc@${buildsvr}'
 alias fhcsshvm='ssh fhc@${vmsvr}'
 alias fhcsshubt='ssh fhc@${ubt}'
@@ -226,6 +223,26 @@ alias  fhcsshxps='ssh -p22022 fhc@${laptop_xps}'
 export desktop_home=xx.xx.xx.xx
 alias  fhcsshhome='ssh -p22022 fhc@${desktop_home}'
 
+function syncx2D(){
+
+	cd ~
+	if [ -e "android-studio" ];then
+		echo android-studio exists, pass
+	else
+		scp -P22022 -r fhc@${laptop_xps}:android-studio .
+	fi
+	if [ -e "Android" ];then
+		echo Android exists, pass
+	else
+		scp -P22022 -r fhc@${laptop_xps}:Android .
+	fi
+	if [ -e ".android/avd" ];then
+		echo .android/avd exists, pass
+	else
+		scp -P22022 -r fhc@${laptop_xps}:.android/avd .android/
+	fi
+
+}
 
 function getimg {
 scp fhc@${buildsvr}:/home/fhc/src/out/target/product/generic/system.img dexhtnew/
@@ -857,7 +874,7 @@ alias adbn51='adb -s 03be21df437dc6a3'
 alias adben7='adb -s emulator-5554'
 alias jadx='/home/fhc/Downloads/jadx-0.6.1/bin/jadx-gui'
 
-alias as='~/android-studio/bin/studio.sh'
+alias as='nohup ~/android-studio/bin/studio.sh &'
 
 function getsigninfo()
 {
@@ -1150,17 +1167,7 @@ function swcache(){
 	$CCACHE_TOOL_X -M 100G
 }
 
-
-
-# get code demo cmd:
-# getandcode emu-master-dev net
-# getandcode emu-master-dev
-# getandcode android-4.4.4_r1
-# getandcode android-5.1.1_r14
-# getandcode android-6.0.1_r77
-# getandcode android-7.1.1_r27
-# getandcode android-4.4.4_r1;getandcode android-5.1.1_r14;getandcode android-6.0.1_r77;getandcode android-7.1.1_r27
-function getandcode(){
+function checkout_andcode(){
 
 	local beginstr=`_begincall`
 	if [ "$1" == "" ];then
@@ -1186,15 +1193,52 @@ function getandcode(){
 	cp ~/bin/loopsync .
 	./loopsync
 
-	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-		mkdir -p $AND_SRC_PATH/$andvertag
-		mv * $AND_SRC_PATH/$andvertag
-		cd $AND_SRC_PATH/$andvertag
-	else
-		echo $AND_SRC_PATH/$andvertag is exist, remove it and run again
-		return 1
-	fi
 	_endcall $beginstr "$*"
+
+}
+
+
+# get code demo cmd:
+# getandcode emu-master-dev net
+# getandcode emu-master-dev
+# getandcode android-4.4.4_r1
+# getandcode android-5.1.1_r14
+# getandcode android-6.0.1_r77
+# getandcode android-7.1.1_r27
+# getandcode android-4.4.4_r1;getandcode android-5.1.1_r14;getandcode android-6.0.1_r77;getandcode android-7.1.1_r27
+function getandcode(){
+
+	if [ "$1" == "" ];then
+		echo need andvertag as \$1
+		return 1
+	else
+		local andvertag=$1
+	fi
+	if [ "$2" == "net" ];then
+		local REPO_URL=$REPO_URL_NET
+		local anddir=android-net
+		echo get code from net
+	else
+		local REPO_URL=$REPO_URL_LOC
+		local anddir=android-
+		echo get code from local
+	fi
+	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
+		mkdir -p $AND_SRC_PATH/$anddir
+	fi
+	cd $AND_SRC_PATH/$anddir
+	REPO_URL=$REPO_URL_LOC/git-repo ~/bin/repo init -u $REPO_URL/platform/manifest --no-clone-bundle -b $andvertag
+	cp ~/bin/loopsync .
+	./loopsync
+
+#	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
+#		mkdir -p $AND_SRC_PATH/$andvertag
+#		mv * $AND_SRC_PATH/$andvertag
+#		cd $AND_SRC_PATH/$andvertag
+#	else
+#		echo $AND_SRC_PATH/$andvertag is exist, remove it and run again
+#		return 1
+#	fi
 
 }
 
