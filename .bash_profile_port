@@ -1232,8 +1232,8 @@ function extractanddrv(){
 		extractdrv $anddrvdir/n5_ham/M4B30Z/extract-qcom-hammerhead.sh
 		;;
 	n6p_angler_NUF26N_71_a25)
-		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-broadcom-hammerhead.sh
-		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-qcom-hammerhead.sh
+		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-huawei-angler.sh
+		extractdrv $anddrvdir/n6p_angler/NUF26N/extract-qcom-angler.sh
 		;;
 	*)
 		echo fixme extractanddrv expect right arg !!!
