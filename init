@@ -85,7 +85,9 @@ else
 fi
 
 
-
+sudo apt install -y openssh-server
+sudo sed -i 's/Port 22/Port 22022/' /etc/ssh/sshd_config
+sudo service ssh restart
 
 
 

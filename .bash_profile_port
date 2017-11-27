@@ -1,19 +1,21 @@
-PS1='$ '
 alias ee='vim ~/.bash_profile_port'
 alias bb='. ~/.bash_profile_port'
 MYMACHINE=`hostname`
 case $MYMACHINE in
 fhc-B250M-D3H)
+	PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
 	REPO_URL_LOC=/home/fhc/aosp/mirror
 	;;
 fhc-XPS-15-9560)
+	PS1='\033[1;33mx\033[1;32m$:\033[0;00m'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
 	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
 	;;
 desktop_home)
+	PS1='\033[1;33mH\033[1;32m$:\033[0;00m'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	REPO_URL_NET=https://android.googlesource.com
 	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
@@ -215,7 +217,16 @@ export ubt=172.16.18.9
 alias fhcssh='ssh fhc@${buildsvr}'
 alias fhcsshvm='ssh fhc@${vmsvr}'
 alias fhcsshubt='ssh fhc@${ubt}'
-alias clyssh='ssh cly@${buildsvr}'
+
+export desktop_dell=172.16.12.122
+alias  fhcsshdtd='ssh -p22022 fhc@${desktop_dell}'
+export laptop_xps=172.16.12.88
+alias  fhcsshltx='ssh -p22022 fhc@${laptop_xps}'
+
+export desktop_home=xx.xx.xx.xx
+alias  fhcsshdth='ssh -p22022 fhc@${desktop_home}'
+
+
 function getimg {
 scp fhc@${buildsvr}:/home/fhc/src/out/target/product/generic/system.img dexhtnew/
 scp fhc@${buildsvr}:/home/fhc/src/out/target/product/generic/userdata.img dexhtnew/
