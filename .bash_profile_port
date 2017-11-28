@@ -1529,7 +1529,7 @@ function compileand7(){
 	20_aosp_angler-userdebug|\
 	21_aosp_bullhead-userdebug|\
 	22_hikey-userdebug|\
-	23_aosp_shamu-userdebug)|\
+	23_aosp_shamu-userdebug)
 		echo $1 match !
 		;;
 	*)
