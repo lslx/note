@@ -6,29 +6,31 @@ fhc-B250M-D3H)
 	#PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
 	PS1='D$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
-	REPO_URL_NET=https://android.googlesource.com
-	REPO_URL_LOC=/home/fhc/aosp/mirror
 	;;
 fhc-XPS-15-9560)
 	#PS1='\033[1;33mx\033[1;32m$:\033[0;00m'
 	PS1='x$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
-	REPO_URL_NET=https://android.googlesource.com
-	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
 	;;
 ubt)
 	#PS1='\033[1;33mu\033[1;32m$:\033[0;00m'
 	PS1='u$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
-	REPO_URL_NET=https://android.googlesource.com
-	REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
 	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
 	echo err MYMACHINE need fix !!!
 	;;
 esac
-AND_SRC_PATH=$MAIN_DATA_ROOT/androidcode
+
+AOSP_SRC_URL_GOOGLE=https://android.googlesource.com
+# must begin with /home, end with mirror,see  __get_aosp_code
+AOSP_SRC_URL_LOCAL=/home/fhc/aosp/mirror
+
+AOSP_SRC_URL_CUR=$AOSP_SRC_URL_LOCAL
+
+SRC_PATH_AND=$MAIN_DATA_ROOT/androidcode
+SRC_PATH_CUR=$SRC_PATH_AND
 export MARKPATH=$HOME/.marks
 
 function jump {
@@ -1086,7 +1088,7 @@ function getandver(){
 		mkdir -p $HSTDIR/andrepo_4getinfo
 	fi
 	cd $HSTDIR/andrepo_4getinfo
-	REPO_URL=$REPO_URL_LOC/git-repo repo init -u $REPO_URL/platform/manifest --no-clone-bundle
+	REPO_URL=$AOSP_SRC_URL_LOCAL/git-repo repo init -u $AOSP_SRC_URL_LOCAL/platform/manifest --no-clone-bundle
 	git --git-dir .repo/manifests/.git/ branch -a | cut -d / -f 3
 	cd $pwdtmp
 
@@ -1138,7 +1140,7 @@ function xxtest(){
 
 # use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
 # compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 27G 
-CCACHE_TOOL_X=$AND_SRC_PATH/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
+CCACHE_TOOL_X=~/ext800/androidcode/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
 function swcache(){
 
 	local C4ROM=~/CCACHE4ROM/.ccache
@@ -1167,80 +1169,81 @@ function swcache(){
 	$CCACHE_TOOL_X -M 100G
 }
 
-function checkout_andcode(){
-
-	local beginstr=`_begincall`
-	if [ "$1" == "" ];then
-		echo need andvertag as \$1
-		return 1
-	else
-		local andvertag=$1
-	fi
-	if [ "$2" == "net" ];then
-		local REPO_URL=$REPO_URL_NET
-		local anddir=android-net
-		echo get code from net
-	else
-		local REPO_URL=$REPO_URL_LOC
-		local anddir=android-
-		echo get code from local
-	fi
-	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
-		mkdir -p $AND_SRC_PATH/$anddir
-	fi
-	cd $AND_SRC_PATH/$anddir
-	REPO_URL=$REPO_URL_LOC/git-repo ~/bin/repo init -u $REPO_URL/platform/manifest --no-clone-bundle -b $andvertag
-	cp ~/bin/loopsync .
-	./loopsync
-
-	_endcall $beginstr "$*"
+MYXX=globalxx
+function testfunc(){
+MYZZ=sbsb
 
 }
 
+function testcaller(){
+testfunc
+echo $MYZZ in caller
+}
+function testcaller2(){
+
+testcaller
+echo $MYZZ in caller2
+}
+
+function __get_aosp_code(){
+
+	local vertag repo_path src_path
+	if [ "$1" == "" ];then
+		echo need vertag as \$1
+		return 1
+	else
+		vertag=$1
+	fi
+
+	echo $AOSP_SRC_URL_CUR sss
+	case "$AOSP_SRC_URL_CUR" in
+	*home*mirror)
+		repo_path=$MAIN_DATA_ROOT/repo-android-local
+		src_path=$MAIN_DATA_ROOT/src-android-local
+		;;	
+	http*google*)
+		repo_path=$MAIN_DATA_ROOT/repo-android-google
+		src_path=$MAIN_DATA_ROOT/src-android-google
+		;;	
+	*)
+		echo error: set repo_path failed !
+		return 1
+		;;	
+	esac
+
+	if [ ! -e "$repo_path" ];then
+		mkdir -p $repo_path
+	fi
+	cd $repo_path
+	REPO_URL=$AOSP_SRC_URL_CUR/git-repo ~/bin/repo init -u $AOSP_SRC_URL_CUR/platform/manifest --no-clone-bundle -b $vertag
+	cp ~/bin/loopsync .
+	./loopsync
+
+	if [ ! -e "$src_path/$vertag" ];then
+		mkdir -p $src_path/$vertag
+		mv * $src_path/$vertag
+		cd $src_path/$vertag
+	else
+		echo $src_path/$vertag is exist, remove it and run again
+		return 1
+	fi
+
+}
 
 # get code demo cmd:
-# getandcode emu-master-dev net
 # getandcode emu-master-dev
 # getandcode android-4.4.4_r1
 # getandcode android-5.1.1_r14
 # getandcode android-6.0.1_r77
 # getandcode android-7.1.1_r27
-# getandcode android-4.4.4_r1;getandcode android-5.1.1_r14;getandcode android-6.0.1_r77;getandcode android-7.1.1_r27
+
 function getandcode(){
 
-	if [ "$1" == "" ];then
-		echo need andvertag as \$1
-		return 1
-	else
-		local andvertag=$1
-	fi
-	if [ "$2" == "net" ];then
-		local REPO_URL=$REPO_URL_NET
-		local anddir=android-net
-		echo get code from net
-	else
-		local REPO_URL=$REPO_URL_LOC
-		local anddir=android-
-		echo get code from local
-	fi
-	if [ ! -e "$AND_SRC_PATH/$anddir" ];then
-		mkdir -p $AND_SRC_PATH/$anddir
-	fi
-	cd $AND_SRC_PATH/$anddir
-	REPO_URL=$REPO_URL_LOC/git-repo ~/bin/repo init -u $REPO_URL/platform/manifest --no-clone-bundle -b $andvertag
-	cp ~/bin/loopsync .
-	./loopsync
-
-#	if [ ! -e "$AND_SRC_PATH/$andvertag" ];then
-#		mkdir -p $AND_SRC_PATH/$andvertag
-#		mv * $AND_SRC_PATH/$andvertag
-#		cd $AND_SRC_PATH/$andvertag
-#	else
-#		echo $AND_SRC_PATH/$andvertag is exist, remove it and run again
-#		return 1
-#	fi
-
-}
+	local beginstr=`_begincall`
+	AOSP_SRC_URL_CUR=$AOSP_SRC_URL_LOCAL\
+	__get_aosp_code "$*"
+	_endcall $beginstr "$*"
+} 
 
 # only 601 repo:37G total:78G out:28G
 # only 711 repo:40G total:59G out:19G
@@ -1251,10 +1254,10 @@ function getandcode(){
 # show version: cd /media/fhc/ext800/androidcode/android-4.4.4_r1; cat build/core/version_defaults.mk
 # kernel path1: ./prebuilts/qemu-kernel/
 # kernel path2: ./device/lge/hammerhead-kernel/   and so on
-function getallcode(){
+function getandcodeall(){
 
-	getandcode emu-master-dev
-	getandcode android-4.4.4_r1
+	#getandcode emu-master-dev
+	#getandcode android-4.4.4_r1
 	getandcode android-5.1.1_r14
 	getandcode android-6.0.1_r77
 	getandcode android-7.1.1_r27
@@ -1292,6 +1295,7 @@ function extractanddrv(){
 		;;
 	*)
 		echo fixme extractanddrv expect right arg !!!
+		return 1
 		;;
 	esac
 
@@ -1307,7 +1311,7 @@ function p4compile(){
 	4)
 		local andvertag=android-4.4.4_r1
 		chgejava2 6
-		cd $AND_SRC_PATH/$andvertag
+		cd $SRC_PATH_CUR/$andvertag
 		# fixme chge make version
 		#return
 		source build/envsetup.sh
@@ -1320,7 +1324,7 @@ function p4compile(){
 	5)
 		local andvertag=android-5.1.1_r14
 		chgejava2 7
-		cd $AND_SRC_PATH/$andvertag
+		cd $SRC_PATH_CUR/$andvertag
 		cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
@@ -1334,10 +1338,10 @@ function p4compile(){
 	6)
 		local andvertag=android-6.0.1_r77
 		chgejava2 7
-		cd $AND_SRC_PATH/$andvertag
+		cd $SRC_PATH_CUR/$andvertag
 		cd build/core/clang/
 		patch < ~/importantbk/0001-Ubuntu-16.04-adaption.patch
-		cd $AND_SRC_PATH/$andvertag
+		cd $SRC_PATH_CUR/$andvertag
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n5_ham_M4B30Z_60_a23
@@ -1348,7 +1352,7 @@ function p4compile(){
 	7)
 		local andvertag=android-7.1.1_r27
 		chgejava2 8
-		cd $AND_SRC_PATH/$andvertag
+		cd $SRC_PATH_CUR/$andvertag
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n6p_angler_NUF26N_71_a25
@@ -1372,110 +1376,176 @@ function p4compile(){
 
 }
 
-function compileall(){
+function compileandall(){
+	 compileandall4
+	 compileandall5
+	 compileandall6
+	 compileandall7
+}
 
-local logpath=$AND_SRC_PATH
-# ----------android 4
-#     1. aosp_arm-eng
-#     2. aosp_x86-eng
-#     3. aosp_mips-eng
-#     4. vbox_x86-eng
-#     5. aosp_hammerhead-userdebug
-#     6. aosp_mako-userdebug
-#     7. aosp_manta-userdebug
-#     8. mini_x86-userdebug
-#     9. mini_armv7a_neon-userdebug
-#     10. mini_mips-userdebug
-#     11. aosp_flo-userdebug
-#     12. aosp_grouper-userdebug
-#     13. aosp_deb-userdebug
-#     14. aosp_tilapia-userdebug
+# android combo number will chge
+function compileand4(){
 
-	p4compile 4 aosp_arm-eng | tee $logpath/a4emu_arm.log
-	p4compile 4 aosp_x86-eng | tee $logpath/a4emu_x86.log
-	p4compile 4 aosp_hammerhead-userdebug | tee $logpath/a4ham.log
-# ------------android 5
-#     1. aosp_arm-eng
-#     2. aosp_arm64-eng
-#     3. aosp_mips-eng
-#     4. aosp_mips64-eng
-#     5. aosp_x86-eng
-#     6. aosp_x86_64-eng
-#     7. aosp_hammerhead-userdebug
-#     8. aosp_mako-userdebug
-#     9. aosp_flounder-userdebug
-#     10. aosp_shamu-userdebug
-#     11. aosp_manta-userdebug
-#     12. mini_emulator_mips-userdebug
-#     13. m_e_arm-userdebug
-#     14. mini_emulator_x86-userdebug
-#     15. mini_emulator_arm64-userdebug
-#     16. mini_emulator_x86_64-userdebug
-#     17. aosp_flo-userdebug
-#     18. aosp_grouper-userdebug
-#     19. aosp_deb-userdebug
-#     20. aosp_tilapia-userdebug
-#     21. full_fugu-userdebug
-#     22. aosp_fugu-userdebug
-#
-	p4compile 5 aosp_arm-eng | tee $logpath/a5emu_arm.log
-	p4compile 5 aosp_x86-eng | tee $logpath/a5emu_x86.log
-	p4compile 5 aosp_hammerhead-userdebug | tee $logpath/a5ham.log
-# --------------android 6
-#     1. aosp_arm-eng
-#     2. aosp_arm64-eng
-#     3. aosp_mips-eng
-#     4. aosp_mips64-eng
-#     5. aosp_x86-eng
-#     6. aosp_x86_64-eng
-#     7. aosp_deb-userdebug
-#     8. aosp_flo-userdebug
-#     9. full_fugu-userdebug
-#     10. aosp_fugu-userdebug
-#     11. mini_emulator_arm64-userdebug
-#     12. m_e_arm-userdebug
-#     13. mini_emulator_mips-userdebug
-#     14. mini_emulator_x86_64-userdebug
-#     15. mini_emulator_x86-userdebug
-#     16. aosp_flounder-userdebug
-#     17. aosp_angler-userdebug
-#     18. aosp_bullhead-userdebug
-#     19. aosp_hammerhead-userdebug
-#     20. aosp_hammerhead_fp-userdebug
-#     21. aosp_shamu-userdebug
+	case "$1" in
+	01_aosp_arm-eng|\
+	02_aosp_x86-eng|\
+	03_aosp_mips-eng|\
+	04_vbox_x86-eng|\
+	05_aosp_hammerhead-userdebug|\
+	06_aosp_mako-userdebug|\
+	07_aosp_manta-userdebug|\
+	08_mini_x86-userdebug|\
+	09_mini_armv7a_neon-userdebug|\
+	10_mini_mips-userdebug|\
+	11_aosp_flo-userdebug|\
+	12_aosp_grouper-userdebug|\
+	13_aosp_deb-userdebug|\
+	14_aosp_tilapia-userdebug)
+		echo $1 match !
+		;;
+	*)
+		echo error : $1 not match !
+		return 1
+		;;
+	esac
 
-	p4compile 6 aosp_arm-eng | tee $logpath/a6emu_arm.log
-	p4compile 6 aosp_x86-eng | tee $logpath/a6emu_x86.log
-	p4compile 6 aosp_hammerhead-userdebug | tee $logpath/a6ham.log
-# -------------- android 7
-#     1. aosp_arm-eng
-#     2. aosp_arm64-eng
-#     3. aosp_mips-eng
-#     4. aosp_mips64-eng
-#     5. aosp_x86-eng
-#     6. aosp_x86_64-eng
-#     7. full_fugu-userdebug
-#     8. aosp_fugu-userdebug
-#     9. mini_emulator_arm64-userdebug
-#     10. m_e_arm-userdebug
-#     11. m_e_mips64-eng
-#     12. m_e_mips-userdebug
-#     13. mini_emulator_x86_64-userdebug
-#     14. mini_emulator_x86-userdebug
-#     15. aosp_dragon-userdebug
-#     16. aosp_dragon-eng
-#     17. aosp_marlin-userdebug
-#     18. aosp_sailfish-userdebug
-#     19. aosp_flounder-userdebug
-#     20. aosp_angler-userdebug
-#     21. aosp_bullhead-userdebug
-#     22. hikey-userdebug
-#     23. aosp_shamu-userdebug
-#
-	p4compile 7 aosp_arm-eng | tee $logpath/a7emu_arm.log
-	p4compile 7 aosp_x86-eng | tee $logpath/a7emu_x86.log
-	p4compile 7 aosp_angler-userdebug | tee $logpath/a7angler.log
+	#echo ${1:3}
+	p4compile 4 ${1:3} | tee $SRC_PATH_CUR/a4_${1:3}.log
+}
+function compileandall4(){
 
+	compileand4 01_aosp_arm-eng
+	compileand4 02_aosp_x86-eng
+	compileand4 09_aosp_hammerhead-userdebug 
+}
+
+function compileand5(){
+
+	case "$1" in
+	01_aosp_arm-eng|\
+	02_aosp_arm64-eng|\
+	03_aosp_mips-eng|\
+	04_aosp_mips64-eng|\
+	05_aosp_x86-eng|\
+	06_aosp_x86_64-eng|\
+	07_aosp_shamu-userdebug|\
+	08_aosp_flounder-userdebug|\
+	09_m_e_arm-userdebug|\
+	10_mini_emulator_mips-userdebug|\
+	11_mini_emulator_x86_64-userdebug|\
+	12_mini_emulator_x86-userdebug|\
+	13_mini_emulator_arm64-userdebug|\
+	14_aosp_manta-userdebug|\
+	15_aosp_hammerhead-userdebug|\
+	16_aosp_mako-userdebug|\
+	17_aosp_flo-userdebug|\
+	18_aosp_deb-userdebug|\
+	19_full_fugu-userdebug|\
+	20_aosp_fugu-userdebug|\
+	21_aosp_grouper-userdebug|\
+	22_aosp_tilapia-userdebug)
+		echo $1 match !
+			;;
+	*)
+		echo error : $1 not match !
+		return 1
+		;;
+	esac
+
+	#echo ${1:3}
+	p4compile 5 ${1:3} | tee $SRC_PATH_CUR/a5_${1:3}.log
+}
+function compileandall5(){
+
+	compileand5 01_aosp_arm-eng
+	compileand5 05_aosp_x86-eng
+	compileand5 15_aosp_hammerhead-userdebug 
+}
+
+function compileand6(){
+
+	case "$1" in
+	01_aosp_arm-eng|\
+	02_aosp_arm64-eng|\
+	03_aosp_mips-eng|\
+	04_aosp_mips64-eng|\
+	05_aosp_x86-eng|\
+	06_aosp_x86_64-eng|\
+	07_aosp_deb-userdebug|\
+	08_aosp_flo-userdebug|\
+	09_full_fugu-userdebug|\
+	10_aosp_fugu-userdebug|\
+	11_mini_emulator_arm64-userdebug|\
+	12_m_e_arm-userdebug|\
+	13_mini_emulator_mips-userdebug|\
+	14_mini_emulator_x86_64-userdebug|\
+	15_mini_emulator_x86-userdebug|\
+	16_aosp_flounder-userdebug|\
+	17_aosp_angler-userdebug|\
+	18_aosp_bullhead-userdebug|\
+	19_aosp_hammerhead-userdebug|\
+	20_aosp_hammerhead_fp-userdebug|\
+	21_aosp_shamu-userdebug)
+		echo $1 match !
+		;;
+	*)
+		echo error : $1 not match !
+		return 1
+		;;
+	esac
+
+	#echo ${1:3}
+	p4compile 6 ${1:3} | tee $SRC_PATH_CUR/a6_${1:3}.log
+}
+function compileandall6(){
+
+	compileand6 01_aosp_arm-eng
+	compileand6 05_aosp_x86-eng
+	compileand6 19_aosp_hammerhead-userdebug 
+}
+
+function compileand7(){
+
+	case "$1" in
+	01_aosp_arm-eng|\
+	02_aosp_arm64-eng|\
+	03_aosp_mips-eng|\
+	04_aosp_mips64-eng|\
+	05_aosp_x86-eng|\
+	06_aosp_x86_64-eng|\
+	07_full_fugu-userdebug|\
+	08_aosp_fugu-userdebug|\
+	09_mini_emulator_arm64-userdebug|\
+	10_m_e_arm-userdebug|\
+	11_m_e_mips64-eng|\
+	12_m_e_mips-userdebug|\
+	13_mini_emulator_x86_64-userdebug|\
+	14_mini_emulator_x86-userdebug|\
+	15_aosp_dragon-userdebug|\
+	16_aosp_dragon-eng|\
+	17_aosp_marlin-userdebug|\
+	18_aosp_sailfish-userdebug|\
+	19_aosp_flounder-userdebug|\
+	20_aosp_angler-userdebug|\
+	21_aosp_bullhead-userdebug|\
+	22_hikey-userdebug|\
+	23_aosp_shamu-userdebug)|\
+		echo $1 match !
+		;;
+	*)
+		echo error : $1 not match !
+		return 1
+		;;
+	esac
+
+	#echo ${1:3}
+	p4compile 7 ${1:3} | tee $SRC_PATH_CUR/a7_${1:3}.log
+}
+function compileandall7(){
+
+	compileand7 01_aosp_arm-eng
+	compileand7 05_aosp_x86-eng
+	compileand7 20_aosp_angler-userdebug
 }
 
 PANDA='/home/fhc/panda1dev/panda/qemu/arm-softmmu/qemu-system-arm'
