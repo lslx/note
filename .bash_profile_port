@@ -29,8 +29,6 @@ AOSP_SRC_URL_LOCAL=/home/fhc/aosp/mirror
 
 AOSP_SRC_URL_CUR=$AOSP_SRC_URL_LOCAL
 
-SRC_PATH_AND=$MAIN_DATA_ROOT/androidcode
-SRC_PATH_CUR=$SRC_PATH_AND
 export MARKPATH=$HOME/.marks
 
 function jump {
@@ -1069,13 +1067,18 @@ function create_local_android_src_mirror(){
 
 } 
 # back up as tar, 
-# time tar -czvf aosp.tgz aosp    #198G   cost : real	105m31.690s   compress is not useful
-# time tar -cvf aosp.tar          #201G   cost : real	20m52.734s 
-# time md5sum aosp.tar            #929a6a55f34d52ffe690999f8005cf38  aosp.tar , cost : real	8m42.242s
-# time cp aosp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar /media/fhc/sg2t/  #cost : real	36m0.121s
+# time tar -czvf aosp.tgz aosp # onxps (171109)     #198G   cost : real	105m31.690s   compress is not useful
+# time tar -cvf aosp.tar  aosp # onxps (171109)     #201G   cost : real	20m52.734s 
+# time tar -cvf aosp.tar  aosp # onDell(171128)     #202G   cost : real 65m35.804s
+# time md5sum aosp.tar         # onxps (171109)     #929a6a55f34d52ffe690999f8005cf38  cost : real 8m42.242s
+# time md5sum aosp.tar         # onDell(171128)     #92c23739e2cf7e02ac6bf1209c2b7a39  cost : real 24m50.439s 
+# time cp aosp171109_md5_929a6a55f34d52ffe690999f8005cf38.tar /media/fhc/sg2t/  #cost : real	36m0.121s
 
-# copy  aosp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar from removble disk to dell desktop cost 88m
-# tar xvf osp_md5sum_929a6a55f34d52ffe690999f8005cf38.tar #  on desktop cost 44m
+# copy    aosp171109_md5_929a6a55f34d52ffe690999f8005cf38.tar removble disk -> dell desktop cost 88m
+# tar xvf aosp171109_md5_929a6a55f34d52ffe690999f8005cf38.tar #  on desktop cost 44m
+
+# copy    aosp171128_md5_92c23739e2cf7e02ac6bf1209c2b7a39.tar removble disk <- dell desktop cost m
+# tar xvf aosp171128_md5_92c23739e2cf7e02ac6bf1209c2b7a39.tar #  on xps cost m
 
 
 HSTDIR=~/heavyscripttmp
@@ -1185,9 +1188,47 @@ testcaller
 echo $MYZZ in caller2
 }
 
+function __def_repo_path(){
+	case "$AOSP_SRC_URL_CUR" in
+	*home*mirror)
+		REPO_PATH=$MAIN_DATA_ROOT/repo-android-local
+		;;	
+	http*google*)
+		REPO_PATH=$MAIN_DATA_ROOT/repo-android-google
+		;;	
+	*)
+		REPO_PATH=
+		return 1
+		;;	
+	esac
+}
+function __def_src_path(){
+	case "$AOSP_SRC_URL_CUR" in
+	*home*mirror)
+		SRC_PATH=$MAIN_DATA_ROOT/src-android-local
+		;;	
+	http*google*)
+		SRC_PATH=$MAIN_DATA_ROOT/src-android-google
+		;;	
+	*)
+		SRC_PATH=
+		return 1
+		;;	
+	esac
+}
+
+function __def_path(){
+
+	echo AOSP_SRC_URL_CUR is: $AOSP_SRC_URL_CUR
+	if [[ -z `__def_repo_path` || -z `__def_repo_path` ]];then
+		echo get repo_path or src_path failed !
+		return 1
+	fi
+}
+
 function __get_aosp_code(){
 
-	local vertag repo_path src_path
+	local vertag
 	if [ "$1" == "" ];then
 		echo need vertag as \$1
 		return 1
@@ -1195,36 +1236,25 @@ function __get_aosp_code(){
 		vertag=$1
 	fi
 
-	echo $AOSP_SRC_URL_CUR sss
-	case "$AOSP_SRC_URL_CUR" in
-	*home*mirror)
-		repo_path=$MAIN_DATA_ROOT/repo-android-local
-		src_path=$MAIN_DATA_ROOT/src-android-local
-		;;	
-	http*google*)
-		repo_path=$MAIN_DATA_ROOT/repo-android-google
-		src_path=$MAIN_DATA_ROOT/src-android-google
-		;;	
-	*)
-		echo error: set repo_path failed !
+	__def_path
+	if [[ $? != 0 ]];then
 		return 1
-		;;	
-	esac
-
-	if [ ! -e "$repo_path" ];then
-		mkdir -p $repo_path
 	fi
-	cd $repo_path
+	# echo end end ; return 0
+	if [ ! -e "$REPO_PATH" ];then
+		mkdir -p $REPO_PATH
+	fi
+	cd $REPO_PATH
 	REPO_URL=$AOSP_SRC_URL_CUR/git-repo ~/bin/repo init -u $AOSP_SRC_URL_CUR/platform/manifest --no-clone-bundle -b $vertag
 	cp ~/bin/loopsync .
 	./loopsync
 
-	if [ ! -e "$src_path/$vertag" ];then
-		mkdir -p $src_path/$vertag
-		mv * $src_path/$vertag
-		cd $src_path/$vertag
+	if [ ! -e "$SRC_PATH/$vertag" ];then
+		mkdir -p $SRC_PATH/$vertag
+		mv * $SRC_PATH/$vertag
+		cd $SRC_PATH/$vertag
 	else
-		echo $src_path/$vertag is exist, remove it and run again
+		echo $SRC_PATH/$vertag is exist, remove it and run again
 		return 1
 	fi
 
@@ -1311,7 +1341,7 @@ function p4compile(){
 	4)
 		local andvertag=android-4.4.4_r1
 		chgejava2 6
-		cd $SRC_PATH_CUR/$andvertag
+		cd $SRC_PATH/$andvertag
 		# fixme chge make version
 		#return
 		source build/envsetup.sh
@@ -1324,7 +1354,7 @@ function p4compile(){
 	5)
 		local andvertag=android-5.1.1_r14
 		chgejava2 7
-		cd $SRC_PATH_CUR/$andvertag
+		cd $SRC_PATH/$andvertag
 		cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
@@ -1338,10 +1368,10 @@ function p4compile(){
 	6)
 		local andvertag=android-6.0.1_r77
 		chgejava2 7
-		cd $SRC_PATH_CUR/$andvertag
+		cd $SRC_PATH/$andvertag
 		cd build/core/clang/
 		patch < ~/importantbk/0001-Ubuntu-16.04-adaption.patch
-		cd $SRC_PATH_CUR/$andvertag
+		cd $SRC_PATH/$andvertag
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n5_ham_M4B30Z_60_a23
@@ -1352,7 +1382,7 @@ function p4compile(){
 	7)
 		local andvertag=android-7.1.1_r27
 		chgejava2 8
-		cd $SRC_PATH_CUR/$andvertag
+		cd $SRC_PATH/$andvertag
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n6p_angler_NUF26N_71_a25
@@ -1386,6 +1416,11 @@ function compileandall(){
 # android combo number will chge
 function compileand4(){
 
+	__def_path
+	if [[ $? != 0 ]];then
+		return 1
+	fi
+
 	case "$1" in
 	01_aosp_arm-eng|\
 	02_aosp_x86-eng|\
@@ -1410,7 +1445,7 @@ function compileand4(){
 	esac
 
 	#echo ${1:3}
-	p4compile 4 ${1:3} | tee $SRC_PATH_CUR/a4_${1:3}.log
+	p4compile 4 ${1:3} | tee $SRC_PATH/a4_${1:3}.log
 }
 function compileandall4(){
 
@@ -1420,6 +1455,11 @@ function compileandall4(){
 }
 
 function compileand5(){
+
+	__def_path
+	if [[ $? != 0 ]];then
+		return 1
+	fi
 
 	case "$1" in
 	01_aosp_arm-eng|\
@@ -1453,7 +1493,7 @@ function compileand5(){
 	esac
 
 	#echo ${1:3}
-	p4compile 5 ${1:3} | tee $SRC_PATH_CUR/a5_${1:3}.log
+	p4compile 5 ${1:3} | tee $SRC_PATH/a5_${1:3}.log
 }
 function compileandall5(){
 
@@ -1463,6 +1503,11 @@ function compileandall5(){
 }
 
 function compileand6(){
+
+	__def_path
+	if [[ $? != 0 ]];then
+		return 1
+	fi
 
 	case "$1" in
 	01_aosp_arm-eng|\
@@ -1495,7 +1540,7 @@ function compileand6(){
 	esac
 
 	#echo ${1:3}
-	p4compile 6 ${1:3} | tee $SRC_PATH_CUR/a6_${1:3}.log
+	p4compile 6 ${1:3} | tee $SRC_PATH/a6_${1:3}.log
 }
 function compileandall6(){
 
@@ -1505,6 +1550,11 @@ function compileandall6(){
 }
 
 function compileand7(){
+
+	__def_path
+	if [[ $? != 0 ]];then
+		return 1
+	fi
 
 	case "$1" in
 	01_aosp_arm-eng|\
@@ -1539,7 +1589,7 @@ function compileand7(){
 	esac
 
 	#echo ${1:3}
-	p4compile 7 ${1:3} | tee $SRC_PATH_CUR/a7_${1:3}.log
+	p4compile 7 ${1:3} | tee $SRC_PATH/a7_${1:3}.log
 }
 function compileandall7(){
 
