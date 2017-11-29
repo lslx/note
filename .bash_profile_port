@@ -1170,7 +1170,7 @@ function swcache(){
 	echo ccache for rom
 	;;
 	esac
-	$CCACHE_TOOL_X -M 100G
+	$CCACHE_TOOL_X -M 150G
 }
 
 MYXX=globalxx
