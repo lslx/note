@@ -90,8 +90,11 @@ alias l6='tree -N -L 6'
 alias l7='tree -N -L 7'
 alias l8='tree -N -L 8'
 alias l9='tree -N -L 9'
+alias findsl='find . -type l  -exec ls -l {} \;'
 alias 'o'='nautilus'
 alias gsm='nohup gnome-system-monitor &'
+# open pdf
+#evince xx.pdf
 
 # complex cmd
 alias andcmd='~/Android/Sdk/tools/android' 
@@ -114,11 +117,103 @@ function get_all_soft(){
 
 }
 
+function tt(){
+	local ss
+	ss=aa
+	echo $ss
+	case $ss in
+	aa)
+		echo match aa
+		;;
+	ss)
+		echo match ss
+		;;
+	*)
+		echo $ss
+		echo match default
+		;;
+	esac
+
+}
+function tt2(){
+
+	tt aa
+	echo $ss
+}
+
 function copy4_new_machine_setup(){
-#	return
+
+	local mycopy targetpath cmdwrapper
+	local CopyRoot=CopyRootDir
+	local remote=$1
+	case $remote in
+	dell)
+		if (hostname|grep -q -i -e 'B250M');then echo copy error args;return 1;fi
+		# mycopy="scp -P22022" # git maybe has soft link, scp will get realfile
+		mycopy="rsync -avuz -e ssh -p22022"	
+		targetpath=fhc@${desktop_dell}:$CopyRoot
+		cmdwrapper=fhcsshdell
+		;;
+	xps)
+		if (hostname|grep -q -i -e 'xps');then echo copy error args;return 1;fi
+		mycopy="rsync -avuz -e ssh -p22022"	
+		targetpath=fhc@${laptop_xps}:$CopyRoot
+		cmdwrapper=fhcsshxps
+		;;
+	disk)
+		mycopy="cp -d"  # if cp dir soft link work right , if cp a file soft link, -d keep soft link
+		targetpath=/media/fhc/sg2t/$CopyRoot
+		cmdwrapper="sh -c"
+		;;
+	*)
+		echo targetpath match error
+		return 1
+		;;
+	esac
 	cd
-	#scp -r fhc@$buildsvr:sharedir/importantbk/ .
-	scp -r fhc@$buildsvr:sharedir/nexus_drivers $MAIN_DATA_ROOT/nexus_drivers
+	$cmdwrapper "if [ -e $CopyRoot ];then echo exsits;exit 0;else echo not exsits;exit 1;fi"
+	if [ $? -ne 0 ];then
+		$cmdwrapper "mkdir $CopyRoot"
+		$cmdwrapper "mkdir -p $CopyRoot/ext800"
+	else
+		echo dir exsits,all files overwrite
+		#return 1
+	fi
+
+	cd;
+	# system
+	local predir=cp_bug_hack_dir
+	rm -fr $predir
+	mkdir ~/$predir
+	$mycopy -r $predir $targetpath
+	$mycopy -r ubtKernel4.13.11 $targetpath
+	# soft
+	$mycopy -r Downloads $targetpath
+
+	#android 
+	$mycopy -r bin $targetpath
+	$mycopy -r $predir $targetpath/ext800
+	$mycopy -r ext800/importantbk $targetpath/ext800
+	$mycopy -r ext800/nexus_drivers $targetpath/ext800
+
+	# kernel
+	$mycopy -r ext800/kernel $targetpath/ext800
+	# kernel dev
+	$mycopy -r ext800/android-lkms $targetpath/ext800
+
+	#android ide
+	$mycopy -r android-studio $targetpath
+	$mycopy -r Android $targetpath
+
+	# dev native and dex
+	$mycopy -r devcode $targetpath
+	$mycopy -r apkdev $targetpath
+
+	# flash rom
+	$mycopy -r andenv $targetpath
+	
+	rm -fr $predir
+	echo copy data done !
 
 }
 
@@ -1144,9 +1239,9 @@ function xxtest(){
 
 # use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
 # compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 27G 
-CCACHE_TOOL_X=$SRC_PATH/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
 function swcache(){
 
+local CCACHE_TOOL_X=$SRC_PATH/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
 	local C4ROM=~/CCACHE4ROM/.ccache
 	local C4OTH=~/CCACHE4OTH/.ccache
 	if [ ! -e "$C4ROM" ];then
@@ -1338,12 +1433,11 @@ function extractanddrv(){
 
 }
 # compile for and 5:
-# getand 5;chgejava2 7;. build/envsetup.sh;cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk;lunch 1;make update-api;make -j6
 # prepare for compile , chagejava, patch , and extract drivers
 function p4compile(){
 
 	swcache
-
+	local patchpath=$MAIN_DATA_ROOT/importantbk
 	case $1 in
 	4)
 		local andvertag=android-4.4.4_r1
@@ -1351,7 +1445,7 @@ function p4compile(){
 		cd $SRC_PATH/$andvertag
 		# fixme chge make version
 		if ! (make -v | sed -n 1p | grep 3.81 );then
-			sudo dpkg -i ~/importantbk/make_3.81-8.2ubuntu3_amd64.deb
+			sudo dpkg -i $patchpath/make_3.81-8.2ubuntu3_amd64.deb
 		fi
 		if ! (make -v | sed -n 1p | grep 3.81);then
 			echo error info:  make version 
@@ -1368,7 +1462,7 @@ function p4compile(){
 		local andvertag=android-5.1.1_r14
 		chgejava2 7
 		cd $SRC_PATH/$andvertag
-		cp ~/importantbk/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk
+		cp $patchpath/HOST_x86_common.mk.and5 build/core/clang/HOST_x86_common.mk
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n5_ham_LMY48M_51_a22
@@ -1383,7 +1477,7 @@ function p4compile(){
 		chgejava2 7
 		cd $SRC_PATH/$andvertag
 		cd build/core/clang/
-		patch < ~/importantbk/0001-Ubuntu-16.04-adaption.patch
+		patch < $patchpath/0001-Ubuntu-16.04-adaption.patch
 		cd $SRC_PATH/$andvertag
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
