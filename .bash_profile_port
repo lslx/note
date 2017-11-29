@@ -1144,7 +1144,7 @@ function xxtest(){
 
 # use ccache, compile cost 13min, otherwise cost 72min, only 4.4.4 cache size is 7.5G, switch to 6.0.1 and
 # compile cache size grow to 18G, switch to 5.1.1 and compile cache size grow to 27G 
-CCACHE_TOOL_X=~/ext800/androidcode/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
+CCACHE_TOOL_X=$SRC_PATH/android-4.4.4_r1/prebuilts/misc/linux-x86/ccache/ccache
 function swcache(){
 
 	local C4ROM=~/CCACHE4ROM/.ccache
@@ -1294,7 +1294,7 @@ function getandcode(){
 function getandcodeall(){
 
 	#getandcode emu-master-dev
-	#getandcode android-4.4.4_r1
+	getandcode android-4.4.4_r1
 	getandcode android-5.1.1_r14
 	getandcode android-6.0.1_r77
 	getandcode android-7.1.1_r27
