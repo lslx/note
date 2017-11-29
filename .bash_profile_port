@@ -1073,6 +1073,7 @@ function create_local_android_src_mirror(){
 # time md5sum aosp.tar         # onxps (171109)     #929a6a55f34d52ffe690999f8005cf38  cost : real 8m42.242s
 # time md5sum aosp.tar         # onDell(171128)     #92c23739e2cf7e02ac6bf1209c2b7a39  cost : real 24m50.439s 
 # time cp aosp171109_md5_929a6a55f34d52ffe690999f8005cf38.tar /media/fhc/sg2t/  #cost : real	36m0.121s
+# time cp aosp171128_md5_92c23739e2cf7e02ac6bf1209c2b7a39.tar /media/fhc/sg2t/  #cost : real	57m24.316s
 
 # copy    aosp171109_md5_929a6a55f34d52ffe690999f8005cf38.tar removble disk -> dell desktop cost 88m
 # tar xvf aosp171109_md5_929a6a55f34d52ffe690999f8005cf38.tar #  on desktop cost 44m
@@ -1220,10 +1221,16 @@ function __def_src_path(){
 function __def_path(){
 
 	echo AOSP_SRC_URL_CUR is: $AOSP_SRC_URL_CUR
-	if [[ -z `__def_repo_path` || -z `__def_repo_path` ]];then
-		echo get repo_path or src_path failed !
+	if ! __def_repo_path;then
+		echo get repo_path failed !
 		return 1
 	fi
+		echo REPO_PATH is $REPO_PATH
+	if ! __def_src_path;then
+		echo get src_path failed !
+		return 1
+	fi
+		echo SRC_PATH is $SRC_PATH
 }
 
 function __get_aosp_code(){
@@ -1343,7 +1350,13 @@ function p4compile(){
 		chgejava2 6
 		cd $SRC_PATH/$andvertag
 		# fixme chge make version
-		#return
+		if ! (make -v | sed -n 1p | grep 3.81 );then
+			sudo dpkg -i ~/importantbk/make_3.81-8.2ubuntu3_amd64.deb
+		fi
+		if ! (make -v | sed -n 1p | grep 3.81);then
+			echo error info:  make version 
+			return 1
+		fi
 		source build/envsetup.sh
 		if [ ! -e "drv_copyed" ];then
 			extractanddrv n5_ham_KTU84P_44_a19
@@ -1451,7 +1464,7 @@ function compileandall4(){
 
 	compileand4 01_aosp_arm-eng
 	compileand4 02_aosp_x86-eng
-	compileand4 09_aosp_hammerhead-userdebug 
+	compileand4 05_aosp_hammerhead-userdebug
 }
 
 function compileand5(){
