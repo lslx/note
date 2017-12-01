@@ -146,23 +146,23 @@ function copy4_new_machine_setup(){
 	local mycopy targetpath cmdwrapper
 	local CopyRoot=CopyRootDir
 	local remote=$1
+	export RSYNC_RSH='ssh -p 22022 -o StrictHostKeyChecking=no'
+	mycopy="rsync -avuz --progress --delete "	
 	case $remote in
 	dell)
 		if (hostname|grep -q -i -e 'B250M');then echo copy error args;return 1;fi
 		# mycopy="scp -P22022" # git maybe has soft link, scp will get realfile
-		mycopy="rsync -avuz -e ssh -p22022"	
-		targetpath=fhc@${desktop_dell}:$CopyRoot
-		cmdwrapper=fhcsshdell
+		targetpath=fhc@${desktop_dell}:
+		cmdwrapper="ssh -p 22022 -o StrictHostKeyChecking=no fhc@$desktop_dell"
 		;;
 	xps)
 		if (hostname|grep -q -i -e 'xps');then echo copy error args;return 1;fi
-		mycopy="rsync -avuz -e ssh -p22022"	
-		targetpath=fhc@${laptop_xps}:$CopyRoot
-		cmdwrapper=fhcsshxps
+		targetpath=fhc@${laptop_xps}
+		cmdwrapper="ssh -p 22022 -o StrictHostKeyChecking=no fhc@$laptop_xps"
 		;;
 	disk)
-		mycopy="cp -d"  # if cp dir soft link work right , if cp a file soft link, -d keep soft link
-		targetpath=/media/fhc/sg2t/$CopyRoot
+		#mycopy="cp -d"  # if cp dir soft link work right , if cp a file soft link, -d keep soft link
+		targetpath=/media/fhc/sg2t/
 		cmdwrapper="sh -c"
 		;;
 	*)
@@ -183,36 +183,71 @@ function copy4_new_machine_setup(){
 	cd;
 	# system
 	local predir=cp_bug_hack_dir
-	rm -fr $predir
-	mkdir ~/$predir
-	$mycopy -r $predir $targetpath
-	$mycopy -r ubtKernel4.13.11 $targetpath
+	cd;rm -fr $predir
+	cd;mkdir ~/$predir
+	local syncdir=$predir
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+
+	local syncdir=ubtKernel4.13.11
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 	# soft
-	$mycopy -r Downloads $targetpath
+	local syncdir=Downloads
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 
 	#android 
-	$mycopy -r bin $targetpath
-	$mycopy -r $predir $targetpath/ext800
-	$mycopy -r ext800/importantbk $targetpath/ext800
-	$mycopy -r ext800/nexus_drivers $targetpath/ext800
+	local syncdir=bin
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+
+	# ----------------------------------------------------------------
+	local syncdir=$predir
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+
+	local syncdir=importantbk
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
 
 	# kernel
-	$mycopy -r ext800/kernel $targetpath/ext800
+	local syncdir=kernel
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+
 	# kernel dev
-	$mycopy -r ext800/android-lkms $targetpath/ext800
+	local syncdir=android-lkms
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+	# ----------------------------------------------------------------
 
 	#android ide
-	$mycopy -r android-studio $targetpath
-	$mycopy -r Android $targetpath
+	local syncdir=android-studio
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+
+	local syncdir=Android
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	local syncdir=.android
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 
 	# dev native and dex
-	$mycopy -r devcode $targetpath
-	$mycopy -r apkdev $targetpath
+	local syncdir=devcode
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	local syncdir=apkdev
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 
 	# flash rom
-	$mycopy -r andenv $targetpath
+	local syncdir=andenv
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 	
-	rm -fr $predir
+	cd;rm -fr $predir
 	echo copy data done !
 
 }
