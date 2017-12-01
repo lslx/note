@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#ori_root_path
+export orip=/home/fhc/Downloads/竞品分析包
+#apk_root_path
+export apkp=/home/fhc/devcode/autorev
+
