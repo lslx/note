@@ -8,13 +8,15 @@ fhc-B250M-D3H)
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
 fhc-XPS-15-9560)
-	#PS1='\033[1;33mx\033[1;32m$:\033[0;00m'
 	PS1='x$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
 ubt)
-	#PS1='\033[1;33mu\033[1;32m$:\033[0;00m'
 	PS1='u$:'
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	;;
+fhc-Hi-Fi-B85W)
+	PS1='H$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
 *)
@@ -49,6 +51,26 @@ function marks {
 # for linux
  ls -l "$MARKPATH" | sed 's/ / /g' | cut -d' ' -f9-
 }
+
+function docmd(){
+	local cmdfile=$1
+	local firstline=$2
+	local lastline=$3
+	if [[ "$1" != "" && "$2" != "" && "$3" == "" ]];then
+		echo 1111
+		`sed -n "${2}p" $cmdfile`
+		echo 2222
+	fi
+
+	if [[ "$1" != "" && "$2" != "" && "$3" != "" ]];then
+
+		for((i=$firstline;i<=$lastline;i++))
+		do
+			`sed -n "${i}p" $cmdfile`
+		done
+	fi
+}
+
 extract() { 
     if [ -f $1 ] ; then 
       case $1 in 

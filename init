@@ -12,7 +12,7 @@ fhc-XPS-15-9560)
         REPO_URL_NET=https://android.googlesource.com
         REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
         ;;
-desktop_home)
+fhc-Hi-Fi-B85W)
         MAIN_DATA_ROOT=/home/fhc/ext800
         REPO_URL_NET=https://android.googlesource.com
         REPO_URL_LOC=/home/fhc/ext800/aospbk/mirror
