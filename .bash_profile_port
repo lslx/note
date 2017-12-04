@@ -436,7 +436,7 @@ adb shell "rm /data/local/tmp/straceout.txt"
 adb shell "strace -o /data/local/tmp/straceout.txt -e trace=all -p $pro_id" &
 echo $pro_id has strace 
 jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
-#adb shell "strace -o /data/local/tmp/straceout.txt -e trace=all -p $pro_id 2>&1 >/data/local/tmp/sss.txt &"
+#adb shell "strace -o /data/local/tmp/straceout.txt -e trace=all -p $pro_id  >/data/local/tmp/sss.txt 2>&1 &"
 if [ ! -d straceout ];then
    mkdir straceout
 fi
@@ -1120,9 +1120,9 @@ function java2smali()
 function apkunpack()
 {
 	local prefix=$2
-	apktool d -o "$prefix"dirnrs -r -s -f $1 2>&1 >unpack.log
-	echo ---------------------------------------  >>unpack.log
-	apktool d -o "$prefix"dir -f $1 2>&1 >>unpack.log
+	apktool d -o "$prefix"dirnrs -r -s -f $1 >unpack.log 2>&1
+	echo ---------------------------------------  >>unpack.log 2>&1
+	apktool d -o "$prefix"dir -f $1 >>unpack.log
 }
 
 function getscr()
