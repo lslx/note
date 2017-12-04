@@ -1007,13 +1007,6 @@ function chgerom2()
 		fi
 	fi
 }
-#~/bin/apktool d -f -o "/Users/hongchaofu/jpfxb/$1"  "/Users/hongchaofu/$1.apk"
-function unpackapk()
-{
-	local unpackpath=`pwd`/unpack
-	apktool d -f -o $unpackpath $1 2>&1 >unpack.log
-
-}
 function getapkunpackdir()
 {
 	local pkg=`_apk_get_pkg_name $1`
