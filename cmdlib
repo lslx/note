@@ -2,14 +2,15 @@
 
 
 
+sudo apt remove apktool
+cd Downloads
+wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool apktool
+wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.3.0.jar apktool.jar
+mv apktool apktool.jar /usr/local/bin/
+cd /usr/local/bin/
+chmod +x *
+cd
 
-
-echo fffff
-echo sssss
-
-
-
-echo end
 
 
 
