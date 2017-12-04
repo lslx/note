@@ -169,7 +169,8 @@ function copy4_new_machine_setup(){
 	local CopyRoot=CopyRootDir
 	local remote=$1
 	export RSYNC_RSH='ssh -p 22022 -o StrictHostKeyChecking=no'
-	mycopy="rsync -avuz --progress --delete "	
+	#mycopy="rsync -avuz --progress --delete "	
+	mycopy="rsync -avuz --progress"	
 	case $remote in
 	dell)
 		if (hostname|grep -q -i -e 'B250M');then echo copy error args;return 1;fi
@@ -179,7 +180,7 @@ function copy4_new_machine_setup(){
 		;;
 	xps)
 		if (hostname|grep -q -i -e 'xps');then echo copy error args;return 1;fi
-		targetpath=fhc@${laptop_xps}
+		targetpath=fhc@${laptop_xps}:
 		cmdwrapper="ssh -p 22022 -o StrictHostKeyChecking=no fhc@$laptop_xps"
 		;;
 	disk)
@@ -204,72 +205,72 @@ function copy4_new_machine_setup(){
 
 	cd;
 	# system
-	local predir=cp_bug_hack_dir
-	cd;rm -fr $predir
-	cd;mkdir ~/$predir
-	local syncdir=$predir
-	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	#local predir=cp_bug_hack_dir
+	#cd;rm -fr $predir
+	#cd;mkdir ~/$predir
+	#local syncdir=$predir
+	#$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	#cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 
 	local syncdir=ubtKernel4.13.11
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	# soft
 	local syncdir=Downloads
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
 	#android 
 	local syncdir=bin
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
 	# ----------------------------------------------------------------
-	local syncdir=$predir
-	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
-	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+	#local syncdir=$predir
+	#$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	#cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
 
 	local syncdir=importantbk
 	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
-	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
 
 	# kernel
 	local syncdir=kernel
 	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
-	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
 
 	# kernel dev
 	local syncdir=android-lkms
 	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
-	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800/$syncdir
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
 	# ----------------------------------------------------------------
 
 	#android ide
 	local syncdir=android-studio
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
 	local syncdir=Android
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	local syncdir=.android
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
 	# dev native and dex
 	local syncdir=devcode
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	local syncdir=apkdev
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
 	# flash rom
 	local syncdir=andenv
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	
-	cd;rm -fr $predir
+	#cd;rm -fr $predir
 	echo copy data done !
 
 }
@@ -551,10 +552,10 @@ function _apk_get_act_name()
 {
 	echo `aapt d badging $1 | grep activity:| grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2`
 }
-function getapkinfo()
+function apkgetinfo()
 {
-    local PKG=`_apk_get_pkg_name $1`
-    local ACT=`_apk_get_act_name $1`
+    PKG=`_apk_get_pkg_name $1`
+    ACT=`_apk_get_act_name $1`
     echo $PKG
     echo $ACT
     echo $PKG/$ACT
@@ -942,7 +943,7 @@ function replaceso()
 }
 function chgerom()
 {
-	local basepath=~/dbgbase/so_bk
+	local basepath=~/bin/dbgbase/so_bk
 	local debugpath=~/android-4.4.4_r1
 	testunpackrom
 	if [ $? -eq 0 ]; then # now is unpacker
@@ -976,7 +977,7 @@ function chgerom()
 # just replace so
 function chgerom2()
 {
-	local basepath=~/dbgbase/so_bk
+	local basepath=~/bin/dbgbase/so_bk
 	# local debugpath=~/android-4.4.4_r1
 	testunpackrom
 	if [ $? -eq 0 ]; then # now is unpacker
@@ -1007,10 +1008,11 @@ function chgerom2()
 		fi
 	fi
 }
-function getapkunpackdir()
+function apkgetunpackdir()
 {
 	local pkg=`_apk_get_pkg_name $1`
-	adb pull /data/local/tmp/$pkg
+	[ -n "$pkg" ] && adb pull /data/local/tmp/$pkg
+	[ -n "$2" ] && mv $pkg $2_$pkg
 }
 alias adbn7='adb -s 015d4906062bfc05'
 alias adbn6p='adb -s ENU5T15C17000579'
@@ -1120,9 +1122,9 @@ function java2smali()
 function apkunpack()
 {
 	local prefix=$2
-	apktool d -o "$prefix"dirnrs -r -s -f $1 >unpack.log 2>&1
-	echo ---------------------------------------  >>unpack.log 2>&1
-	apktool d -o "$prefix"dir -f $1 >>unpack.log
+	apktool d -o ${prefix}dirnrs -r -s -f $1 >${prefix}unpack.log 2>&1
+	echo ---------------------------------------  >>${prefix}unpack.log 2>&1
+	apktool d -o ${prefix}dir -f $1 >>${prefix}unpack.log 2>&1
 }
 
 function getscr()
