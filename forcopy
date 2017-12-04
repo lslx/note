@@ -77,8 +77,15 @@ arm-softmmu/qemu-system-arm -M android_arm -cpu cortex-a9 -kernel /home/fhc/andr
 
 install Beyond Compare 
 http://blog.csdn.net/bingyu9875/article/details/52856675
-install wine (is too old version)
+install wine (use apt is too old version)
 https://wiki.winehq.org/Ubuntu
+use net:
+sudo dpkg --add-architecture i386 
+wget -nc https://dl.winehq.org/wine-builds/Release.key
+sudo apt-key add Release.key
+sudo apt-add-repository https://dl.winehq.org/wine-builds/ubuntu/
+sudo apt-get update
+sudo apt-get install --install-recommends winehq-stable
 
 arm board on qemu
 http://www.bkjia.com/Androidjc/1027005.html
