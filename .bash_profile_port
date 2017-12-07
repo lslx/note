@@ -271,6 +271,10 @@ function copy4_new_machine_setup(){
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
+	local syncdir=panda1dev
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
+
 	
 	#cd;rm -fr $predir
 	echo copy data done !
@@ -1997,4 +2001,14 @@ alias q2='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kern
 
 #-------------
 alias gitset='git config --global user.email "zz00zz.9774@gmail.com" && git config --global user.name "lslx"'
+#------ todo:
+echo ------todo list:
+echo bin tool func
+echo system.map func
+echo show sig number
+echo
+
+
+
+
 
