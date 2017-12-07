@@ -13,10 +13,7 @@ make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_armv7_defconfig
 make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm -j4
 
 panda1 compile:
-get panda_install.bash, and comment the build.sh call line, otherwise, all file will owner is root
-sudo panda_install.bash
-sudo apt-get install libsdl1.2-dev
-or build.sh get error: fatal error: SDL/SDL.h: No such file or directory
+sudo panda_install2.bash
 cd panda/qemu
 chge build.sh content: (for android support)
 
