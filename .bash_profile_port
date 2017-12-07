@@ -523,6 +523,20 @@ function initanadata(){
 
 #gtb apk_path apk_md5 apk_pkg_name apk_act_name anti* policy>ss.html;open ss.html
 
+dmesgand(){
+	echo new_log_begin:>~/bin/dmesg.log
+	(while true; do
+	  sleep 1
+	  adb shell su -c "dmesg -c" >> ~/bin/dmesg.log;
+	done) & 
+
+	trap "kill %1;%1;kill %2;%2;kill %3;%3;trap - SIGINT" SIGINT
+	tail -f ~/bin/dmesg.log
+	echo fffffff
+	wait %1 2>/dev/null
+	wait %2 2>/dev/null
+	wait %3 2>/dev/null
+}
 function pid()
 {
     local prepend=''
