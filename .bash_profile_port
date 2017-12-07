@@ -240,6 +240,11 @@ function copy4_new_machine_setup(){
 	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
 	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
 
+	# makerom
+	local syncdir=makerom
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+
 	# kernel dev
 	local syncdir=android-lkms
 	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
@@ -266,10 +271,6 @@ function copy4_new_machine_setup(){
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
-	# flash rom
-	local syncdir=andenv
-	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	
 	#cd;rm -fr $predir
 	echo copy data done !
@@ -635,12 +636,19 @@ function gdbwrapper()
 	#local gdbpathfile=/usr/local/bin/gdb
 
 	# use android stdio sdk gdb
-	local gdbpathfile=~/Android/sdk/ndk-bundle/prebuilt/darwin-x86_64/bin/gdb
+	local gdbpathfile=~/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/bin/gdb
 
 
 	# use cryxx
 	#local gdbpathfile=~/cryndk/crystax-ndk-10.3.2/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-gdb
 	$gdbpathfile -x "$@"
+	#$gdbpathfile -x "$@"<<EOF
+#x/1xw 0x400cb004
+#set  *0x400cb004=1
+#x/1xw 0x400cb004
+#detach
+#q
+#EOF
 }
 
 # gdbclient app_process :5040 xxx
@@ -659,15 +667,12 @@ function gdbclient()
 		return;
 	fi
 
+	echo '###-->'gdbwrapper "$GDBCMDS" "$EXEPATHFILE"
 	gdbwrapper "$GDBCMDS" "$EXEPATHFILE"
 }
 
 # to do: 
 # kill all sub process
-#
-#
-#
-#
 
 function apkdbg()
 {
@@ -713,18 +718,18 @@ function apkdbg()
 	adb shell "su -c gdbserver $PORT --attach $PID" &
 	sleep 1s
 
-	local OUT_ROOT=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead
-	local OUT_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols
-	local OUT_SO_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/lib
-	local OUT_EXE_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/bin
-	local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+	local OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead
+	local OUT_SYMBOLS=$OUT_ROOT/symbols
+	local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
+	local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
+	local PREBUILTS=/home/fhc/ext800/makerom/android-4.4.4_r1/prebuilt/linux-x86
 	local ARCH=arm
 	local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
 
 	echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/android-4.4.4_r1/"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+	#echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/ext800/src-android-local/android-4.4.4_r1/ /home/fhc/ext800/makerom/android-4.4.4_r1/"
+	#echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "define ss"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "b dlopen"
 	# must have bash   and  > /dev/null   ,  otherwise will stuck 
@@ -734,11 +739,11 @@ function apkdbg()
 	echo >>"$OUT_ROOT/gdbclient.cmds" "end"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
 	echo >>"$OUT_ROOT/gdbclient.cmds" ""
-	local GDBCMDS=$OUT_ROOT/gdbclient.cmds
+	GDBCMDS=$OUT_ROOT/gdbclient.cmds
 	gdbclient
 }
 
-function gdbattch()
+function apkattch()
 {
 	local debugutil=
 	local debugutil=`adb shell "su -c if [ -f /data/local/tmp/setpropex ]\; then echo findit\; fi"`
@@ -781,29 +786,30 @@ function gdbattch()
 		adb shell "su -c gdbserver $PORT --attach $PID" &
 		sleep 2
 
-		local OUT_ROOT=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead
-		local OUT_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols
-		local OUT_SO_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/lib
-		local OUT_EXE_SYMBOLS=/Users/hongchaofu/android-4.4.4_r1/out/target/product/hammerhead/symbols/system/bin
-		local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+		local OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead
+		local OUT_SYMBOLS=$OUT_ROOT/symbols
+		local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
+		local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
+		local PREBUILTS=/home/fhc/ext800/makerom/android-4.4.4_r1/prebuilt/linux-x86
 		local ARCH=arm
 		local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
 
 		echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 		echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
-		echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/android-4.4.4_r1/"
-		echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
-		echo >>"$OUT_ROOT/gdbclient.cmds" "define ss"
-		echo >>"$OUT_ROOT/gdbclient.cmds" "b dlopen"
-		# must have bash   and  > /dev/null   ,  otherwise will stuck 
-		echo >>"$OUT_ROOT/gdbclient.cmds" "shell bash jdwpexitsh $PID >/dev/null &"
-		# c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck
-		echo >>"$OUT_ROOT/gdbclient.cmds" "c"
-		echo >>"$OUT_ROOT/gdbclient.cmds" "end"
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/ext800/src-android-local/android-4.4.4_r1/ /home/fhc/ext800/makerom/android-4.4.4_r1/"
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "define ss"
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "b dlopen"
+		## must have bash   and  > /dev/null   ,  otherwise will stuck 
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "shell bash jdwpexitsh $PID >/dev/null &"
+		## c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "c"
+		#echo >>"$OUT_ROOT/gdbclient.cmds" "end"
 		echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
 		echo >>"$OUT_ROOT/gdbclient.cmds" ""
-		local GDBCMDS=$OUT_ROOT/gdbclient.cmds
+		GDBCMDS=$OUT_ROOT/gdbclient2.cmds
 		gdbclient
+		break
 	done
 }
 
@@ -841,11 +847,11 @@ function nativedbg()
 
 	echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/android-4.4.4_r1/ /Users/hongchaofu/android-4.4.4_r1/"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+	echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/ext800/src-android-local/android-4.4.4_r1/ /home/fhc/ext800/makerom/android-4.4.4_r1/"
+	#echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
 	echo >>"$OUT_ROOT/gdbclient.cmds" ""
-	local GDBCMDS=$OUT_ROOT/gdbclient.cmds
+	GDBCMDS=$OUT_ROOT/gdbclient.cmds
 	gdbclient
 }
 function dbgtest()
