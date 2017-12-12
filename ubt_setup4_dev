@@ -11,6 +11,19 @@ sudo apt -f install
 
 
 
-
+#install vim and plugin
+#http://blog.csdn.net/u011475134/article/details/76216176
+#http://blog.jobbole.com/58978/
+#http://blog.csdn.net/qq_21544879/article/details/51957133
+#http://www.jianshu.com/p/e9820ed084ca
+#http://valloric.github.io/YouCompleteMe/#general-usage
+#
+#
+#
+#
+#ctags
+#http://www.naseer.in/blog/2010/08/10/use-cscope-to-browse-the-android-source-code/
+#https://github.com/fighterCui/android_vim_cscope/blob/master/cscope_maps.vim
+#https://github.com/Valloric/YouCompleteMe
 
 
