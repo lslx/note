@@ -1,5 +1,7 @@
 alias ee='vim ~/.bash_profile_port'
 alias bb='. ~/.bash_profile_port'
+HISTSIZE=100000
+HISTFILESIZE=200000
 MYMACHINE=`hostname`
 case $MYMACHINE in
 fhc-B250M-D3H)
@@ -418,6 +420,22 @@ function getimg2 {
 	scp fhc@${buildsvr}:/home/fhc/android-4.4.4_r1/out/target/product/hammerhead/ramdisk.img .
 	scp fhc@${buildsvr}:/home/fhc/src/prebuilts/qemu-kernel/arm/kernel-qemu-armv7 .
 }
+
+
+function unpackramdisk(){ # only use relative path
+	local srcfile=${1:-ramdisk.img} local dstdir=${2:-unpack}
+	[ -e $dstdir  ] && rm -fr $dstdir
+	[ -e $srcfile ] && (mkdir $dstdir && cd $dstdir && cat ../$srcfile | gunzip | cpio -idmv)
+
+}
+function packramdisk(){ # only use relative path
+	local srcdir=${1:-unpack} local dstfile=${2:-ramdisk_new.img}
+	[ -e $dstfile ] && rm  -fr $dstfile
+	[ -e $srcdir  ] && (cd $srcdir && find . | cpio -o -H newc | gzip -9 > ../$dstfile)
+
+}
+
+
 function getdbgtool(){
 	mkdir ~/dbgtool
 	#scp -r fhc@${buildsvr}:/home/fhc/src/prebuilts/gcc/darwin-x86/x86/i686-linux-android-4.7/bin ~/dbgtool
@@ -619,9 +637,9 @@ function dostrace()
 		adb shell "su -c kill -9 $PID"
 	fi
 	adb shell "am start -D -n $PKG/$ACT"
+	sleep 5s
 	local PID=`pid $PKG`
 	echo -------------new pid:$PID
-	sleep 0.5s
 	if [ -z "$PID" ]; then
 	    echo start apk failed, pid is null
 	    return
@@ -1006,6 +1024,7 @@ function chgerom()
 function chgerom2()
 {
 	local basepath=~/bin/dbgbase/so_bk
+	#local basepath=/home/fhc/ext800/src-android-local/android-4.4.4_r1/out/target/product/hammerhead/system/lib
 	# local debugpath=~/android-4.4.4_r1
 	testunpackrom
 	if [ $? -eq 0 ]; then # now is unpacker
@@ -1787,7 +1806,7 @@ function compileandall7(){
 
 PANDA='/home/fhc/panda1dev/panda/qemu/arm-softmmu/qemu-system-arm'
 IMGPATH='/home/fhc/pandaimg/n5a19arma44'
-PANDA_WORK_DIR=~/pandawork
+PANDA_WORK_DIR=~/devcode/autorev
 function pdr(){
 
 	if [ -z "$1" ];then
@@ -1845,14 +1864,15 @@ function pdr(){
 }
 
 
-#-panda syscalls
+#pdr4 ijm "-replay fjtyj -panda syscalls"
 #-panda stringsearch:str=7890,callers=2
 # or 
 #-panda callstack_instr -panda stringsearch:str=7890,callers=2
 # pdrt calc2 '-replay newkn -panda osi;osi_linux:kconf_file=kernelinfo.conf,kconf_group=my_kn_info;osi_test'>ositest.txt
 # pdrt calc2 '-replay newkn -panda osi;osi_linux:kconf_file=kernelinfo.conf,kconf_group=my_kn_info;asidstory:width=180'
 function pdr4(){
-	pdrt 4 $*
+	echo all arg:$*
+	pdrt 4 "$@"
 }
 function pdr5(){
 	pdrt 5 $*
@@ -1901,15 +1921,13 @@ function pdrt(){
 	else
 		local projdir=$2
 	fi
-	if [ ! -e "$PANDA_WORK_DIR/$projdir" ];then
-		mkdir -p $PANDA_WORK_DIR/$projdir
-		touch stringsearch_search_strings.txt
-	fi
+	[ ! -e "$PANDA_WORK_DIR/$projdir" ] && mkdir -p $PANDA_WORK_DIR/$projdir
 	cd $PANDA_WORK_DIR/$projdir
+	touch stringsearch_search_strings.txt
 	echo
 	echo now you are in dir $PANDA_WORK_DIR/$projdir
 	echo
-	
+	echo arg3:$3
 	if [ -n "$3" ];then
 
 		local replaycmd="\
@@ -2004,6 +2022,11 @@ alias q2='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kern
 
 #-------------
 alias gitset='git config --global user.email "zz00zz.9774@gmail.com" && git config --global user.name "lslx"'
+alias mkcscopefile='find `pwd` -name "*.[ch]" -o -name "*.cpp" > cscope.files'
+alias mktag='ctags --languages=c,c++ -R;cscope -bRq'
+
+
+
 #------ todo:
 echo ------todo list:
 echo bin tool func
