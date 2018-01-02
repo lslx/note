@@ -1,7 +1,7 @@
 alias ee='vim ~/.bash_profile_port'
 alias bb='. ~/.bash_profile_port'
-HISTSIZE=100000
-HISTFILESIZE=200000
+HISTSIZE=10000
+HISTFILESIZE=20000
 MYMACHINE=`hostname`
 case $MYMACHINE in
 fhc-B250M-D3H)
@@ -99,8 +99,9 @@ alias bcmp='nohup bcompare &'
 #ulimit -S -n 1024
 
 #for android sdk
-export PATH="/home/fhc/Android/Sdk/ndk-bundle:$PATH"
+export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:$PATH"
 
+alias ccc='clear;clear'
 alias ida='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq.exe'
 alias idaa='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq64.exe'
 alias ll='ls -l'
@@ -552,7 +553,8 @@ dmesgand(){
 	echo new_log_begin:>~/bin/dmesg.log
 	(while true; do
 	  sleep 1
-	  adb shell su -c "dmesg -c" >> ~/bin/dmesg.log;
+	  #adb shell su -c "dmesg -c" >> ~/bin/dmesg.log;
+	  adb shell "dmesg -c" >> ~/bin/dmesg.log;
 	done) & 
 
 	trap "kill %1;%1;kill %2;%2;kill %3;%3;trap - SIGINT" SIGINT
@@ -929,14 +931,18 @@ function initdbgenv()
 {
 	local targetdir=/data/local/tmp
 	adb shell "su -c chmod 777 $targetdir"
-	inter_putbin ~/devcode/rootadb/libs/armeabi-v7a/ setpropex $targetdir setpropex
+	inter_putbin ~/devcode/rootadb/libs/armeabi-v7a/ setpropex-pie $targetdir setpropex-pie
 	inter_putbin ~/Android/Sdk/ndk-bundle/prebuilt/android-arm/gdbserver gdbserver $targetdir gdbserver
-	inter_putbin ~/devcode/adbi/hijack/obj/local/armeabi/hijack $targetdir hijack
+	inter_putbin ~/devcode/adbi/hijack/libs/armeabi-v7a hijack $targetdir hijack
 	inter_putbin ~/devcode/haihang_analysis/everisk libexample.so $targetdir libexample.so
-	inter_putbin ~/devcode/haihang_analysis/everisk inject $targetdir inject
+	inter_putbin ~/devcode/inject-test/libs/armeabi-v7a inject $targetdir inject
+	inter_putbin ~/devcode/inject-test/libs/armeabi-v7a libgkutil.so $targetdir libgkutil.so
+	#inter_putbin ~/devcode/haihang_analysis/everisk inject $targetdir inject
 	inter_putbin ~/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv android_server $targetdir andsvr
 	inter_putbin ~/devcode/so_unpacker_adv/libs/armeabi-v7a so_unpacker_adv $targetdir so_unpacker_adv
-	adb shell "su -c /data/local/tmp/setpropex ro.debuggable 1"
+	adb shell "su -c /data/local/tmp/setpropex-pie ro.debuggable 1"
+	adb shell "su -c setenforce 0"
+    adb shell echo 0 \> /proc/sys/kernel/kptr_restrict
 }
 function jdwpexit()
 {
@@ -2025,13 +2031,70 @@ alias gitset='git config --global user.email "zz00zz.9774@gmail.com" && git conf
 alias mkcscopefile='find `pwd` -name "*.[ch]" -o -name "*.cpp" > cscope.files'
 alias mktag='ctags --languages=c,c++ -R;cscope -bRq'
 
+function getmem(){
 
+    adb shell echo 0 \> /proc/sys/kernel/kptr_restrict
+    adb shell cat /proc/iomem
+    adb shell cat /proc/kallsyms \| grep sys_call_table
 
+}
+# setenforce 0
+# getenforce
+function andsystable(){
+    if [ -z "$1" ];then return 1;fi  #0xf984
+    adb shell dd if=/dev/mem skip=$(($1)) bs=$((0x1)) count=2048 2\>/dev/null \| od -A x -t x4
+}
+h2d(){
+    para=$@
+    echo "ibase=16; ${para^^}"|bc
+}
+d2h(){
+    result=`echo "obase=16; $@"|bc`
+    echo ${result,,}
+}
+function adbps(){
+    adb shell ps
+}
+function adbhijack(){
+    local pid=$1
+    adb shell /data/local/tmp/hijack -p $pid -l /data/local/tmp/libexample.so -D 9
+    adb shell cat /proc/$pid/maps | grep libexample
+}
+function adbhijack2(){
+    local pid=$1
+    adb shell /data/local/tmp/hijack -p $pid -l /data/local/tmp/libgkutil.so
+    adb shell cat /proc/$pid/maps | grep libgkutil
+}
+function adbinject(){
+    local pid=$1
+    adb shell /data/local/tmp/inject $pid /data/local/tmp/libgkutil.so
+    adb shell cat /proc/$pid/maps | grep libgkutil
+}
+function cleanijm(){
+    adb shell su -c 'rm -fr /data/local/tmp/com.saic.roewe.iov'
+}
+function getijm(){
+    adb pull /data/local/tmp/com.saic.roewe.iov
+}
+function cleancalc(){
+    adb shell su -c 'rm -fr /data/local/tmp/com.android.calculator2'
+}
+function getcalc(){
+    adb pull /data/local/tmp/com.android.calculator2
+}
+function cleantest(){
+    adb shell su -c 'rm -fr /data/local/tmp/com.example.fhc.test'
+}
+function gettest(){
+    adb pull /data/local/tmp/com.example.fhc.test
+}
 #------ todo:
 echo ------todo list:
 echo bin tool func
 echo system.map func
 echo show sig number
+echo dexparse cmd use dextra ... 
+echo elfparse cmd use bintool, angr and so on
 echo
 
 
