@@ -717,16 +717,8 @@ function gdbclient()
 
 function apkdbg()
 {
-	local debugutil=
-	local debugutil=`adb shell "su -c if [ -f /data/local/tmp/setpropex ]\; then echo findit\; fi"`
-	if [ -z "$debugutil" ]; then
-		# donot need chmod, what every adbd run as root
-		adb push ~/devcode/rootadb/libs/armeabi-v7a/setpropex /data/local/tmp/
-	fi
-        adb shell "su -c /data/local/tmp/setpropex ro.debuggable 1"
 	local PKG=`_apk_get_pkg_name $1`
 	local ACT=`_apk_get_act_name $1`
-	local PID=
 	local PID=`pid $PKG`
 	if [ -n "$PID" ];then
 		adb shell "su -c kill -9 $PID"
@@ -734,11 +726,10 @@ function apkdbg()
 	sleep 0.5s
 	adb shell "am start -D -n $PKG/$ACT"
 	sleep 0.3s
-
-	local PID=
+	PID=
 	for i in {1..300}
 	do
-		local PID=`pid $PKG`
+		PID=`pid $PKG`
 		if [ -n "$PID" ];then
 		    break
 		fi
@@ -747,7 +738,6 @@ function apkdbg()
 		echo get pid failed
 		return
 	fi
-	# echo pid : $PID
 	local PORT=:5040
 	adb forward --remove "tcp$PORT"
 	adb forward "tcp$PORT" "tcp$PORT"
@@ -758,14 +748,21 @@ function apkdbg()
 	fi
 	adb shell "su -c gdbserver $PORT --attach $PID" &
 	sleep 1s
-
-	local OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead
+    local andver=`adb shell getprop ro.build.fingerprint | grep -o [4-7]\.[0-9]\.[0-9]`
+    local OUT_ROOT=
+    case "$andver" in
+        4.4.4) OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead;;
+        5.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-5.1.1_r14/out/target/product/hammerhead;;
+        6.0.1) OUT_ROOT=/home/fhc/ext800/makerom/android-6.0.1_r77/out/target/product/hammerhead;;
+        7.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-7.1.1_r27/out/target/product/angler;;
+        *) echo Unknown andver: $andver;return;;
+    esac
 	local OUT_SYMBOLS=$OUT_ROOT/symbols
 	local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
 	local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
-	local PREBUILTS=/home/fhc/ext800/makerom/android-4.4.4_r1/prebuilt/linux-x86
+	#local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
 	local ARCH=arm
-	local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
+	local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process32
 
 	echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 	echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
@@ -786,16 +783,8 @@ function apkdbg()
 
 function apkattch()
 {
-	local debugutil=
-	local debugutil=`adb shell "su -c if [ -f /data/local/tmp/setpropex ]\; then echo findit\; fi"`
-	if [ -z "$debugutil" ]; then
-		# donot need chmod, what every adbd run as root
-		adb push ~/devcode/rootadb/libs/armeabi-v7a/setpropex /data/local/tmp/
-	fi
-        adb shell "su -c /data/local/tmp/setpropex ro.debuggable 1"
 	local PKG=`_apk_get_pkg_name $1`
 	local ACT=`_apk_get_act_name $1`
-	local PID=
 	local PID=`pid $PKG`
 	if [ -n "$PID" ];then
 		adb shell "su -c kill -9 $PID"
@@ -825,15 +814,23 @@ function apkattch()
 			adb shell "su -c kill -9 $gdbsvrpid"
 		fi
 		adb shell "su -c gdbserver $PORT --attach $PID" &
-		sleep 2
+        sleep 1s
+        local andver=`adb shell getprop ro.build.fingerprint | grep -o [4-7]\.[0-9]\.[0-9]`
+        local OUT_ROOT=
+        case "$andver" in
+            4.4.4) OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead;;
+            5.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-5.1.1_r14/out/target/product/hammerhead;;
+            6.0.1) OUT_ROOT=/home/fhc/ext800/makerom/android-6.0.1_r77/out/target/product/hammerhead;;
+            7.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-7.1.1_r27/out/target/product/angler;;
+            *) echo Unknown andver: $andver;return;;
+        esac
 
-		local OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead
-		local OUT_SYMBOLS=$OUT_ROOT/symbols
-		local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
-		local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
-		local PREBUILTS=/home/fhc/ext800/makerom/android-4.4.4_r1/prebuilt/linux-x86
-		local ARCH=arm
-		local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process
+        local OUT_SYMBOLS=$OUT_ROOT/symbols
+        local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
+        local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
+        #local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+        local ARCH=arm
+        local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process32
 
 		echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
 		echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
@@ -848,7 +845,7 @@ function apkattch()
 		#echo >>"$OUT_ROOT/gdbclient.cmds" "end"
 		echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
 		echo >>"$OUT_ROOT/gdbclient.cmds" ""
-		GDBCMDS=$OUT_ROOT/gdbclient2.cmds
+		GDBCMDS=$OUT_ROOT/gdbclient.cmds
 		gdbclient
 		break
 	done
@@ -2030,6 +2027,53 @@ alias q2='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kern
 alias gitset='git config --global user.email "zz00zz.9774@gmail.com" && git config --global user.name "lslx"'
 alias mkcscopefile='find `pwd` -name "*.[ch]" -o -name "*.cpp" > cscope.files'
 alias mktag='ctags --languages=c,c++ -R;cscope -bRq'
+function setclone(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_clone
+    adb shell echo -n x_show_clone:\;cat /sys/module/kernel/parameters/x_show_clone
+}
+function setfork(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_fork
+    adb shell echo -n x_show_fork:\;cat /sys/module/kernel/parameters/x_show_fork
+}
+function setvfork(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_vfork
+    adb shell echo -n x_show_vfork:\;cat /sys/module/kernel/parameters/x_show_vfork
+}
+function setexecve(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_execve
+    adb shell echo -n x_show_execve:\;cat /sys/module/kernel/parameters/x_show_execve
+}
+function sethideptrace(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_hide_ptrace
+    adb shell echo -n x_hide_ptrace:\;cat /sys/module/kernel/parameters/x_hide_ptrace
+}
+function sethidenormal(){
+    echo fix me
+}
+function sethideijm2(){
+    [ -n "$1" ] && adb shell echo ijm_anti2 \> /sys/module/kernel/parameters/x_hide_policy
+    adb shell echo -n x_hide_policy:\;cat /sys/module/kernel/parameters/x_hide_policy
+    [ -n "$1" ] && adb shell echo saic.roewe.iov \> /sys/module/kernel/parameters/x_ijm_anti2_para
+    adb shell echo -n x_ijm_anti2_para:\;cat /sys/module/kernel/parameters/x_ijm_anti2_para
+
+}
+function gethk(){
+    setclone
+    setfork
+    setvfork
+    setexecve
+    sethideptrace
+    sethideijm2
+}
+function sethk(){
+    setclone Y
+    setfork Y
+    setvfork Y
+    setexecve Y
+    sethideptrace N
+    sethideijm2 Y
+    sethideptrace Y
+}
 
 function getmem(){
 
