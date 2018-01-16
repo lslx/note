@@ -790,7 +790,7 @@ function apkattch()
 		adb shell "su -c kill -9 $PID"
 	fi
 	sleep 0.5s
-	adb shell "am start $PKG/$ACT"
+	#adb shell "am start $PKG/$ACT"
 	sleep 3s
 
 	local PID=
@@ -931,7 +931,8 @@ function initdbgenv()
 	inter_putbin ~/devcode/rootadb/libs/armeabi-v7a/ setpropex-pie $targetdir setpropex-pie
 	inter_putbin ~/Android/Sdk/ndk-bundle/prebuilt/android-arm/gdbserver gdbserver $targetdir gdbserver
 	inter_putbin ~/devcode/adbi/hijack/libs/armeabi-v7a hijack $targetdir hijack
-	inter_putbin ~/devcode/haihang_analysis/everisk libexample.so $targetdir libexample.so
+	inter_putbin ~/devcode/adbi/instruments/example/libs/armeabi-v7a libexample.so $targetdir libexample.so
+	#inter_putbin ~/devcode/haihang_analysis/everisk libexample.so $targetdir libexample.so
 	inter_putbin ~/devcode/inject-test/libs/armeabi-v7a inject $targetdir inject
 	inter_putbin ~/devcode/inject-test/libs/armeabi-v7a libgkutil.so $targetdir libgkutil.so
 	#inter_putbin ~/devcode/haihang_analysis/everisk inject $targetdir inject
@@ -946,6 +947,13 @@ function jdwpexit()
     adb forward --remove tcp:8777
     adb forward tcp:8777 jdwp:$1
     echo quit | jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
+}
+function jdwpdbg()
+{
+    adb forward --remove tcp:8778
+    adb forward tcp:8778 jdwp:$1
+    jdb -connect com.sun.jdi.SocketAttach:port=8778,hostname=localhost -dbgtrace
+    #jdb -attach localhost:8778 -dbgtrace
 }
 function getfile()
 {
@@ -2027,6 +2035,17 @@ alias q2='~/panda/build/arm-softmmu/qemu-system-arm -M vexpress-a9 -m 512M -kern
 alias gitset='git config --global user.email "zz00zz.9774@gmail.com" && git config --global user.name "lslx"'
 alias mkcscopefile='find `pwd` -name "*.[ch]" -o -name "*.cpp" > cscope.files'
 alias mktag='ctags --languages=c,c++ -R;cscope -bRq'
+
+function unpackso(){
+    [ -z "$1" ] && echo need para && return
+    adb push $1 /data/local/tmp/
+    adb shell rm /data/local/tmp/libunpacked.so
+    adb shell cd /data/local/tmp/\;./so_unpacker_adv -L2 $1
+    adb pull /data/local/tmp/libunpacked.so
+    mv libunpacked.so `basename $1`_un.so
+}
+
+
 function setclone(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_clone
     adb shell echo -n x_show_clone:\;cat /sys/module/kernel/parameters/x_show_clone
@@ -2132,6 +2151,7 @@ function cleantest(){
 function gettest(){
     adb pull /data/local/tmp/com.example.fhc.test
 }
+
 #------ todo:
 echo ------todo list:
 echo bin tool func
