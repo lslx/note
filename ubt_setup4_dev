@@ -26,4 +26,10 @@ sudo apt -f install
 #https://github.com/fighterCui/android_vim_cscope/blob/master/cscope_maps.vim
 #https://github.com/Valloric/YouCompleteMe
 
-
+#------------install-----------
+# in .vimrc
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+:PluginInstall
+# without : --system-libclang 
+cd ~/.vim/bundle/YouCompleteMe
+./install.py --clang-completer 
