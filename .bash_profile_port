@@ -99,7 +99,7 @@ alias bcmp='nohup bcompare &'
 #ulimit -S -n 1024
 
 #for android sdk
-export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:$PATH"
+export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:/home/fhc/Android/Sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:$PATH"
 
 alias ccc='clear;clear'
 alias ida='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq.exe'
@@ -223,6 +223,9 @@ function copy4_new_machine_setup(){
 	local syncdir=Downloads
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
+	local syncdir=Documents
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
 	#android 
 	local syncdir=bin
@@ -250,6 +253,33 @@ function copy4_new_machine_setup(){
 
 	# kernel dev
 	local syncdir=android-lkms
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=lkms601
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=lkms601bk
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=busybox
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=LiME
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=nexus_drivers
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=panda2
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=qemu
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=qemu-arm
+	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
+	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
+	local syncdir=systemtap-android
 	$cmdwrapper "mkdir -p $CopyRoot/ext800/$syncdir"
 	cd;cd ext800/$syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/ext800
 	# ----------------------------------------------------------------
@@ -445,9 +475,22 @@ function getdbgtool(){
 }
 # export CLASSPATH=~/bin # this will cause android 5 compile failed see https://groups.google.com/forum/#!topic/android-building/HoNt0qixSfI
 export anddbgsvr=/home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv/android_server
+
+# gen demo.keystore
+# http://www.jb51.net/article/63602.htm
+# keytool -genkey -alias mykey -keyalg RSA -validity 40000 -keystore demo.keystore
+# password
+# password
+# enter * x
+# y
 function signapk(){
-#$1 ori.apk $2 signed.apk
-jarsigner -verbose -keystore ~/demo.keystore -storepass MyKeyPw -digestalg SHA1 -sigalg MD5withRSA -tsa http://timestamp.digicert.com -signedjar $2 $1 mykey
+    #$1 ori.apk $2 signed.apk
+    #rm tmp.apk
+    cp $1 tmp.apk
+    zip -d tmp.apk META-INF/*
+    jarsigner -verbose -keystore ~/demo.keystore -storepass 123456 -digestalg SHA1 -sigalg MD5withRSA -signedjar $2 tmp.apk mykey
+    #jarsigner -verbose -keystore ~/demo.keystore -storepass 123456 -digestalg SHA1 -sigalg MD5withRSA -tsa http://timestamp.digicert.com -signedjar $2 tmp.apk mykey
+    rm tmp.apk
 }
 function getapppid(){
 local pid=`adb shell ps | grep $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2`
@@ -790,7 +833,7 @@ function apkattch()
 		adb shell "su -c kill -9 $PID"
 	fi
 	sleep 0.5s
-	#adb shell "am start $PKG/$ACT"
+	adb shell "am start $PKG/$ACT"
 	sleep 3s
 
 	local PID=
@@ -2045,6 +2088,10 @@ function unpackso(){
     mv libunpacked.so `basename $1`_un.so
 }
 
+function setrevhk(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/rev/parameters/is_hook_work
+    adb shell echo -n is_hook_work:\;cat /sys/module/rev/parameters/is_hook_work
+}
 
 function setclone(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_clone
@@ -2151,7 +2198,15 @@ function cleantest(){
 function gettest(){
     adb pull /data/local/tmp/com.example.fhc.test
 }
+function cpapkfromsmb(){
 
+    cp -R /run/user/1000/gvfs/smb-share:server=192.168.138.37,share=bangcle_shared/pub/产品发布/竞品分析包 jpfxbsmb
+}
+
+#----------
+function pkglist(){
+    adb shell pm list packages
+}
 #------ todo:
 echo ------todo list:
 echo bin tool func
@@ -2159,6 +2214,7 @@ echo system.map func
 echo show sig number
 echo dexparse cmd use dextra ... 
 echo elfparse cmd use bintool, angr and so on
+echo v1v2sign code
 echo
 
 
