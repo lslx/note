@@ -312,6 +312,10 @@ function copy4_new_machine_setup(){
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	
+	local syncdir=vboxshared
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
+
 	#cd;rm -fr $predir
 	echo copy data done !
 
