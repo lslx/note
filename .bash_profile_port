@@ -216,7 +216,15 @@ function copy4_new_machine_setup(){
 	#$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	#cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot/$syncdir
 
-	local syncdir=ubtKernel4.13.11
+	local syncdir=private
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
+
+	local syncdir=privatedata
+	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
+	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
+
+	local syncdir=systemdata
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 	# soft
@@ -298,9 +306,6 @@ function copy4_new_machine_setup(){
 
 	# dev native and dex
 	local syncdir=devcode
-	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
-	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
-	local syncdir=apkdev
 	$cmdwrapper "mkdir -p $CopyRoot/$syncdir"
 	cd;cd $syncdir/..; $mycopy $syncdir $targetpath$CopyRoot
 
