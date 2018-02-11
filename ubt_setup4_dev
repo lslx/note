@@ -33,3 +33,20 @@ git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 # without : --system-libclang 
 cd ~/.vim/bundle/YouCompleteMe
 ./install.py --clang-completer 
+
+
+
+# debug tool
+# pwndbg
+
+# python diff
+#/usr/local/lib/python2.7
+#/home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7
+# capstone
+# elftools
+# future
+# lib-dynload/bz2.so
+# lib-dynload/Python-2.7.egg-info
+# pkg_resources
+# psutil
+# six.py
