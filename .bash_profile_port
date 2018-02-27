@@ -380,7 +380,7 @@ sudo update-alternatives --config jar
 sudo update-alternatives --config javadoc
 sudo update-alternatives --config javap
 }
-sudoautoinfo=/home/fhc/sudoautoinfo
+sudoautoinfo=/home/fhc/private/sudoautoinfo
 function chgejava2()
 {
 	case $1 in
@@ -1799,7 +1799,14 @@ function compileand6(){
 	18_aosp_bullhead-userdebug|\
 	19_aosp_hammerhead-userdebug|\
 	20_aosp_hammerhead_fp-userdebug|\
-	21_aosp_shamu-userdebug)
+	21_aosp_shamu-userdebug|\
+    ___SELF_DEFINE_START___|\
+	17_aosp_angler-user|\
+    17_aosp_angler-eng|\
+	18_aosp_bullhead-user|\
+	18_aosp_bullhead-eng|\
+	19_aosp_hammerhead-user|\
+    19_aosp_hammerhead-eng)
 		echo $1 match !
 		;;
 	*)
@@ -1816,6 +1823,13 @@ function compileandall6(){
 	compileand6 01_aosp_arm-eng
 	compileand6 05_aosp_x86-eng
 	compileand6 19_aosp_hammerhead-userdebug 
+    #self define
+    compileand6 17_aosp_angler-user
+    compileand6 17_aosp_angler-eng
+	compileand6 18_aosp_bullhead-user
+	compileand6 18_aosp_bullhead-eng
+	compileand6 19_aosp_hammerhead-user
+	compileand6 19_aosp_hammerhead-eng
 }
 
 function compileand7(){
@@ -2102,6 +2116,14 @@ function setrevhk(){
     adb shell echo -n is_hook_work:\;cat /sys/module/rev/parameters/is_hook_work
 }
 
+function setopen(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_open
+    adb shell echo -n x_show_open:\;cat /sys/module/kernel/parameters/x_show_open
+}
+function setptrace(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_ptrace
+    adb shell echo -n x_show_ptrace:\;cat /sys/module/kernel/parameters/x_show_ptrace
+}
 function setclone(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_clone
     adb shell echo -n x_show_clone:\;cat /sys/module/kernel/parameters/x_show_clone
@@ -2133,6 +2155,8 @@ function sethideijm2(){
 
 }
 function gethk(){
+    setopen
+    setptrace
     setclone
     setfork
     setvfork
@@ -2141,6 +2165,8 @@ function gethk(){
     sethideijm2
 }
 function sethk(){
+    setopen Y
+    setptrace Y
     setclone Y
     setfork Y
     setvfork Y
