@@ -497,7 +497,7 @@ function signapk(){
     #rm tmp.apk
     cp $1 tmp.apk
     zip -d tmp.apk META-INF/*
-    jarsigner -verbose -keystore ~/demo.keystore -storepass 123456 -digestalg SHA1 -sigalg MD5withRSA -signedjar $2 tmp.apk mykey
+    jarsigner -verbose -keystore ~/privatedata/demo.keystore -storepass 123456 -digestalg SHA1 -sigalg MD5withRSA -signedjar $2 tmp.apk mykey
     #jarsigner -verbose -keystore ~/demo.keystore -storepass 123456 -digestalg SHA1 -sigalg MD5withRSA -tsa http://timestamp.digicert.com -signedjar $2 tmp.apk mykey
     rm tmp.apk
 }
@@ -838,8 +838,10 @@ function apkattch()
 	local PKG=`_apk_get_pkg_name $1`
 	local ACT=`_apk_get_act_name $1`
 	local PID=`pid $PKG`
+    #local root=`adb shell whoami`# fix me
 	if [ -n "$PID" ];then
-		adb shell "su -c kill -9 $PID"
+		adb shell "kill -9 $PID"
+		#adb shell "su -c kill -9 $PID"
 	fi
 	sleep 0.5s
 	adb shell "am start $PKG/$ACT"
@@ -848,7 +850,8 @@ function apkattch()
 	local PID=
 	for i in {1..300}
 	do
-		adb shell "su -c ps | grep $PKG"
+		adb shell "ps | grep $PKG"
+		#adb shell "su -c ps | grep $PKG"
 		echo -n "attch pid="
 		read PID
 		if [ -z "$PID" ]; then
@@ -863,16 +866,18 @@ function apkattch()
 		gdbsvrpid=`pid gdbserver`
 		# echo xxxxxxx  $gdbsvrpid
 		if [ "$gdbsvrpid" ] ; then
-			adb shell "su -c kill -9 $gdbsvrpid"
+			adb shell "kill -9 $gdbsvrpid"
+			#adb shell "su -c kill -9 $gdbsvrpid"
 		fi
-		adb shell "su -c gdbserver $PORT --attach $PID" &
+		adb shell "gdbserver $PORT --attach $PID" &
+		#adb shell "su -c gdbserver $PORT --attach $PID" &
         sleep 1s
         local andver=`adb shell getprop ro.build.fingerprint | grep -o [4-7]\.[0-9]\.[0-9]`
         local OUT_ROOT=
         case "$andver" in
-            4.4.4) OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead;;
+            4.4.4*) OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead;;
             5.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-5.1.1_r14/out/target/product/hammerhead;;
-            6.0.1) OUT_ROOT=/home/fhc/ext800/makerom/android-6.0.1_r77/out/target/product/hammerhead;;
+            6.0.1*) OUT_ROOT=/home/fhc/ext800/makerom/android-6.0.1_r77/out/target/product/hammerhead;;
             7.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-7.1.1_r27/out/target/product/angler;;
             *) echo Unknown andver: $andver;return;;
         esac
@@ -2115,15 +2120,29 @@ function setrevhk(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/rev/parameters/is_hook_work
     adb shell echo -n is_hook_work:\;cat /sys/module/rev/parameters/is_hook_work
 }
-
+# call stack file: (open)
+#fs/open.c
+#----
+#arch-arm/syscalls/__openat.S
+#bionic/libc/bionic/open.c
 function setopen(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_open
     adb shell echo -n x_show_open:\;cat /sys/module/kernel/parameters/x_show_open
 }
+# call stack file: (ptrace)
+#kernel/ptrace.c
+#----
+#bionic/libc/arch-arm/syscalls/__ptrace.S
+#bionic/libc/bionic/ptrace.cpp
 function setptrace(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_ptrace
     adb shell echo -n x_show_ptrace:\;cat /sys/module/kernel/parameters/x_show_ptrace
 }
+# call stack file:(cloen fork vfork execve)
+#./arch/arm/kernel/sys_arm.c
+#./arch/arm/kernel/entry-common.S
+#----
+#bionic/libc/arch-arm/syscalls/vfork.S
 function setclone(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_clone
     adb shell echo -n x_show_clone:\;cat /sys/module/kernel/parameters/x_show_clone
@@ -2140,6 +2159,22 @@ function setexecve(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_execve
     adb shell echo -n x_show_execve:\;cat /sys/module/kernel/parameters/x_show_execve
 }
+#time func:
+#time()
+#call sys_time
+#libc/tzcode/private.h
+#clock()
+#call clock_gettime
+#libc/bionic/clock.cpp
+#gettimeofday()
+#libc/arch-arm/syscalls/gettimeofday.S
+#clock_gettime()
+#libc/arch-arm/syscalls/clock_gettime.S
+#getrusage()
+#libc/arch-arm/syscalls/getrusage.S
+#file: 
+#fs/proc/array.c
+#fs/proc/base.c
 function sethideptrace(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_hide_ptrace
     adb shell echo -n x_hide_ptrace:\;cat /sys/module/kernel/parameters/x_hide_ptrace
