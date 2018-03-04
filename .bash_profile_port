@@ -21,6 +21,10 @@ fhc-Hi-Fi-B85W)
 	PS1='H$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
+DESKTOP-15EGHT8) # bash on windows
+	PS1='W$:'
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
 	echo err MYMACHINE need fix !!!
