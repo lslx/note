@@ -21,10 +21,6 @@ fhc-Hi-Fi-B85W)
 	PS1='H$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
-DESKTOP-15EGHT8) # bash on windows
-	PS1='W$:'
-	MAIN_DATA_ROOT=/home/fhc/ext800
-	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
 	echo err MYMACHINE need fix !!!
@@ -998,7 +994,7 @@ function initdbgenv()
 	inter_putbin ~/devcode/inject-test/libs/armeabi-v7a libgkutil.so $targetdir libgkutil.so
 	#inter_putbin ~/devcode/haihang_analysis/everisk inject $targetdir inject
 	inter_putbin ~/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv android_server $targetdir andsvr
-	inter_putbin ~/devcode/so_unpacker_adv/libs/armeabi-v7a so_unpacker_adv $targetdir so_unpacker_adv
+	inter_putbin ~/devcode/so_unpacker_adv_bk/libs/armeabi-v7a so_unpacker_adv $targetdir so_unpacker_adv
 	adb shell "su -c /data/local/tmp/setpropex-pie ro.debuggable 1"
 	adb shell "su -c setenforce 0"
     adb shell echo 0 \> /proc/sys/kernel/kptr_restrict
@@ -2163,6 +2159,13 @@ function setexecve(){
     [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_execve
     adb shell echo -n x_show_execve:\;cat /sys/module/kernel/parameters/x_show_execve
 }
+#
+#kernel/signal.c
+function setkill(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_kill
+    adb shell echo -n x_show_kill:\;cat /sys/module/kernel/parameters/x_show_kill
+}
+#time func:
 #time func:
 #time()
 #call sys_time
@@ -2176,6 +2179,12 @@ function setexecve(){
 #libc/arch-arm/syscalls/clock_gettime.S
 #getrusage()
 #libc/arch-arm/syscalls/getrusage.S
+
+#kernel/signal.c
+function setgettimeofday(){
+    [ -n "$1" ] && adb shell echo $1 \> /sys/module/kernel/parameters/x_show_gettimeofday
+    adb shell echo -n x_show_gettimeofday:\;cat /sys/module/kernel/parameters/x_show_gettimeofday
+}
 #file: 
 #fs/proc/array.c
 #fs/proc/base.c
@@ -2200,6 +2209,9 @@ function gethk(){
     setfork
     setvfork
     setexecve
+    setkill
+    setgettimeofday
+
     sethideptrace
     sethideijm2
 }
@@ -2210,7 +2222,9 @@ function sethk(){
     setfork Y
     setvfork Y
     setexecve Y
-    sethideptrace N
+    setkill Y
+    setgettimeofday Y
+
     sethideijm2 Y
     sethideptrace Y
 }
