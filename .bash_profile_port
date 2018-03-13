@@ -2291,6 +2291,12 @@ function cpapkfromsmb(){
     cp -R /run/user/1000/gvfs/smb-share:server=192.168.138.37,share=bangcle_shared/pub/产品发布/竞品分析包 jpfxbsmb
 }
 
+function setuserlog(){
+    local action=rm
+    [ "$1" = "Y" ] &&  action=touch
+    adb shell $action /data/local/tmp/linkerout
+    adb shell $action /data/local/tmp/libartout
+}
 #----------
 function pkglist(){
     adb shell pm list packages
