@@ -21,6 +21,10 @@ fhc-Hi-Fi-B85W)
 	PS1='H$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
+DESKTOP-15EGHT8) # bash on windows
+	PS1='W$:'
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
 	echo err MYMACHINE need fix !!!
@@ -95,6 +99,7 @@ extract() {
 }
 alias 010e='~/010editor/010editor'
 alias bcmp='nohup bcompare &'
+PATH="~/bin:$PATH"
 #PATH="~/bin:~/andtool/bin:/Users/hongchaofu/dex2jar-2.0/:$PATH"
 #ulimit -S -n 1024
 
@@ -1003,6 +1008,12 @@ function jdwpexit()
 {
     adb forward --remove tcp:8777
     adb forward tcp:8777 jdwp:$1
+    echo quit | jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
+}
+function jdwpexit2()
+{
+    adb -s $2 forward --remove tcp:8777
+    adb -s $2 forward tcp:8777 jdwp:$1
     echo quit | jdb -connect com.sun.jdi.SocketAttach:port=8777,hostname=localhost
 }
 function jdwpdbg()
