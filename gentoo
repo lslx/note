@@ -1,0 +1,141 @@
+gentoo install :
+
+wget https://mirrors.kernel.org/gentoo//releases/amd64/20160704/livedvd-amd64-multilib-20160704.iso
+# born iso to usb disk
+sudo dd if=livedvd-amd64-multilib-20160704.iso of=/dev/sdc
+# boot from usb
+# enter system without passwd
+# open kconsole
+# set root passwd
+sudo passwd
+service sshd start
+
+# now you can login from other computer
+ssh root@172.16.12.35
+
+# 分区
+parted -a optimal /dev/sda
+mklabel gpt
+unit mib
+mkpart primary 1 3
+name 1 grub
+set 1 bios_grub on
+print
+
+# echo "131+8192" | bc
+# 8323
+
+mkpart primary 3 131
+name 2 boot
+mkpart primary 131 8323
+name 3 swap
+mkpart primary 8323 -1
+name 4 rootfs
+set 2 boot on
+
+# 格式化
+mkfs.vfat -F 32 /dev/sda2
+####mkfs.ext2 /dev/sda2
+mkfs.ext4 /dev/sda4
+mkswap /dev/sda3
+swapon /dev/sda3
+
+# 挂载
+mount /dev/sda4 /mnt/gentoo
+mkdir /mnt/gentoo/boot
+mount /dev/sda2 /mnt/gentoo/boot
+
+# copy stage3 to target
+scp stage3-amd64-20180318T214503Z.tar.xz root@172.16.12.35:
+
+cd/mnt/gentoo
+tar xvf /root/stage3-amd64-20180318T214503Z.tar.xz
+
+mount -t proc proc /mnt/gentoo/proc
+mount --rbind /sys /mnt/gentoo/sys
+mount --make-rslave /mnt/gentoo/sys
+mount --rbind /dev /mnt/gentoo/dev
+mount --make-rslave /mnt/gentoo/dev
+
+# chroot
+chroot /mnt/gentoo /bin/bash
+source /etc/profile
+export PS1="(chroot) $PS1"
+
+ls /usr/share/zoneinfo
+cat /etc/timezone
+echo "Asia/Shanghai" > /etc/timezone
+mkdir /usr/portage
+emerge-webrsync
+eselect profile list
+eselect profile set 12  # 5 is bad, when install grub
+emerge --sync
+
+nano /etc/locale.gen
+cat /etc/locale.gen
+env-update && source /etc/profile && export PS1="(chroot) $PS1"
+emerge gentoo-sources
+emerge genkernel
+genkernel all
+
+# add fstab
+nano /etc/fstab
+/dev/sda2               /boot           vfat           noauto,noatime 0 2
+/dev/sda4               /               ext4            noatime          0 1
+/dev/sda3               none            swap            sw               0 0 
+
+# hostname="livecd" --> hostname="mygentoo"
+nano /etc/conf.d/hostname
+#127.0.0.1	gentoo localhost
+#::1		gentoo localhost
+nano /etc/hosts
+
+emerge dhcpcd
+rc-update add dhcpcd default
+
+emerge virtual/ssh
+emerge syslog-ng
+emerge cronie
+emerge mlocate
+rc-update add sshd default
+rc-update add syslog-ng default
+rc-update add cronie default
+
+#services, keyboard and hwclock
+# nano -w /etc/rc.conf
+# nano -w /etc/conf.d/keymaps
+# nano -w /etc/conf.d/hwclock
+
+passwd
+useradd -m -G users,wheel,audio,lp,cdrom,portage,cron -s /bin/bash fhc
+passwd fhc
+passwd fhc
+
+uncomment %wheel
+nano /etc/sudoers
+
+echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
+emerge --ask sys-boot/grub:2
+ls /usr/lib/grub/
+grub-install --target=x86_64-efi --efi-directory=/boot
+grub-install --target=x86_64-efi --efi-directory=/boot/efi /dev/sda
+grub-mkconfig -o /boot/grub/grub.cfg
+
+exit
+cd
+umount -l /mnt/gentoo/dev{/shm,/pts,}
+umount -l /mnt/gentoo{/boot,/proc,}
+umount -R /mnt/gentoo
+reboot
+
+--------------------------------url--------------------------
+https://www.tecmint.com/gentoo-linux-installation-guide/
+https://www.tecmint.com/gentoo-linux-installation-guide-part-2/
+https://www.cnblogs.com/Garin/archive/2017/01/04/6183904.html
+https://wiki.gentoo.org/wiki/Handbook:AMD64/Installation/Bootloader/zh-cn
+http://blog.csdn.net/connect_/article/details/46226823
+
+https://wiki.gentoo.org/wiki/EFI_System_Partition
+https://wiki.gentoo.org/wiki/Handbook_Talk:AMD64/Full/Installation#improve_suggested_partitions_and_use_of_grub-install
+
+
