@@ -1,0 +1,53 @@
+linux skills
+
+*byte abstract
+	*硬盘
+	*分区：分区重叠，分区嵌套
+	*net
+	*N
+
+
+_________________
+
+ 1977  cp livedvd-amd64-multilib-20160704.iso mygentoo.iso
+ 1978  qemu-img resize mygentoo.iso +1G
+ 1980  sudo fdisk -lu mygentoo.iso
+ 1986  sudo fdisk -lu /dev/sda
+ 1988  cat /etc/fstab 
+ 1990  mount | grep sdb
+ 1992  sudo fdisk -lu /dev/sdb
+ 1993  sudo parted /dev/sda unit s print
+ 1994  sudo parted /dev/sdb unit s print
+
+
+ 2016  file livedvd-amd64-multilib-20160704.iso 
+ 2017  sudo fdisk -lu livedvd-amd64-multilib-20160704.iso
+ 2018  sudo fdisk -lu mygentoo.iso
+ 2019  sudo fdisk  mygentoo.iso
+ 2020  sudo fdisk -lu mygentoo.iso
+ 2021  sudo losetup -o $((4450304*512)) /dev/loop0 mygentoo.iso
+ 2022  sudo losetup -d /dev/loop0
+ 2023  sudo losetup -o $((4450304*512)) /dev/loop0 mygentoo.iso
+ 2024  mkfs.ext4 /dev/loop0
+ 2025  sudo mkfs.ext4 /dev/loop0
+ 2026  sudo fdisk -lu mygentoo.iso
+ 2027  file /dev/loop0
+ 2028  sudo file /dev/loop0
+ 2029  mkdir /mnt/gtext
+ 2030  sudo mkdir /mnt/gtext
+ 2031  mount /dev/loop0 /mnt/gtext
+ 2032  sudo mount /dev/loop0 /mnt/gtext
+ 2033  mount
+ 2034  ls | grep sta
+ 2035  cp stage3-amd64-20180318T214503Z.tar.xz /mnt/gtext/
+ 2036  sudo cp stage3-amd64-20180318T214503Z.tar.xz /mnt/gtext/
+ 2037  ls /mnt/gtext/
+ 2038  ls -lh | grep sta
+ 2039  sudo umount /mnt/gtext
+ 2040  sudo fdisk -d /dev/loop0
+ 2041  sudo losetup -d /dev/loop0
+
+
+ 2043  adb push mygentoo.iso /sdcard/
+ 2044  adb push livedvd-amd64-multilib-20160704.iso /sdcard/gtori.iso
+
