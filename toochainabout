@@ -1,0 +1,144 @@
+
+bash，版本 4.3.48(1)-release (x86_64-pc-linux-gnu)
+Binutils: (GNU Binutils for Ubuntu) 2.26.1
+bzip2,  Version 1.0.6, 6-Sept-2010.
+Coreutils:  8.25
+diff (GNU diffutils) 3.3
+find (GNU findutils) 4.7.0-git
+GNU Awk 4.1.3, API: 1.1 (GNU MPFR 3.1.4, GNU MP 6.1.0)
+gcc (Ubuntu 5.4.0-6ubuntu1~16.04.9) 5.4.0 20160609
+GNU C Library (Ubuntu GLIBC 2.23-0ubuntu10) stable release version 2.23,
+grep (GNU grep) 2.25
+gzip 1.6
+m4 (GNU M4) 1.4.17
+GNU Make 4.1
+GNU patch 2.7.5
+sed (GNU sed) 4.2.2
+Sudo 版本 1.8.16
+tar (GNU tar) 1.28
+texi2any (GNU texinfo) 6.1
+
+
+
+
+
+
+
+MD5 sum: 2869c9bf3e60ee97c74ac2a6bf4e9d68
+MD5 sum: 2eaae519cac1143bcf583636a745381f
+MD5 sum: N/A
+MD5 sum: 9768625159663b300ae4de2f4745fcc4
+MD5 sum: 4c175f86e11eb32d8bf9872ca3a8e11d
+MD5 sum: 3ba3afb1d1b261383d247f46cb135ee8
+MD5 sum: b6390b3abc02ef4986644fb7051b4568
+MD5 sum: d6a1d5f8ddea3abd2cc3e98f58352d26
+MD5 sum: b8a2f6b0e68bef46e53da2ac439e1cf4
+MD5 sum: ac52ccaec6b06ab0f289d37e8436859b
+MD5 sum: 8bf719b313053a482b1e878b75dfc07e
+wget http://ftp.gnu.org/gnu/binutils/binutils-2.27.tar.bz2
+wget http://busybox.net/downloads/busybox-1.24.2.tar.bz2
+wget http://git.clfs.org/?p=bootscripts-embedded.git;a=snapshot;h=HEAD;sf=tgz
+wget http://gcc.gnu.org/pub/gcc/releases/gcc-6.2.0/gcc-6.2.0.tar.bz2
+wget http://ftp.gnu.org/gnu/gmp/gmp-6.1.1.tar.bz2
+wget http://sethwklein.net/iana-etc-2.30.tar.bz2
+wget http://www.kernel.org/pub/linux/kernel/v4.x/linux-4.9.22.tar.xz
+wget http://www.multiprecision.org/mpc/download/mpc-1.0.3.tar.gz
+wget http://ftp.gnu.org/gnu/mpfr/mpfr-3.1.4.tar.bz2
+wget http://www.musl-libc.org/releases/musl-1.1.16.tar.gz
+wget http://patches.clfs.org/embedded-dev/iana-etc-2.30-update-2.patch
+
+
+
+
+/home/fhc/andtoolchain/toolchainrepo/build/build.sh
+
+#!/bin/bash
+
+export PWD=`pwd`
+export PREFIX=${PWD}/system
+export NDK_HOME=/home/fhc/andtoolchain/android-ndk-r16b
+export CROSS_COMPILE=${NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-
+export PATH=${NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:$PATH
+export SYSROOT=${NDK_HOME}/platforms/android-23/arch-arm
+make distclean
+rm */config.cache
+./configure \
+--prefix=$PREFIX \
+--host=arm-linux-androideabi \
+--target=arm-linux-androideabi \
+--disable-option-checking \
+CC=${CROSS_COMPILE}gcc \
+CXX=${CROSS_COMPILE}g++ \
+CFLAGS="-g -I -O2 -mandroid -mbionic -I${NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9/include -I${SYSROOT}/usr/include/ --sysroot=${SYSROOT} -Wno-error -fPIE" \
+LDFLAGS="-L${NDK_HOME}/platforms/android-23/arch-arm/usr/lib -pie" \
+CPP=${CROSS_COMPILE}cpp \
+CPPFLAGS="-I${NDK_HOME}/platforms/android-23/arch-arm/usr/include/" \
+AR=${CROSS_COMPILE}ar
+make
+mkdir -p $PREFIX
+make install
+
+
+
+----------------------------
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-binutils-version=VERSION
+                          use binutils-VERSION (default is 2.17)
+  --with-gold-version=VERSION
+                          use binutils-VERSION for gold (default is the main binutils version)
+  --with-gcc-version=VERSION
+                          use gcc-VERSION (default is 4.2.1)
+  --with-newlib-version=VERSION
+                          use newlib-VERSION (default is 1.16.0)
+  --with-gmp-version=VERSION
+                          use gmp-VERSION (default is 4.2.2)
+  --with-mpfr-version=VERSION
+                          use mpfr-VERSION (default is 2.3.0)
+  --with-mpc-version=VERSION
+                          use mpc-VERSION (default is 0.8.1)
+  --with-ppl-version=VERSION
+                          use ppl-VERSION (default is 0.11.2)
+  --with-cloog-version=VERSION
+                          use cloog-VERSION (default is 0.15.9)
+  --with-isl-version=VERSION
+                          use isl-VERSION (default is 0.11.1)
+  --with-gdb-version=VERSION
+                          use gdb-VERSION (default is 6.6)
+  --with-expat-version=VERSION
+                          use expat-VERSION (default is 2.0.1)
+  --with-python=WITH_PYTHON
+                          use python WITH_PYTHON)
+  --with-sysroot=DIR
+                          use target sysroot in DIR
+  --with-mpc=PATH
+                          specify prefix directory for installed MPC package.
+  --with-mpfr=PATH
+                          specify prefix directory for installed MPFR package.
+  --with-gmp=PATH
+                          specify prefix directory for the installed GMP package.
+  --with-ppl=PATH
+                          specify prefix directory for the installed PPL package.
+  --with-cloog=PATH
+                          specify prefix directory for the installed CLooG package.
+  --with-isl=PATH
+                          specify prefix directory for the installed ISL package.
+  --with-expat=PATH
+                          specify prefix directory for the installed EXPAT package.
+./configure --target=arm-linux-androideabi --prefix=/home/fhc/andgdb/gdb_build/gdb/gdb-vxx/arm-linux \
+--with-binutils-version=2.27 \
+--with-gcc-version=4.9 \
+--with-gmp-version=5.0.5 \
+--with-mpfr-version=3.1.1 \
+--with-gdb-version=7.11 \
+--with-mpc=0.8.1
+--with-python=WITH_PYTHON \
+--host=x86_64-unknown-linux-gnu --target=x86_64-unknown-linux-gnu 
+./configure \
+--prefix=/home/fhc/andgdb/gdb_build/gdb/gdb-7.11/arm-linux \
+--with-binutils-version=2.27 \
+--with-gcc-version=4.9 \
+--with-gmp-version=5.0.5 \
+--with-mpfr-version=3.1.1 \
+--with-gdb-version=7.11 \
+
