@@ -8,14 +8,15 @@ sudo dd if=livedvd-amd64-multilib-20160704.iso of=/dev/sdc
 # open kconsole
 # set root passwd
 sudo passwd
-service sshd start
+sudo service sshd start
 
 # now you can login from other computer
 ssh root@172.16.12.35
 
 # 分区
 parted -a optimal /dev/sda
-mklabel gpt
+# mklabel gpt
+mklabel msdos
 unit mib
 mkpart primary 1 3
 name 1 grub
@@ -51,6 +52,7 @@ scp stage3-amd64-20180318T214503Z.tar.xz root@172.16.12.35:
 cd/mnt/gentoo
 tar xvf /root/stage3-amd64-20180318T214503Z.tar.xz
 
+mkdir /mnt/gentoo/{proc,sys,dev}
 mount -t proc proc /mnt/gentoo/proc
 mount --rbind /sys /mnt/gentoo/sys
 mount --make-rslave /mnt/gentoo/sys
@@ -66,6 +68,8 @@ ls /usr/share/zoneinfo
 cat /etc/timezone
 echo "Asia/Shanghai" > /etc/timezone
 mkdir /usr/portage
+
+# connect internet
 emerge-webrsync
 eselect profile list
 eselect profile set 12  # 5 is bad, when install grub
