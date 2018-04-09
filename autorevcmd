@@ -1,0 +1,49 @@
+
+
+1900  jadx ./unchan/com.gov.cn-1.apk_0x74fc1c48/DexFile.dex
+ 1901  ls
+ 1902  cd un
+ 1903  ls
+ 1904  cat pack_type.txt 
+ 1905  cd ..
+ 1906  ls
+ 1907  cd unchan/
+ 1908  ls
+ 1909  cat pack_type.txt 
+ 1910  cd ..
+ 1911  ls
+ 1912  find . | grep dex$
+ 1913  find . | grep dex$ | xargs -I % md5sum %
+ 1914  cd un
+ 1915  find . | grep dex$ | xargs -I % md5sum %
+ 1916  jadx ./com.gov.cn-1.apk_0x6e817ea8/DexFile.dex
+ 1917  ls
+ 1918  find . | grep dex$ | xargs -I % md5sum %
+ 1919  jadx ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex
+ 1920  ls
+ 1921  find . | grep dex$ | xargs -I % md5sum %
+ 1922  jadx ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex
+ 1923  jadx ./com.gov.cn-1.apk_0x713b92a8/DexFile.dex
+ 1924  find . | grep dex$ | xargs -I % md5sum %
+ 1925  jadx ./com.gov.cn-1.apk_0x6e817ea8/DexFile.dex
+ 1926  find . | grep dex$ | xargs -I % md5sum %
+ 1927  dextra 
+ 1928  dextra -M ./com.gov.cn-1.apk_0x713b92a8/DexFile.dex
+ 1929  dextra -M ./com.gov.cn-1.apk_0x713b92a8/DexFile.dex | grep native
+ 1930  find . | grep dex$ | xargs -I % md5sum %
+ 1931  dextra -M ./com.gov.cn-1.apk_0x6f7fb170/DvmDex.dex | grep native
+ 1932  dextra -f -m  ./com.gov.cn-1.apk_0x6f7fb170/DvmDex.dex | grep native
+ 1933  dextra -f -m  ./com.gov.cn-1.apk_0x6f7fb170/DvmDex.dex
+ 1934  jadx ./com.gov.cn-1.apk_0x6f7fb170/DvmDex.dex
+ 1935  find . | grep dex$ | xargs -I % md5sum %
+ 1936  jadx ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex
+ 1937  dextra -f -m  ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex | grep native
+ 1938  dextra -f -m  ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex 
+ 1939  dextra -f -M  ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex 
+ 1940  find . | grep dex$ | xargs -I % md5sum %
+ 1941  dextra ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex
+ 1942  dextra -D ./com.gov.cn-1.apk_0x6f7fb170/DexFile.dex
+ 1943  find . | grep dex$ | xargs -I % md5sum %
+ 1944  dextra -D ./com.gov.cn-1.apk_0x713b92a8/DexFile.dex | grep native
+ 1945  jadx ./com.gov.cn-1.apk_0x713b92a8/DexFile.dex
+
