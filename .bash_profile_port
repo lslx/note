@@ -506,6 +506,9 @@ function signapk(){
     #jarsigner -verbose -keystore ~/demo.keystore -storepass 123456 -digestalg SHA1 -sigalg MD5withRSA -tsa http://timestamp.digicert.com -signedjar $2 tmp.apk mykey
     rm tmp.apk
 }
+function adbmountsystem(){
+    adb shell mount -o rw /dev/block/bootdevice/by-name/system /system
+}
 function getapppid(){
 local pid=`adb shell ps | grep $1 | tr '\t' ' ' | tr -s ' ' | cut -d ' ' -f 2`
 echo $pid
@@ -992,6 +995,7 @@ function initdbgenv()
 	adb shell "su -c chmod 777 $targetdir"
 	inter_putbin ~/devcode/rootadb/libs/armeabi-v7a/ setpropex-pie $targetdir setpropex-pie
 	inter_putbin ~/Android/Sdk/ndk-bundle/prebuilt/android-arm/gdbserver gdbserver $targetdir gdbserver
+	inter_putbin ~/bin gdb $targetdir gdb
 	inter_putbin ~/devcode/adbi/hijack/libs/armeabi-v7a hijack $targetdir hijack
 	inter_putbin ~/devcode/adbi/instruments/example/libs/armeabi-v7a libexample.so $targetdir libexample.so
 	#inter_putbin ~/devcode/haihang_analysis/everisk libexample.so $targetdir libexample.so
@@ -999,7 +1003,7 @@ function initdbgenv()
 	inter_putbin ~/devcode/inject-test/libs/armeabi-v7a libgkutil.so $targetdir libgkutil.so
 	#inter_putbin ~/devcode/haihang_analysis/everisk inject $targetdir inject
 	inter_putbin ~/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/dbgsrv android_server $targetdir andsvr
-	inter_putbin ~/devcode/so_unpacker_adv_bk/libs/armeabi-v7a so_unpacker_adv $targetdir so_unpacker_adv
+	#inter_putbin ~/devcode/so_unpacker_adv_bk/libs/armeabi-v7a so_unpacker_adv $targetdir so_unpacker_adv
 	adb shell "su -c /data/local/tmp/setpropex-pie ro.debuggable 1"
 	adb shell "su -c setenforce 0"
     adb shell echo 0 \> /proc/sys/kernel/kptr_restrict
