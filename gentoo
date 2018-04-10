@@ -59,6 +59,7 @@ mount --make-rslave /mnt/gentoo/sys
 mount --rbind /dev /mnt/gentoo/dev
 mount --make-rslave /mnt/gentoo/dev
 
+cp -L /etc/resolv.conf /mnt/gentoo/etc/
 # chroot
 chroot /mnt/gentoo /bin/bash
 source /etc/profile
@@ -70,12 +71,20 @@ echo "Asia/Shanghai" > /etc/timezone
 mkdir /usr/portage
 
 # connect internet
+mkdir -p echo /usr/portage/metadata
+echo masters=gentoo>/usr/portage/metadata/layout.conf
 emerge-webrsync
 eselect profile list
 eselect profile set 12  # 5 is bad, when install grub
 emerge --sync
 
-nano /etc/locale.gen
+#nano /etc/locale.gen
+echo en_US  ISO-8859-1>/etc/locale.gen
+echo en_US.UTF-8  UTF-8>>/etc/locale.gen
+echo zh_CN  GB18030>>/etc/locale.gen
+echo zh_CN.GBK  GBK>>/etc/locale.gen
+echo zh_CN.GB2312  GB2312>>/etc/locale.gen
+echo zh_CN.UTF-8  UTF-8>>/etc/locale.gen
 cat /etc/locale.gen
 env-update && source /etc/profile && export PS1="(chroot) $PS1"
 emerge gentoo-sources
@@ -84,9 +93,10 @@ genkernel all
 
 # add fstab
 nano /etc/fstab
-/dev/sda2               /boot           vfat           noauto,noatime 0 2
-/dev/sda4               /               ext4            noatime          0 1
-/dev/sda3               none            swap            sw               0 0 
+echo '/dev/sda2               /boot           vfat           noauto,noatime 0 2'>>/etc/fstab
+echo '/dev/sda4               /               ext4            noatime          0 1'>>/etc/fstab
+echo '/dev/sda3               none            swap            sw               0 0'>>/etc/fstab
+cat /etc/fstab
 
 # hostname="livecd" --> hostname="mygentoo"
 nano /etc/conf.d/hostname
@@ -113,9 +123,9 @@ rc-update add cronie default
 passwd
 useradd -m -G users,wheel,audio,lp,cdrom,portage,cron -s /bin/bash fhc
 passwd fhc
-passwd fhc
 
-uncomment %wheel
+emerge sudo
+#uncomment %wheel  (root ALL=(ALL) ALL)
 nano /etc/sudoers
 
 echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
