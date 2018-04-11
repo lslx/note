@@ -49,7 +49,7 @@ mount /dev/sda2 /mnt/gentoo/boot
 # copy stage3 to target
 scp stage3-amd64-20180318T214503Z.tar.xz root@172.16.12.35:
 
-cd/mnt/gentoo
+cd /mnt/gentoo
 tar xvf /root/stage3-amd64-20180318T214503Z.tar.xz
 
 mkdir /mnt/gentoo/{proc,sys,dev}
@@ -93,7 +93,7 @@ genkernel all
 
 # add fstab
 nano /etc/fstab
-echo '/dev/sda2               /boot           vfat           noauto,noatime 0 2'>>/etc/fstab
+echo '/dev/sda2               /boot           vfat           noauto,noatime 0 2'>/etc/fstab
 echo '/dev/sda4               /               ext4            noatime          0 1'>>/etc/fstab
 echo '/dev/sda3               none            swap            sw               0 0'>>/etc/fstab
 cat /etc/fstab
@@ -131,6 +131,7 @@ nano /etc/sudoers
 echo 'GRUB_PLATFORMS="efi-64"' >> /etc/portage/make.conf
 emerge --ask sys-boot/grub:2
 ls /usr/lib/grub/
+grub-install /dev/sda
 grub-install --target=x86_64-efi --efi-directory=/boot
 grub-install --target=x86_64-efi --efi-directory=/boot/efi /dev/sda
 grub-mkconfig -o /boot/grub/grub.cfg
