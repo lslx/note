@@ -89,7 +89,8 @@ cat /etc/locale.gen
 env-update && source /etc/profile && export PS1="(chroot) $PS1"
 emerge gentoo-sources
 emerge genkernel
-genkernel all
+genkernel --menuconfig all
+
 
 # add fstab
 nano /etc/fstab
@@ -141,6 +142,8 @@ cd
 umount -l /mnt/gentoo/dev{/shm,/pts,}
 umount -l /mnt/gentoo{/boot,/proc,}
 umount -R /mnt/gentoo
+poweroff
+
 reboot
 
 --------------------------------url--------------------------
@@ -154,3 +157,15 @@ https://wiki.gentoo.org/wiki/EFI_System_Partition
 https://wiki.gentoo.org/wiki/Handbook_Talk:AMD64/Full/Installation#improve_suggested_partitions_and_use_of_grub-install
 
 
+#problem resolved:
+boot crush at nvidiafb:
+Device Drivers --->
+Graphics Support --->
+Frame buffer---->
+< >   nVidia Framebuffer Support
+< >   nVidia Riva support
+
+boot crush at sig check:
+Symbol: MODULE_SIG_ALL 
+    -> Enable loadable module support (MODULES 
+(4)   -> Module signature verification (MODULE_SIG [=n])        
