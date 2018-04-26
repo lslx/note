@@ -51,3 +51,38 @@ _________________
  2043  adb push mygentoo.iso /sdcard/
  2044  adb push livedvd-amd64-multilib-20160704.iso /sdcard/gtori.iso
 
+
+
+
+livedvd-amd64-multilib-20160704.iso1 *         0 4450004 4450005  2.1G  0 空
+livedvd-amd64-multilib-20160704.iso2      126744  161559   34816   17M ef EFI (FAT-12/16/32)
+livedvd-amd64-multilib-20160704.iso3         344   65878   65535   32M  0 空
+
+sudo losetup -o $((126744*512)) /dev/loop0 livedvd-amd64-multilib-20160704.iso
+sudo losetup -o $((0*512)) /dev/loop0 livedvd-amd64-multilib-20160704.iso
+sudo mount /dev/loop0 /mnt/gtext
+
+sudo umount /mnt/gtext
+sudo losetup -d /dev/loop0
+
+
+
+fuser -m -v /mnt/gtext/
+df -T
+sudo lsblk -f
+sudo blkid
+
+
+livedvd-amd64-multilib-20160704.iso 启动需uefi,而在bios下无法启动
+
+cat /proc/config.gz | gunzip > running.config
+
+
+
+
+
+
+
+
+
+
