@@ -104,7 +104,11 @@ PATH="~/bin:$PATH"
 #ulimit -S -n 1024
 
 #for android sdk
-export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:/home/fhc/Android/Sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:$PATH"
+#export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:/home/fhc/Android/Sdk/ndk-bundle/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin:$PATH"
+#export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:/home/fhc/ndk-arm-19/bin:$PATH"
+#export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:/home/fhc/ndk-arm-23/bin:$PATH"
+#export PATH="/home/fhc/ndk-arm-23/bin:$PATH"
+export PATH="/home/fhc/Android/Sdk/ndk-bundle:/home/fhc/Android/Sdk/tools:$PATH"
 
 alias ccc='clear;clear'
 alias ida='wine /home/fhc/.wine/drive_c/Program\ Files\ \(x86\)/IDA\ 6.95/idaq.exe'
@@ -431,6 +435,8 @@ alias  fhcsshxps='ssh -p22022 fhc@${laptop_xps}'
 
 export desktop_home=xx.xx.xx.xx
 alias  fhcsshhome='ssh -p22022 fhc@${desktop_home}'
+vps1=103.76.87.28
+alias  fhcsshvps='ssh -p22022 root@${vps1}'
 
 function syncx2D(){
 
@@ -637,7 +643,7 @@ function pid()
     if [ "$EXE" ] ; then
         local PID=`adb shell ps \
             | tr -d '\r' \
-            | \grep "$prepend$EXE$append" \
+            | grep "$prepend$EXE$append" \
             | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'`
         echo "$PID"
     else
@@ -777,13 +783,13 @@ function gdbclient()
 
 function apkdbg()
 {
+	local DBGSVR=newname #rename gdbserver 
+	local PORT=5040
+	adb forward --remove "tcp:$PORT" 2>/dev/null
+	adb forward "tcp:$PORT" "tcp:$PORT"
 	local PKG=`_apk_get_pkg_name $1`
 	local ACT=`_apk_get_act_name $1`
-	local PID=`pid $PKG`
-	if [ -n "$PID" ];then
-		adb shell "su -c kill -9 $PID"
-	fi
-	sleep 0.5s
+    adb shell "su -c pkill $PKG"
 	adb shell "am start -D -n $PKG/$ACT"
 	sleep 0.3s
 	PID=
@@ -795,50 +801,44 @@ function apkdbg()
 		fi
 	done
 	if [ -z "$PID" ]; then
-		echo get pid failed
+		echo get pid failed,app start too slow!
 		return
 	fi
-	local PORT=:5040
-	adb forward --remove "tcp$PORT"
-	adb forward "tcp$PORT" "tcp$PORT"
-	gdbsvrpid=`pid gdbserver`
-	# echo xxxxxxx  $gdbsvrpid
-	if [ "$gdbsvrpid" ] ; then
-		adb shell "su -c kill -9 $gdbsvrpid"
-	fi
-	adb shell "su -c gdbserver $PORT --attach $PID" &
+    adb shell "su -c pkill $DBGSVR"
+	adb shell "su -c /data/local/tmp/$DBGSVR :$PORT --attach $PID" &
 	sleep 1s
-    local andver=`adb shell getprop ro.build.fingerprint | grep -o [4-7]\.[0-9]\.[0-9]`
-    local OUT_ROOT=
-    case "$andver" in
-        4.4.4) OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead;;
-        5.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-5.1.1_r14/out/target/product/hammerhead;;
-        6.0.1) OUT_ROOT=/home/fhc/ext800/makerom/android-6.0.1_r77/out/target/product/hammerhead;;
-        7.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-7.1.1_r27/out/target/product/angler;;
-        *) echo Unknown andver: $andver;return;;
-    esac
-	local OUT_SYMBOLS=$OUT_ROOT/symbols
-	local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
-	local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
-	#local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
-	local ARCH=arm
-	local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process32
+    #local andver=`adb shell getprop ro.build.fingerprint | grep -o [4-7]\.[0-9]\.[0-9]`
+    #local OUT_ROOT=
+    #case "$andver" in
+    #    4.4.4) OUT_ROOT=/home/fhc/ext800/makerom/android-4.4.4_r1/out/target/product/hammerhead;;
+    #    5.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-5.1.1_r14/out/target/product/hammerhead;;
+    #    6.0.1) OUT_ROOT=/home/fhc/ext800/makerom/android-6.0.1_r77/out/target/product/hammerhead;;
+    #    7.1.1) OUT_ROOT=/home/fhc/ext800/makerom/android-7.1.1_r27/out/target/product/angler;;
+    #    *) echo Unknown andver: $andver;return;;
+    #esac
+	#local OUT_SYMBOLS=$OUT_ROOT/symbols
+	#local OUT_SO_SYMBOLS=$OUT_ROOT/symbols/system/lib
+	#local OUT_EXE_SYMBOLS=$OUT_ROOT/symbols/system/bin
+	##local PREBUILTS=/Users/hongchaofu/android-4.4.4_r1/prebuilt/linux-x86
+	#local ARCH=arm
+	#local EXEPATHFILE=$OUT_EXE_SYMBOLS/app_process32
 
-	echo >|"$OUT_ROOT/gdbclient.cmds" "set solib-absolute-prefix $OUT_SYMBOLS"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
-	#echo >>"$OUT_ROOT/gdbclient.cmds" "set substitute-path /home/fhc/ext800/src-android-local/android-4.4.4_r1/ /home/fhc/ext800/makerom/android-4.4.4_r1/"
-	#echo >>"$OUT_ROOT/gdbclient.cmds" "source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "define ss"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "b dlopen"
-	# must have bash   and  > /dev/null   ,  otherwise will stuck 
-	echo >>"$OUT_ROOT/gdbclient.cmds" "shell bash jdwpexitsh $PID >/dev/null &"
-	# c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck
-	echo >>"$OUT_ROOT/gdbclient.cmds" "c"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "end"
-	echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
-	echo >>"$OUT_ROOT/gdbclient.cmds" ""
-	GDBCMDS=$OUT_ROOT/gdbclient.cmds
-	gdbclient
+    #    -ex "set solib-absolute-prefix $OUT_SYMBOLS"\
+	#    -ex "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
+    #    -ex "# must have bash   and  > /dev/null   ,  otherwise will stuck"\
+	#    -ex "# c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck"\
+    #gdb-multiarch \
+    #/home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/bin/gdb \
+    /home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb
+#-ex "define ss
+#b dlopen
+#shell bash jdwpexitsh $PID >/dev/null &
+#c
+#end"\
+#-ex "target extended-remote :$PORT"
+	#"set substitute-path /home/fhc/ext800/src-android-local/android-4.4.4_r1/ /home/fhc/ext800/makerom/android-4.4.4_r1/"
+	#"source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+
 }
 
 function apkattch()
@@ -994,7 +994,7 @@ function initdbgenv()
 	local targetdir=/data/local/tmp
 	adb shell "su -c chmod 777 $targetdir"
 	inter_putbin ~/devcode/rootadb/libs/armeabi-v7a/ setpropex-pie $targetdir setpropex-pie
-	inter_putbin ~/Android/Sdk/ndk-bundle/prebuilt/android-arm/gdbserver gdbserver $targetdir gdbserver
+	inter_putbin ~/Android/Sdk/ndk-bundle/prebuilt/android-arm/gdbserver gdbserver $targetdir newname
 	inter_putbin ~/bin gdb $targetdir gdb
 	inter_putbin ~/devcode/adbi/hijack/libs/armeabi-v7a hijack $targetdir hijack
 	inter_putbin ~/devcode/adbi/instruments/example/libs/armeabi-v7a libexample.so $targetdir libexample.so
@@ -2316,6 +2316,27 @@ function setuserlog(){
 function pkglist(){
     adb shell pm list packages
 }
+function adbpush(){
+    [ "x$1" != "x" ] && adb push $1 /data/local/tmp/
+    [ "x$1" != "x" ] && adb shell su -c "chmod 777 /data/local/tmp/$1"
+}
+function adbpushr(){
+    [ "x$1" != "x" ] && adbpush $1
+    [ "x$1" != "x" ] && adb shell su -c "/data/local/tmp/$@"
+}
+function andver(){
+    cat <<EOF
+    Android Version    |API Level  |Linux Kernel in AOSP
+    ----------------------------------------------------
+    4.4-4.4.4   Kit Kat      |19-20     |3.10
+    5.0-5.1.1   Lollipop     |21-22     |3.16.1
+    6.0-6.0.1   Marshmallow  |23        |3.18.10
+    7.0-7.1     Nougat       |24-25     |4.4.1
+    8.0-8.1     Oreo         |26-27     |4.10
+    9.0         P(android P) |xx-xx     |x.xx
+EOF
+}
+#export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on'
 #------ todo:
 echo ------todo list:
 echo bin tool func
