@@ -1,0 +1,104 @@
+cross compile
+ndkroot=/home/fhc/Android/Sdk/ndk-bundle
+#ndkroot=/home/fhc/Dev/android-ndk-r16b
+$ndkroot/build/tools/make-standalone-toolchain.sh --help
+$ndkroot/build/tools/make-standalone-toolchain.sh --arch=arm --platform=android-19 --install-dir=/home/fhc/ndk-arm-19
+#$ndkroot/build/tools/make-standalone-toolchain.sh --arch=x86 --platform=android-19 --install-dir=/home/fhc/ndk-x86-19
+
+$ndkroot/build/tools/make-standalone-toolchain.sh --arch=arm --platform=android-23 --install-dir=/home/fhc/ndk-arm-23
+
+
+#PATH 中 系统中的python一定要在最前，如果ndk-arm下那个python要在最前，就会编译出错，它会影响到头文件查找目录
+../gdb-8.1/configure --target=arm-linux-androideabi --prefix=/home/fhc/gdb81/gdb-install
+../gdb-8.1/gdb/gdbserver/configure --target=arm-linux-androideabi --host=arm-linux-androideabi --prefix=/home/fhc/gdb/gdbserver-install
+
+../gdb-8.1/gdb/gdbserver/configure --target=arm-linux-androideabi --host=arm-linux-androideabi --sysroot=/home/fhc/Dev/android-ndk-r16b/platforms/android-23/arch-arm --prefix=/home/fhc/gdb/gdbserver-install
+
+
+build-gdbserver.sh
+arm
+arm-eabi-linux
+/home/fhc/Dev/ndksrc/toolchain
+/home/fhc/Dev/ndksrc/ndk
+--build-out=/home/fhc/Dev/ndksrc/out/gdbserver/arm
+-j16
+para out end.
+
+python build-gdbserver.py --host=linux --arch=arm
+
+export ANDROID_BUILD_TOP=/home/fhc/Dev/ndksrc2 
+./build-gdbserver.sh arm arm-eabi-linux $ANDROID_BUILD_TOP/toolchain $ANDROID_BUILD_TOP/ndk --build-out=$ANDROID_BUILD_TOP/out/gdbserver/arm -j16 --verbose --package-dir=$ANDROID_BUILD_TOP/out/dist
+
+export ANDROID_BUILD_TOP=/home/fhc/Dev/ndksrc3 
+./build-gdbserver.sh arm arm-eabi-linux $ANDROID_BUILD_TOP/toolchain $ANDROID_BUILD_TOP/ndk --build-out=$ANDROID_BUILD_TOP/out/gdbserver/arm -j16 --verbose --package-dir=$ANDROID_BUILD_TOP/out/dist
+
+/home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/include/string
+/home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/include/vector
+/home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/libs/armeabi-v7a/libgnustl_static.a
+
+PATH="/home/fhc/ndk-arm-23/bin:$PATH" make
+--------------------------------------------------
+nano hi.c
+#include<stdio.h>
+int main(){
+    printf("hiwd\n");
+}
+
+gcc -g hi.c -o hi
+g++ -g hi.c -o hi
+cc -g hi.c -o hi
+make hi
+
+ltrace -S ./hi  2>&1 >/dev/null
+strace ./hi 2>&1 >/dev/null | grep open
+
+
+
+gdb -q
+file ./hi
+set args -l xx
+start
+tmux-setup
+info sharedlibrary 
+info proc
+vmmap
+info functions open
+info symbol open
+info symbol 0xabcd0000
+
+catch syscall open
+
+
+context
+
+disassemble /mr
+disassemble /sr
+
+-------
+gef config
+----
+strace
+ltrace
+
+
+--------------------------
+gef> py
+>import sys
+>print '\n'.join(sys.path)
+>end
+
+py print '\n'.join(sys.path)
+set debug remote 0
+
+pip install --install-option="--prefix=$PREFIX_PATH" package_name
+sudo pip2 install --install-option="--prefix=/home/fhc/.local" keystone-engine
+sudo pip2 uninstall ropper
+import keystone
+print(keystone.__file__)
+/usr/local/lib/python3.5/dist-packages/keystone/__init__.py
+
+
+
+/usr/share/gdb/python /usr/lib/python3.5 /usr/lib/python3.5/plat-x86_64-linux-gnu /usr/lib/python3.5/lib-dynload /usr/local/lib/python3.5/dist-packages /usr/lib/python3/dist-packages
+
+
