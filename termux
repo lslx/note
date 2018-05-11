@@ -1,0 +1,48 @@
+
+termux:
+
+apkinstall com.termux.apk
+
+https://glow.li/technology/2015/11/06/run-an-ssh-server-on-your-android-with-termux/
+apt update (need it?)
+pkg install openssh   (apt install openssh)
+sshd
+
+
+adb shell su -c cat /data/loca/tmp/authorized_keys \> /data/data/com.termux/files/home/.ssh/authorized_keys
+
+
+
+on host: https://glow.li/technology/2016/9/20/access-termux-via-usb/
+adb forward tcp:8022 tcp:8022
+ssh localhost -p 8022
+
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! 
+---------> ssh-keygen -f "/home/fhc/.ssh/known_hosts" -R [localhost]:8022
+
+
+https://github.com/st42/termux-sudo
+pkg install git
+pkg install ncurses-utils
+git clone https://github.com/st42/termux-sudo.git
+cat sudo > /data/data/com.termux/files/usr/bin/sudo
+chmod 700 /data/data/com.termux/files/usr/bin/sudo
+
+
+cd ../usr/bin
+cat /data/local/tmp/gdb81 > gdb
+pkg install python2
+
+scp -r fhc@172.16.12.45:/data/data/com.termux/files/usr/share .
+cd share/
+adb push gdb /data/local/tmp/gdbdata
+gdb --data-directory=/data/local/tmp/gdbdata
+
+
+
+pkg install wget
+wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
+
+pkg install vim
+
+
