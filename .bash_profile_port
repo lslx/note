@@ -781,15 +781,20 @@ function gdbclient()
 # to do: 
 # kill all sub process
 
+alias gdbcur='/home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb'
+#alias gdbcur='/home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/bin/gdb'
 function apkdbg()
 {
-	local DBGSVR=newname #rename gdbserver 
+	#local DBGSVR=newname711
+	local DBGSVR=newname81
+	#local DBGSVR=gdbserver
 	local PORT=5040
 	adb forward --remove "tcp:$PORT" 2>/dev/null
 	adb forward "tcp:$PORT" "tcp:$PORT"
 	local PKG=`_apk_get_pkg_name $1`
 	local ACT=`_apk_get_act_name $1`
     adb shell "su -c pkill $PKG"
+	#adb shell "am start -n $PKG/$ACT"
 	adb shell "am start -D -n $PKG/$ACT"
 	sleep 0.3s
 	PID=
@@ -804,8 +809,11 @@ function apkdbg()
 		echo get pid failed,app start too slow!
 		return
 	fi
-    adb shell "su -c pkill $DBGSVR"
-	adb shell "su -c /data/local/tmp/$DBGSVR :$PORT --attach $PID" &
+    adb shell "su -c pkill newname711"
+    adb shell "su -c pkill newname81"
+    adb shell "su -c pkill gdbserver"
+	adb shell "su -c /data/local/tmp/$DBGSVR --debug --remote-debug :$PORT --attach $PID" 
+	#adb shell "su -c /data/local/tmp/$DBGSVR :$PORT --attach $PID" &
 	sleep 1s
     #local andver=`adb shell getprop ro.build.fingerprint | grep -o [4-7]\.[0-9]\.[0-9]`
     #local OUT_ROOT=
@@ -827,9 +835,12 @@ function apkdbg()
 	#    -ex "set solib-search-path $OUT_SO_SYMBOLS:$OUT_SO_SYMBOLS/hw:$OUT_SO_SYMBOLS/ssl/engines:$OUT_SO_SYMBOLS/drm:$OUT_SO_SYMBOLS/egl:$OUT_SO_SYMBOLS/soundfx"
     #    -ex "# must have bash   and  > /dev/null   ,  otherwise will stuck"\
 	#    -ex "# c must follow jdwpexitsh , if jdwpexitsh follow c , will stuck"\
-    #gdb-multiarch \
-    #/home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/bin/gdb \
-    /home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb
+    #gdb-multiarch
+    #/home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/bin/gdb
+    #-/home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb
+    #/home/fhc/Downloads/gcc-linaro-arm-linux-gnueabihf-4.7-2012.10-20121022_linux/bin/arm-linux-gnueabihf-gdb
+    #/home/fhc/Downloads/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gdb
+    #/home/fhc/Dev/ndksrc/out/gdb/install/host-tools/bin/gdb-orig
 #-ex "define ss
 #b dlopen
 #shell bash jdwpexitsh $PID >/dev/null &
