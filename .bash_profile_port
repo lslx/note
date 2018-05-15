@@ -5,6 +5,9 @@ HISTFILESIZE=20000
 MYMACHINE=`hostname`
 case $MYMACHINE in
 fhc-B250M-D3H)
+	# gui console will use ~/.bashrc , ctl+alt+f1 will use ~/.profile
+	# but in ubuntu .profile will source ~/.bashrc, so only use .bashrc
+	# just add: source $HOME/.bash_profile_port
 	#PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
 	PS1='D$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
@@ -27,7 +30,9 @@ DESKTOP-15EGHT8) # bash on windows
 	;;
 localhost)
 	# cp .bash_profile_port ~/.bashrc
-	# tsu cmd will use ~/.bashrc
+	# tsu cmd will use ~/.bashrc , .profile donot need
+	# just add: source $HOME/.bash_profile_port
+	#PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
 	PS1='t#:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
