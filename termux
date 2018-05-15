@@ -1,5 +1,5 @@
 
-termux:
+termux, and install gdb:
 
 apkinstall com.termux.apk
 
@@ -8,7 +8,7 @@ apt update (need it?)
 pkg install openssh   (apt install openssh)
 sshd
 
-
+adb push authorized_keys /data/local/tmp/
 adb shell su -c cat /data/loca/tmp/authorized_keys \> /data/data/com.termux/files/home/.ssh/authorized_keys
 
 
@@ -21,22 +21,65 @@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
 ---------> ssh-keygen -f "/home/fhc/.ssh/known_hosts" -R [localhost]:8022
 
 
-https://github.com/st42/termux-sudo
 pkg install git
+
+# discard begin # termux-sudo, use tsu
+https://github.com/st42/termux-sudo
 pkg install ncurses-utils
 git clone https://github.com/st42/termux-sudo.git
 cat sudo > /data/data/com.termux/files/usr/bin/sudo
 chmod 700 /data/data/com.termux/files/usr/bin/sudo
+# discard end
 
+pkg install gdb
+# on host , compile gdb with python
+ssh fhc@172.16.12.45   # 12.45 is ubuntu18.04, because termux-packages build need it(python3.6 is default)
+git clone https://github.com/termux/termux-packages.git
+cd termux-packages
+./scripts/setup-ubuntu.sh 
+./scripts/setup-android-sdk.sh 
+cd gdb
+fake python need to do:
+  438  ./python ~/.termux-build/gdb/src/gdb/python/python-config.py --includes
+  439  ls
+  440  ./python ~/.termux-build/gdb/src/gdb/python/python-config.py --ldflags
+  441  ./python ~/.termux-build/gdb/src/gdb/python/python-config.py --exec-prefix
 
+fhc@fhc-ThinkPad-T460:~$ cat bin/PYTMP/python 
+#! /bin/bash
+case "$2" in
+        --includes) echo "-I/home/fhc/.termux-build/python/subpackages/python-dev/massage/data/data/com.termux/files/usr/include/python2.7" ;;
+        --ldflags) echo "-ldl -lutil -lm -lpython2.7 -Xlinker -export-dynamic" ;;
+        --exec-prefix) echo "/data/data/com.termux/files/usr" ;;
+        *) exit 1 ;;
+esac
+exit 0
+
+./build-package.sh -a arm -f  python
+./build-package.sh -a arm -f -s gdb
+
+adb push gdb /data/local/tmp/gdb81
+
+# on device:
 cd ../usr/bin
 cat /data/local/tmp/gdb81 > gdb
 pkg install python2
+tsu
+pip2 install capstone
+pip2 install keystone-engine
+pip2 install ropper
+# need right python version:
+# python ver has chge right, fix me, use preadd path,and link to python2, or use alias
+mv /data/data/com.termux/files/usr/bin/python /data/data/com.termux/files/usr/bin/python3
+mv /data/data/com.termux/files/usr/bin/python2 /data/data/com.termux/files/usr/bin/python
+pip2 install unicorn 
+
 
 scp -r fhc@172.16.12.45:/data/data/com.termux/files/usr/share .
 cd share/
 adb push gdb /data/local/tmp/gdbdata
 gdb --data-directory=/data/local/tmp/gdbdata
+gef missing
 
 
 
@@ -46,3 +89,6 @@ wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
 pkg install vim
 
 
+ssh localhost -p 8022
+scp -P8022 capstone-3.0.5-rc2.tar.gz localhost:
+tar xzvf capstone-3.0.5-rc2.tar.gz
