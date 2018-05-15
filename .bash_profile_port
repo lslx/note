@@ -25,6 +25,12 @@ DESKTOP-15EGHT8) # bash on windows
 	PS1='W$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
+localhost)
+	# cp .bash_profile_port ~/.bashrc
+	# tsu cmd will use ~/.bashrc
+	PS1='t#:'
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
 	echo err MYMACHINE need fix !!!
