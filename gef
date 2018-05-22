@@ -80,6 +80,10 @@ gef config
 strace
 ltrace
 
+---------------problem resolv-----
+'NoneType' object has no attribute 'all_registers'
+# this cmd will trigger set_arch, then ctx cmd can work ok
+file /system/bin/app_process 
 
 --------------------------
 gef> py
