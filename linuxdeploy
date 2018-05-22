@@ -1,0 +1,38 @@
+linuxdeploy ubuntu:
+
+
+linux deploy:
+https://arachnoid.com/android/LinuxOnAndroid/index.html
+
+linux deploy   (very good)
+proot          (not stable)
+GNURoot
+Complete Linux Installer (is bad)
+
+# mount not work, mount must be before chroot
+mount --bind /system  xx/yy/system
+
+http://mirror.tuna.tsinghua.edu.cn/ubuntu-ports
+
+
+http://wiki.ubuntu.org.cn/%E4%BF%AE%E6%94%B9locale
+https://wiki.debian.org/Locale#Manually
+https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
+---------------------
+linux deploy install ubuntu 16.04:
+only chge:
+gnu/linux:ubuntu
+source:http://mirror.tuna.tsinghua.edu.cn/ubuntu-ports/
+install type:dir
+pw:xxxx
+use ssh:yes
+mount android res:yes
+mount points: (system and data dir will auto create)
+/system:/system
+/data:/data
+you can change mount status(system and data) when containner is runing, after change
+you need click config(top right),and start(bottom left)
+click right top to insall, grant root access,(wait 5-6 min for install)
+output "<<< deploy" when install coplete,then click start
+ssh android@172.16.18.205    (ip is shown at top of screen)
+
