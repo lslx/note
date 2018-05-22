@@ -7,9 +7,9 @@ https://arachnoid.com/android/LinuxOnAndroid/index.html
 linux deploy   (very good)
 proot          (not stable)
 GNURoot
-Complete Linux Installer (is bad)
+Complete Linux Installer (is bad, donot update)
 
-# mount not work, mount must be before chroot
+# mount not work, mount must be before chroot,use other way
 mount --bind /system  xx/yy/system
 
 http://mirror.tuna.tsinghua.edu.cn/ubuntu-ports
@@ -24,6 +24,7 @@ only chge:
 gnu/linux:ubuntu
 source:http://mirror.tuna.tsinghua.edu.cn/ubuntu-ports/
 install type:dir
+fix: user: android --> fhc
 pw:xxxx
 use ssh:yes
 mount android res:yes
@@ -35,4 +36,134 @@ you need click config(top right),and start(bottom left)
 click right top to insall, grant root access,(wait 5-6 min for install)
 output "<<< deploy" when install coplete,then click start
 ssh android@172.16.18.205    (ip is shown at top of screen)
+or:
+scp .ssh/authorized_keys android@172.16.18.205:.ssh/
+
+
+#------------- install xx ---------------
+
+sudo apt update
+sudo apt install vim git default-jdk gdb wget
+scp .ssh/id_rsa android@172.16.18.205:.ssh/
+git clone git@github.com:lslx/note.git
+cp note/.bash_profile_port .
+. .bash_profile_port
+wget -q -O- https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
+
+err resovle:
+e:Python Exception <class 'UnicodeEncodeError'> 'ascii' codec can't encode character '\u27a4' in position 12: ordinal not in range(128):
+r:
+see:https://github.com/singularityware/singularity/issues/11
+echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+sudo locale-gen en_US.UTF-8
+
+#check
+sudo dpkg-reconfigure locales
+
+add to .bashrc,see:https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export LANGUAGE=en_US.UTF-8
+
+gdb
+gef missing
+[*] Command `unicorn-emulate` is missing, reason  →  Missing `unicorn` package for Python3. Install with `pip3 install unicorn`.
+[*] Command `capstone-disassemble` is missing, reason  →  Missing `capstone` package for Python3. Install with `pip3 install capstone`.
+[*] Command `ropper` is missing, reason  →  Missing `ropper` package for Python3, install with: `pip3 install ropper`.
+[*] Command `assemble` is missing, reason  →  Missing `keystone-engine` package for Python3, install with: `pip3 install keystone-engine`.
+[*] Command `set-permission` is missing, reason  →  Missing `keystone-engine` package for Python3, install with: `pip3 install keystone-engine`.
+
+sudo apt install  python-pip python3-pip
+# install keystone-engine need cmake
+sudo apt install cmake
+sudo pip3 install --install-option="--prefix=/home/android/.local" unicorn capstone ropper keystone-engine 
+
+# install gdb8.1: , texinfo used when make install
+sudo apt install make texinfo
+wget https://ftp.gnu.org/gnu/gdb/gdb-8.1.tar.xz
+tar xJvf gdb-8.1.tar.xz
+mkdir buildgdb
+cd buildgdb
+../gdb-8.1/configure --prefix=/home/android/bin
+# make need x min, 52<x<62
+make
+make install
+ln -s ~/bin/gdb ~/bin/gdb81
+because gdb81 use py2.7,so install:
+sudo pip install --install-option="--prefix=/home/android/.local" unicorn capstone ropper keystone-engine 
+
+----err,resolve----
+if texinfo not install
+gdb's make install will faild, then cause gdb could not find python:
+>>>>
+Could not load the Python gdb module from `/home/android/bin/share/gdb/python'.
+Limited Python support is available from the _gdb module.
+Suggest passing --data-directory=/path/to/gdb/data-directory.
+<<<<
+(but your can pass --data-directory=/path/to/gdb/data-directory to gdb resolve it,[when your cross compile])
+
+
+
+
+
+
+
+
+
+
+apt search android: maybe useful:
+abootimg
+apktool
+volatility
+
+
+
+---other:
+ubuntu-make/xenial 16.02.1 all
+  setup your development environment on ubuntu easily
+lime-forensics-dkms/xenial 1.7.2-1 all
+  kernel module to memory dump (DKMS)
+libmedia1/xenial 0.1.0+git20151016+6d424c9-0ubuntu7 armhf
+  Library to provide access to the Android Media HAL
+libhybris-common1/xenial 0.1.0+git20151016+6d424c9-0ubuntu7 armhf
+  Common library that contains the Android linker and custom hooks
+--
+android-src-vendor/xenial 7-0ubuntu1 all
+  Vendor files to build Android Open Source Project
+
+android-tools-adb/xenial 5.1.1r36+git20160322-0ubuntu3 armhf
+  Android Debug Bridge CLI tool
+
+android-tools-adbd/xenial 5.1.1r36+git20160322-0ubuntu3 armhf
+  Android Debug Bridge Phone Daemon
+
+android-tools-fastboot/xenial 5.1.1r36+git20160322-0ubuntu3 armhf
+  Android Fastboot protocol CLI tool
+
+android-tools-fsutils/xenial 5.1.1r36+git20160322-0ubuntu3 armhf
+  Android ext4 utilities with sparse support
+
+androidsdk-ddms/xenial 22.2+git20130830~92d25d6-3 all
+  Graphical debugging tool for Android
+
+
+
+
+
+
+http://meefik.ru/
+hack:https://hackmag.com
+https://hackmag.com/mobile/building-kernel-modules-and-native-linux-applications-for-android/
+
+
+
+
+
+
+
+
+
+
 
