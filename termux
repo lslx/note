@@ -11,17 +11,22 @@ sshd
 adb push authorized_keys /data/local/tmp/
 adb shell su -c cat /data/loca/tmp/authorized_keys \> /data/data/com.termux/files/home/.ssh/authorized_keys
 
-
+pkg install git vim wget gdb
 
 on host: https://glow.li/technology/2016/9/20/access-termux-via-usb/
 adb forward tcp:8022 tcp:8022
 ssh localhost -p 8022
+# err resolve:
+# e: ssh_exchange_identification: read: Connection reset by peer
+# r: reboot host (your desktop)
 
 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! 
 ---------> ssh-keygen -f "/home/fhc/.ssh/known_hosts" -R [localhost]:8022
 
 
 pkg install git
+scp -P8022 id_rsa localhost:/data/data/com.termux/files/home/.ssh
+git clone git@github.com:lslx/note.git
 
 # discard begin # termux-sudo, use tsu
 https://github.com/st42/termux-sudo
