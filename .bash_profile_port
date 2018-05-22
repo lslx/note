@@ -3,6 +3,8 @@ alias bb='. ~/.bash_profile_port'
 HISTSIZE=10000
 HISTFILESIZE=20000
 MYMACHINE=`hostname`
+ADBSHELL="adb shell"
+ADBSHELLSU="adb shell su -c"
 case $MYMACHINE in
 fhc-B250M-D3H)
 	# gui console will use ~/.bashrc , ctl+alt+f1 will use ~/.profile
@@ -35,6 +37,8 @@ localhost)
 	#PS1='\033[1;33mD\033[1;32m$:\033[0;00m'
 	PS1='t#:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
+	ADBSHELL=""
+	ADBSHELLSU="su -c"
 	;;
 *)
 	MAIN_DATA_ROOT=/home/fhc/needfix__
@@ -579,7 +583,8 @@ function slldbsvr(){
 
 }
 #alias andsvrinit='adb shell "su -c /data/local/tmp/andd -p23999"'
-alias aapt='/home/fhc/Android/Sdk/build-tools/27.0.0/aapt'
+#aapt use from # apt install ,or pkg install
+#alias aapt='/home/fhc/Android/Sdk/build-tools/27.0.0/aapt'
 function csv2html(){
 	for line in `cat $1`; do
 		echo "<tr bgcolor=@ffffff><td>${line//,/</td><td>}</td></tr>" ;
@@ -652,7 +657,7 @@ function pid()
     fi
     local EXE="$1"
     if [ "$EXE" ] ; then
-        local PID=`adb shell ps \
+        local PID=`$ADBSHELL ps \
             | tr -d '\r' \
             | grep "$prepend$EXE$append" \
             | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'`
@@ -860,6 +865,27 @@ function apkdbg()
 #-ex "target extended-remote :$PORT"
 	#"set substitute-path /home/fhc/ext800/src-android-local/android-4.4.4_r1/ /home/fhc/ext800/makerom/android-4.4.4_r1/"
 	#"source $ANDROID_BUILD_TOP/development/scripts/gdb/dalvik.gdb"
+
+}
+
+# apkdevxxx, run on device
+function apkdevdbg()
+{
+	local PKG='com.pafinancialtech.weihaibank'
+	local ACT='com.pingan.fstandard.activity.SplashActivity'
+	PATH=/system/bin:$PATH LD_LIBRARY_PATH=/system/lib am force-stop $PKG
+	# need force-stop again
+	PATH=/system/bin:$PATH LD_LIBRARY_PATH=/system/lib am force-stop $PKG
+	PATH=/system/bin:$PATH LD_LIBRARY_PATH=/system/lib am start -D -n $PKG/$ACT
+	PID=`pid $PKG`
+	for i in {1..300};do
+		PID=`pid $PKG`
+		[[ -n "$PID" ]] && break
+	done
+	[[ -z "$PID" ]] && echo get pid failed,app start too slow! && return
+	#[[ -n "$PID" ]] && echo ERROR: PID is null !!! && return 0
+	echo PID: $PID
+	gdb --data-directory=/data/local/tmp/gdbdata --pid=$PID
 
 }
 
