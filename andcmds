@@ -1,0 +1,51 @@
+android cmds:
+
+flash device:
+cd
+cd ext800/makerom/factory/
+cd hammerhead-m4b30z_601
+adb reboot bootloader
+sudo ./flash-all.sh
+
+
+
+
+
+
+
+
+adb shell ls -al /dev/block/platform/msm_sdcc.1/by-name
+lrwxrwxrwx root     root              1970-01-25 13:05 DDR -> /dev/block/mmcblk0p24
+lrwxrwxrwx root     root              1970-01-25 13:05 aboot -> /dev/block/mmcblk0p6
+lrwxrwxrwx root     root              1970-01-25 13:05 abootb -> /dev/block/mmcblk0p11
+lrwxrwxrwx root     root              1970-01-25 13:05 boot -> /dev/block/mmcblk0p19
+lrwxrwxrwx root     root              1970-01-25 13:05 cache -> /dev/block/mmcblk0p27
+lrwxrwxrwx root     root              1970-01-25 13:05 crypto -> /dev/block/mmcblk0p26
+lrwxrwxrwx root     root              1970-01-25 13:05 fsc -> /dev/block/mmcblk0p22
+lrwxrwxrwx root     root              1970-01-25 13:05 fsg -> /dev/block/mmcblk0p21
+lrwxrwxrwx root     root              1970-01-25 13:05 grow -> /dev/block/mmcblk0p29
+lrwxrwxrwx root     root              1970-01-25 13:05 imgdata -> /dev/block/mmcblk0p17
+lrwxrwxrwx root     root              1970-01-25 13:05 laf -> /dev/block/mmcblk0p18
+lrwxrwxrwx root     root              1970-01-25 13:05 metadata -> /dev/block/mmcblk0p14
+lrwxrwxrwx root     root              1970-01-25 13:05 misc -> /dev/block/mmcblk0p15
+lrwxrwxrwx root     root              1970-01-25 13:05 modem -> /dev/block/mmcblk0p1
+lrwxrwxrwx root     root              1970-01-25 13:05 modemst1 -> /dev/block/mmcblk0p12
+lrwxrwxrwx root     root              1970-01-25 13:05 modemst2 -> /dev/block/mmcblk0p13
+lrwxrwxrwx root     root              1970-01-25 13:05 pad -> /dev/block/mmcblk0p7
+lrwxrwxrwx root     root              1970-01-25 13:05 persist -> /dev/block/mmcblk0p16
+lrwxrwxrwx root     root              1970-01-25 13:05 recovery -> /dev/block/mmcblk0p20
+lrwxrwxrwx root     root              1970-01-25 13:05 rpm -> /dev/block/mmcblk0p3
+lrwxrwxrwx root     root              1970-01-25 13:05 rpmb -> /dev/block/mmcblk0p10
+lrwxrwxrwx root     root              1970-01-25 13:05 sbl1 -> /dev/block/mmcblk0p2
+lrwxrwxrwx root     root              1970-01-25 13:05 sbl1b -> /dev/block/mmcblk0p8
+lrwxrwxrwx root     root              1970-01-25 13:05 sdi -> /dev/block/mmcblk0p5
+lrwxrwxrwx root     root              1970-01-25 13:05 ssd -> /dev/block/mmcblk0p23
+lrwxrwxrwx root     root              1970-01-25 13:05 system -> /dev/block/mmcblk0p25
+lrwxrwxrwx root     root              1970-01-25 13:05 tz -> /dev/block/mmcblk0p4
+lrwxrwxrwx root     root              1970-01-25 13:05 tzb -> /dev/block/mmcblk0p9
+lrwxrwxrwx root     root              1970-01-25 13:05 userdata -> /dev/block/mmcblk0p28
+
+adb shell cat /fstab.hammerhead
+/dev/block/platform/msm_sdcc.1/by-name/system       /system         ext4    ro,noatime,barrier=1
+/dev/block/platform/msm_sdcc.1/by-name/userdata     /data           ext4    noatime,nosuid,nodev,barrier=
+
