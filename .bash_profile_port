@@ -1,5 +1,6 @@
 alias ee='vim ~/.bash_profile_port'
 alias bb='. ~/.bash_profile_port'
+alias oo='cat ~/.bash_profile_port'
 HISTSIZE=10000
 HISTFILESIZE=20000
 MYMACHINE=`hostname`
