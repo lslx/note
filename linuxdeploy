@@ -107,10 +107,25 @@ Suggest passing --data-directory=/path/to/gdb/data-directory.
 
 
 
+PATH=/system/bin:$PATH LD_LIBRARY_PATH=/system/lib CLASSPATH=/system/framework/am.jar /system/bin/app_process /system/bin com.android.commands.am.Am
+
+PATH=/system/bin:$PATH CLASSPATH=/system/framework/am.jar /system/bin/app_process /system/bin com.android.commands.am.Am
+
+strace -e verbose=all -o se5 -E ANDROID_DATA=/data -E ANDROID_ROOT=/system -E LD_LIBRARY_PATH=/system/lib -E CLASSPATH=/system/framework/am.jar /system/bin/app_process /system/bin com.android.commands.am.Am
+
+PATH=/system/bin:$PATH ANDROID_DATA=/data ANDROID_ROOT=/system am
+
+LD_LIBRARY_PATH=/system/lib /data/local/tmp/strace
+
+run gun tool on bionic:
+LINUXRT=/data/data/ru.meefik.linuxdeploy/env/rootfs/linux
+LD_LIBRARY_PATH=$LINUXRT/lib/arm-linux-gnueabihf $LINUXRT/lib/ld-linux-armhf.so.3 $LINUXRT/usr/bin/strace -e verbose=all -o a3 -E LD_LIBRARY_PATH=/system/lib -E CLASSPATH=/system/framework/am.jar /system/bin/app_process /system/bin com.android.commands.am.Am
 
 
-
-
+e:r:
+mount -t debugfs none /sys/kernel/debug 
+cutils-trace: Error opening trace file: No such file or directory (2)
+05-23 13:54:29.468  4617  4617 E ICU     : ANDROID_DATA environment variable not set
 
 
 apt search android: maybe useful:
