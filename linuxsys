@@ -11,9 +11,13 @@ chrome archon
 
 LD_LIBRARY_PATH=/data/data/ru.meefik.linuxdeploy/env/rootfs/linux/usr/lib/jvm/java-8-openjdk-armhf/jre/lib/arm/jli:/data/data/ru.meefik.linuxdeploy/env/rootfs/linux/lib/arm-linux-gnueabihf /data/data/ru.meefik.linuxdeploy/env/rootfs/linux/usr/lib/jvm/java-8-openjdk-armhf/bin/jdb
 
-
+https://github.com/NixOS/patchelf.git
 sudo apt insall autoconf automake libtool
 sudo apt insall make g++
+cd patchelf
+./bootstrap.sh
+./configure
+make
 
 cp -Prv /data/data/ru.meefik.linuxdeploy/env/rootfs/linux/bin /data/local/tmp/patch/bin
 cp -Prv /data/data/ru.meefik.linuxdeploy/env/rootfs/linux/lib /data/local/tmp/patch/lib
