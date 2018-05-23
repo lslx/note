@@ -91,6 +91,12 @@ gef> py
 >print '\n'.join(sys.path)
 >end
 
+# python3 print need ()
+gef>pi
+>>> import sys
+>>> print('\n'.join(sys.path))
+
+
 py print '\n'.join(sys.path)
 set debug remote 0
 
