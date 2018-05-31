@@ -1,0 +1,93 @@
+vita
+
+sudo groupadd vita
+sudo useradd -m -s /bin/bash -g vita vita
+sudo bash -c cat\>/etc/sudoers.d/vita<<EOF
+vita ALL=(ALL) NOPASSWD: ALL
+EOF
+
+su - vita
+
+mkdir build cross-tool cross-gcc-tmp source sysroot
+# sudo chown -R vita.vita vita
+
+cd build
+
+tar xvf ../source/binutils-2.30.tar.xz
+mkdir build-binutils
+cd build-binutils
+../binutils-2.30/configure \
+--prefix=$CROSS_TOOL --target=$TARGET \
+--with-sysroot=$SYSROOT
+
+make  -j9
+make install
+cd ..
+
+tar xvf ../source/gcc-7.3.0.tar.xz 
+tar xvf ../source/gmp-6.1.2.tar.xz 
+tar xvf ../source/mpfr-4.0.0.tar.xz 
+tar xvf ../source/mpc-1.1.0.tar.gz
+mv gmp-6.1.2 gcc-7.3.0/gmp
+mv mpfr-4.0.0 gcc-7.3.0/mpfr
+mv mpc-1.1.0 gcc-7.3.0/mpc
+
+mkdir gcc-build
+cd gcc-build
+../gcc-7.3.0/configure \
+--prefix=$CROSS_GCC_TMP --target=$TARGET \
+--with-sysroot=$SYSROOT \
+--with-newlib --enable-languages=c \
+--with-mpfr-include=/home/vita/build/gcc-7.3.0/mpfr/src \
+--with-mpfr-lib=/home/vita/build/gcc-7.3.0/mpfr/.libs \
+--disable-shared --disable-threads \
+--disable-decimal-float --disable-libquadmath \
+--disable-libmudflap --disable-libgomp \
+--disable-nls --disable-libssp \
+--disable-libmpx --disable-libatomic
+
+make -j16
+
+make install
+
+cd ../../source
+apt-get source linux-image-$(uname -r)
+# this will get linux_4.4.0-127.153.diff.gz linux_4.4.0-127.153.dsc linux_4.4.0.orig.tar.gz
+# and unpack to linux-4.4.0
+# Picking 'linux' as source package instead of 'linux-image-4.13.11-041311-generic'
+
+cd ../build
+cp -r ../source/linux-4.4.0 .
+
+cd linux-4.4.0
+make mrproper
+make ARCH=x86_64 headers_check
+make ARCH=x86_64 INSTALL_HDR_PATH=$SYSROOT/usr/ headers_install
+
+# to see syscall num:
+# vi /home/vita/sysroot/usr//include/asm/unistd_64.h
+
+
+# glibc need fix ?
+
+tar xvf ../source/glibc-2.23.tar.xz
+mkdir glibc-build
+cd glibc-build
+../glibc-2.23/configure \
+--prefix=/usr --host=$TARGET \
+--enable-kernel=4.4.0 --enable-add-ons \
+--with-headers=$SYSROOT/usr/include \
+libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes \
+libc_cv_ctors_header=yes
+
+make -j16
+
+
+
+
+
+
+
+
+
+
