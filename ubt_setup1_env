@@ -13,7 +13,7 @@ sudo apt update
 
 
 
-# home 目录中文转英文
+# home 目录中文转英文 (16.04 and 18.04)
 
 打开终端，在终端中输入命令:  
 export LANG=en_US
@@ -42,3 +42,6 @@ sudo apt -f install
 
 因为搜狗基于fcitx，所以设置fcitx为默认:
 设置–》语言支持-》键盘输入法系统-》fcitx 设置保留搜狗和英文美国两个输入法，去除其他 dash搜索-》fcitx配置-》（英语美国，搜狗）
+
+18.04 install sogou look this:
+https://jingyan.baidu.com/article/e75057f20d9521ebc91a890a.html
