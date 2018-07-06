@@ -45,3 +45,31 @@ sudo apt -f install
 
 18.04 install sogou look this:
 https://jingyan.baidu.com/article/e75057f20d9521ebc91a890a.html
+
+
+
+
+
+sudo apt install net-tools
+sudo apt install git
+sudo apt install vim
+
+
+
+   58  cp xx.zip ~/
+   59  cd 
+   60  unzip xx.zip 
+   61  unzip x.zip 
+   62  cd .ssh
+   63  ls
+   64  rm known_hosts 
+
+
+proxychains
+
+
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo dpkg -i google-chrome*; sudo apt-get -f install 
+
+
+https://github.com/FelisCatus/SwitchyOmega/releases
