@@ -1,0 +1,54 @@
+android internal
+
+app_process
+/home/fhc/ext800/src-android-local/android-6.0.1_r77/frameworks/base/cmds/app_process/app_main.cpp
+/home/fhc/ext800/src-android-local/android-6.0.1_r77/frameworks/base/core/jni/AndroidRuntime.cpp
+
+jdwp
+/home/fhc/ext800/src-android-local/android-6.0.1_r77/frameworks/base/core/jni/AndroidRuntime.cpp
+
+./frameworks/base/cmds/am/src/com/android/commands/am/Am.java
+
+
+
+prelink map
+build/core/prelink-linux-arm.map
+
+other option: uber, linaro, termux,crosstool-ng
+
+
+http://chenyuanfang.blogspot.com/2017/11/build-android-ndk-15-from-source.html
+
+# See what Android manifests are available for NDK
+git ls-remote https://android.googlesource.com/platform/manifest | grep NDK
+
+# see we pick 'refs/heads/ndk-release-r16'
+# or see: https://android.googlesource.com/platform/ndk/+/ndk-release-r16/README.md
+repo init -u https://android.googlesource.com/platform/manifest -b ndk-release-r16
+
+# See which clang version are this by this build of NDK for linux host
+ls -al prebuilts/ndk/current/toolchains/linux-x86_64/llvm
+lrwxrwxrwx 1 qe qe 46 Nov 11 18:10 prebuilts/ndk/current/toolchains/linux-x86_64/llvm -> ../../../../clang/host/linux-x86/clang-4053586/
+
+# now replace the default clang with customized version
+# https://android.googlesource.com/platform/ndk/+/master/docs/Toolchains.md
+export CLANG_PREBUILTS=`realpath ../prebuilts/clang/host/linux-x86`
+cd $CLANG_PREBUILTS
+tar xf path/to/clang-dev-linux-x86_64.tar.bz2
+mv clang-4053586 clang-4053586.orig
+mv clang-dev clang-4053586
+
+# rebuild NDK
+cd -
+python checkbuild.py --no-build-tests --system linux
+
+
+How to build prebuilt clang:
+
+# check what the prebuilt clang manifest looks like
+cat prebuilts/ndk/current/toolchains/linux-x86_64/llvm/repo.prop
+#or
+cat prebuilts/ndk/current/toolchains/linux-x86_64/llvm/manifest_*.xml
+
+# Use the manifest
+
