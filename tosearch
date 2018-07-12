@@ -1,44 +1,44 @@
-to search
-
-unicorn
-http://www.unicorn-engine.org/
-
-angr
-http://angr.io/
- 
-r2
-
-DECAF
-https://github.com/sycurelab/DECAF
-
-ISP RAS
-https://github.com/ispras/qemu/tree/plugins
-
-pwndbg
-https://github.com/pwndbg/pwndbg
+to search:
 
 
+pkg manager internal
+
+buildroot
+
+mount
 
 
-multi tools qemu based
-http://events.linuxfoundation.org/sites/events/files/slides/presentation_8.pdf
-
-pyrebox
-https://github.com/Cisco-Talos/pyrebox/
-https://talosintelligence.com/pyrebox
+auto configure
 
 
+advanced toolchain
 
-CGEN, the Cpu tools GENerator
-http://sourceware.org/cgen/
+
+linux sig
+
+
+----------------------------------
+
+
+../gdb-8.1/gdb/configure CXXFLAGS=-static CFLAGS=-static LDFLAGS=-static
+
+../gdb-8.1/gdb/configure --prefix='/home/fhc/install' CXXFLAGS=-static CFLAGS=-static LDFLAGS=-static
+
+../gdb-8.1/gdb/configure --prefix='/home/fhc/install' CXXFLAGS='-fPIC -static' CFLAGS='-fPIC -static' LDFLAGS='-fPIC -static'
 
 
 
+../gdb-8.1/configure --prefix="/home/fhc/install" CXXFLAGS="-fPIC -static" CFLAGS="-fPIC -static" LDFLAGS="-static"
+
+../gdb-8.1/configure --prefix="/home/fhc/install" CXXFLAGS="-fPIC -static" CFLAGS="-fPIC -static" LDFLAGS="-static" --with-python=/usr/bin/python3
 
 
-key world
-virtual machine introspection 
 
 
-panda
-https://www.youtube.com/watch?v=YGVnpWXtlF4
+
+
+
+toolchain
+https://www.slideshare.net/linaroorg/lcu14-311-advanced-toolchain-usage-parts-12
+https://www.slideshare.net/linaroorg/hkg15211-advanced-toolchain-usage-part-4
+https://www.slideshare.net/linaroorg/sfo15310-advanced-toolchain-usage-part-6
