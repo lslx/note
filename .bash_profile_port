@@ -15,6 +15,10 @@ fhc-B250M-D3H)
 	PS1='D$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
+fhc-B360M-D3H)
+	PS1='N$:'
+	MAIN_DATA_ROOT=/home/fhc/ext800
+	;;
 fhc-XPS-15-9560)
 	PS1='x$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
