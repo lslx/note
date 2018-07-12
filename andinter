@@ -52,3 +52,15 @@ cat prebuilts/ndk/current/toolchains/linux-x86_64/llvm/manifest_*.xml
 
 # Use the manifest
 
+-------------------------------
+build ranchu qemu
+http://restart-thinking.vitorallo.com/2014/11/ranchu-where-are-you-kernel-and.html
+https://qemu-android.googlesource.com/qemu-ranchu
+
+git clone https://qemu-android.googlesource.com/qemu-android
+git clone https://qemu-android.googlesource.com/qemu-ranchu
+mkdir builddir
+cd qemu-ranchu/scripts
+./rebuild.sh --system=linux-x86_64 --build-dir=/home/fhc/qemugg/builddir -j9 /home/fhc/qemugg/qemu-android /home/fhc/ext800/src-android-local/android-6.0.1_r77
+
+
