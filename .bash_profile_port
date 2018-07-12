@@ -2404,3 +2404,5 @@ echo
 
 
 
+# cd /home/fhc/Android/Sdk/tools
+# emulator -avd n5a26x86a80
