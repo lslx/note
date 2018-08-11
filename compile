@@ -166,6 +166,13 @@ abootimg -i boot.img
 abootimg -x boot.img
 abootimg --create bootnew.img -f bootimg.cfg -k Image.gz-dtb -r initrd.img
 abootimg --create bootnew9.img -f bootimg.cfg -k ../msm/arch/arm/boot/zImage-dtb -r initrd.img
+abootimg --create bootnew.img -f bootimg.cfg -k /home/fhc/ext800/kernel/msm601systap/msm/arch/arm/boot/zImage-dtb -r initrd.img
+for hammerheader:
+x$:abootimg --create bootnew.img -f bootimg.cfg -k /home/fhc/ext800/kernel/n5msm601systap/msm/arch/arm/boot/zImage-dtb -r initrd.img
+
+for bull_head:
+abootimg --create bootnew.img -f bootimg.cfg -k /home/fhc/ext800/kernel/n5xmsm601-3.10.73-g4e0bcb3/msm/arch/arm64/boot/Image.gz-dtb -r initrd.img
+
 fastboot flash boot bootnew.img
 
 

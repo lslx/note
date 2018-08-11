@@ -2,6 +2,8 @@ linuxdeploy ubuntu:
 
 
 linux deploy:
+https://github.com/meefik/linuxdeploy/releases
+
 https://arachnoid.com/android/LinuxOnAndroid/index.html
 
 linux deploy   (very good)
@@ -12,25 +14,24 @@ Complete Linux Installer (is bad, donot update)
 # mount not work, mount must be before chroot,use other way
 mount --bind /system  xx/yy/system
 
-http://mirror.tuna.tsinghua.edu.cn/ubuntu-ports
-
 
 http://wiki.ubuntu.org.cn/%E4%BF%AE%E6%94%B9locale
 https://wiki.debian.org/Locale#Manually
 https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
 ---------------------
 linux deploy install ubuntu 16.04:
-only chge:
+only chge:(click right bottom to set)
 gnu/linux:ubuntu
 source:http://mirror.tuna.tsinghua.edu.cn/ubuntu-ports/
 install type:dir
 fix: user: android --> fhc
 pw:xxxx
-use ssh:yes
 mount android res:yes
 mount points: (system and data dir will auto create)
 /system:/system
 /data:/data
+use ssh:yes
+(click top right and select install to install ubuntu)(start at 10:56 and complete at)
 you can change mount status(system and data) when containner is runing, after change
 you need click config(top right),and start(bottom left)
 click right top to insall, grant root access,(wait 5-6 min for install)
@@ -191,6 +192,86 @@ linuxdeploy -p linux conf --method='chroot' --source-path='https://mirrors.tuna.
 linuxdeploy -p linux conf -x
 linuxdeploy -p linux deploy
 linuxdeploy -p linux shell -u root
+
+
+-----------------------------
+n5x:
+
+make bullhead_defconfig
+make menuconfig  (module load,unload)
+vi .config
+CONFIG_HAVE_PROBE=y
+CONFIG_PROBES=y
+CONFIG_UPROBE_EVENT=y
+CONFIG_UPROBES=y
+make -j9
+
+for bull_head:
+abootimg --create bootnew.img -f bootimg.cfg -k /home/fhc/ext800/kernel/n5xmsm601-3.10.73-g4e0bcb3/msm/arch/arm64/boot/Image.gz-dtb -r initrd.img
+abootimg --create bootnew.img -f bootimg.cfg -k /home/fhc/ext800/kernel/n5xmsm601-3.10.73-g4e0bcb3/Image.gz-dtb -r initrd.img
+
+fastboot flash boot bootnew.img
+
+adb push vmlinux /data/local/tmp
+adb push Makefile /data/local/tmp
+adb push .config /data/local/tmp
+adb push Module.symvers /data/local/tmp
+cp arch/arm64/boot/Image.gz-dtb ..
+
+make clean
+cd ..
+zip -ry msm3.zip msm
+adb push msm3.zip /data/local/tmp
+arm-linux-gnueabi-objcopy --only-keep-debug vmlinux vmlinux.debug
+
+----------------systemtap-------------------
+手工创建内核debuginfo相关调试信息
+https://www.douban.com/note/350501219/
+
+PATH=/system/bin:$PATH ANDROID_DATA=/data ANDROID_ROOT=/system am
+
+
+
+/data/data/ru.meefik.linuxdeploy/bin/linuxdeploy shell -u root
+
+cd /lib/modules/3.4.0-g2f6be71-dirty
+mkdir -p /modules/3.4.0-g2f6be71-dirty
+# in linux host: compile kernel
+cd /home/fhc/ext800/kernel/msm601systap/msm
+. ../../kernel601new.sh
+make hammerhead_defconfig
+make menuconfig
+# https://www.cnblogs.com/huberypan/p/7976155.html
+
+"cannot get security labeling handle: No such file or directory"
+mount -o remount,ro /sys/fs/selinux
+apt install systemtap
+apt remove gcc-5.3
+apt install gcc-4.8
+cd /usr/bin
+ln -s gcc gcc-4.8
+# err:    ./scripts/recordmcount: 1: ./scripts/recordmcount: Syntax error: end of file unexpected
+cd /data/local/tmp
+make scripts
+
+stap -ve 'probe kernel.function("sys_openat") {log("hello world") exit()}'
+stap -l 'kernel.function("*")' | grep mkdir
+
+stap -ve 'probe kernel.function("sys_mkdirat").call { log ("enter") }'
+
+
+
+------------------- uprobe patch , and other way -------------------------------
+https://patches.linaro.org/patch/26046/
+
+or: install other rom ,which has kernel 4.8
+
+
+
+
+
+
+
 
 
 

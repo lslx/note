@@ -61,6 +61,41 @@ git clone https://qemu-android.googlesource.com/qemu-android
 git clone https://qemu-android.googlesource.com/qemu-ranchu
 mkdir builddir
 cd qemu-ranchu/scripts
-./rebuild.sh --system=linux-x86_64 --build-dir=/home/fhc/qemugg/builddir -j9 /home/fhc/qemugg/qemu-android /home/fhc/ext800/src-android-local/android-6.0.1_r77
+./rebuild.sh --system=linux-x86_64,windows-x86_64 --build-dir=/home/fhc/qemugg/builddir -j9 --target=arm,arm64,x86,x86_64 /home/fhc/qemugg/qemu-android /home/fhc/ext800/src-android-local/android-6.0.1_r77
+
+qemu2.7.0:
+emu2.3
+qemu2.8.0: 
+emu2.4,emu2.5
+qemu2.9.0:
+emu2.6,emu2.7,emu2.8
+
+
+https://android.googlesource.com/platform/external/qemu/+/emu-2.5-release
+
+
+
+
+
+
+后面联系清华的管理员，问题是清华的镜像 @huiyiqun 服务器上 git 需要更新到 2.5 以上，他打开 uploadpack.allowReachableSHA1InWant 这个选项后即可。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

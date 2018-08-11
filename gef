@@ -61,18 +61,43 @@ start
 tmux-setup
 info sharedlibrary 
 info proc
+info proc map
+info thread
 vmmap
 info functions open
 info symbol open
 info symbol 0xabcd0000
-
+ni 单步步过
+si 单步步入
 catch syscall open
-
 
 context
 
 disassemble /mr
 disassemble /sr
+
+disassemble $pc
+x /16xw $pc
+use def cmd to see more cmd of gef
+xfiles
+xinfo
+hexdump
+
+
+thread 2
+thread apply 4
+break *0xaaaa thread 4
+-----------------------------------------
+gef> xinfo 0xb6ce2b49
+-----------------------------------------------------------------------------------------------[ xinfo: 0xb6ce2b49 ]-----------------------------------------------------------------------------------------------
+Page: 0xb6cd4000 -> 0xb6cf9000 (size=0x25000)
+Permissions: r-x
+Pathname: /system/lib/libc.so
+Offset (from page): 0xeb49
+Inode: 1118
+Segment: .text (0xb6cce8d0-0xb6d1be78)
+
+
 
 -------
 gef config
