@@ -117,6 +117,7 @@ extract() {
          echo "'$1' is not a valid file" 
      fi 
 }
+alias apktool='/home/fhc/bin/apktool'
 alias 010e='~/010editor/010editor'
 alias bcmp='nohup bcompare &'
 PATH="~/bin:$PATH"
@@ -2309,6 +2310,14 @@ function getmem(){
 function andsystable(){
     if [ -z "$1" ];then return 1;fi  #0xf984
     adb shell dd if=/dev/mem skip=$(($1)) bs=$((0x1)) count=2048 2\>/dev/null \| od -A x -t x4
+}
+dcd(){
+    result=`echo "obase=10; $@"|bc`
+    echo ${result,,}
+}
+dch(){
+    result=`echo "ibase=16; obase=16; $@"|bc`
+    echo ${result,,}
 }
 h2d(){
     para=$@
