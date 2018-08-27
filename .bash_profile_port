@@ -23,7 +23,7 @@ fhc-XPS-15-9560)
 	PS1='x$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
-ubt)
+ubuntu)
 	PS1='u$:'
 	MAIN_DATA_ROOT=/home/fhc/ext800
 	;;
