@@ -259,7 +259,7 @@ stap -l 'kernel.function("*")' | grep mkdir
 
 stap -ve 'probe kernel.function("sys_mkdirat").call { log ("enter") }'
 
-
+strace -o ss -p xxx
 
 ------------------- uprobe patch , and other way -------------------------------
 https://patches.linaro.org/patch/26046/
