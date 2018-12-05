@@ -1,0 +1,59 @@
+
+
+ubuntu  ssr
+
+# install ssr： https://alanlee.fun/2018/05/18/ubuntu-ssr/
+https://github.com/erguotou520/electron-ssr/releases
+sudo dpkg -i electron-ssr_0.2.3_amd64.deb
+
+# see: https://blog.csdn.net/hanshihao1336295654/article/details/79850584
+wget https://download.libsodium.org/libsodium/releases/LATEST.tar.gz
+#  wget https://github.com/jedisct1/libsodium/releases/download/1.0.10/libsodium-1.0.10.tar.gz
+
+tar xzvf LATEST.tar.gz
+cd libsodium*
+./configure
+make
+sudo make install
+sudo sh -c "echo /usr/local/lib > /etc/ld.so.conf.d/usr_local_lib.conf"
+sudo ldconfig
+
+
+
+SwitchyOmega:
+
+mv SwitchyOmega_Chromium.crx SwitchyOmega_Chromium.rar
+unrar *.rar
+
+chrome://extensions/
+turn on 开发者模式
+加载已解压的扩展程序
+
+
+proxychains-ng
+# see:https://blog.csdn.net/gengxuelei/article/details/52514603
+mkdir soft
+cd soft
+git clone https://github.com/rofl0r/proxychains-ng.git
+cd proxychains-ng/
+./configure --prefix=/usr --sysconfdir=/etc
+make
+sudo make install
+sudo make install-config
+sudo gedit /etc/proxychains.conf
+# socks4  127.0.0.1 9050  --> socks5  127.0.0.1 1080
+
+# failed:
+ping www.google.com
+# failed: (maybe not support icmp)
+proxychains4 ping www.google.com
+# failed: (stuck, return nothing)
+curl https://www.google.com
+curl https://www.youtube.com
+#success：(return something)
+proxychains4 curl https://www.google.com
+proxychains4 curl https://www.youtube.com
+
+
+
+

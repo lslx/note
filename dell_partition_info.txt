@@ -1,0 +1,22 @@
+dell partition info
+
+\\.\PhysicalDrive0
+分区      文件系统             容量         win用法         ubuntu用法       ubuntu VM用法
+
+分区0     Efi System           99MB         启动
+分区1     Microsoft Reserved   128MB        未知
+分区2     Basic Data           199.1GB      系统盘（c:）
+分区3     Unknown              891MB        未分配
+分区4     Linux FS             399.5GB      不可见          ext800           ext800
+分区5     Basic Data           354.1GB      数据（d:）      /home/win        根，home
+
+\\.\PhysicalDrive1
+分区      文件系统             容量         win用法
+
+分区0     Linux FS           95.4GB         不可见          根目录
+分区1     Linux Swap         9.5GB          不可见          交换分区
+分区2     Linux FS           826.6GB        不可见          home             exthome
+
+
+
+
