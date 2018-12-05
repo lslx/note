@@ -2407,6 +2407,7 @@ EOF
 echo ------todo list:
 echo bin tool func
 echo system.map func
+echo show sig number
 echo dexparse cmd use dextra ... 
 echo elfparse cmd use bintool, angr and so on
 echo v1v2sign code
@@ -2439,7 +2440,7 @@ function installandtools(){
     adb push $apkpath/ssr-export.txt /sdcard/
 }
 
-
+alias mybuild='ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk'
 
 # cd /home/fhc/Android/Sdk/tools
 # emulator -avd n5a26x86a80
