@@ -57,3 +57,17 @@ git push origin HEAD --force
 机器2:放弃本地修改 强制更新
 git fetch --all
 git reset --hard origin/master
+
+
+patch
+---------------------------------
+cd /home/fhc/ext800/kernel/msm601
+git log
+git format-patch 95e601e5f8e05b99c5bbc4de01f13ce1c65b58fb -1
+cd ../msmcf10b7e
+git am ../msm601/0001*.patch
+
+
+
+
+
