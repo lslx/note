@@ -119,7 +119,11 @@ extract() {
 }
 alias apktool='/home/fhc/bin/apktool'
 alias 010e='~/010editor/010editor'
-alias bcmp='nohup bcompare &'
+alias bcmp='nohup bcompare > ~/nohupall.out &'
+# fixme: use function , and check wmware-mount is exists
+alias mntvm='sudo vmware-mount /home/fhc/win/VM/ubt64_1604_5/ubt64_1604_5.vmdk 1 /mnt/vmwaremount;cd /mnt/vmwaremount;pwd;ls'
+alias umntvm='cd;sudo vmware-mount -k /home/fhc/win/VM/ubt64bit/ubt64_1604_5.vmdk'
+alias httpshare='python -m SimpleHTTPServer'
 PATH="~/bin:$PATH"
 #PATH="~/bin:~/andtool/bin:/Users/hongchaofu/dex2jar-2.0/:$PATH"
 #ulimit -S -n 1024
@@ -147,9 +151,9 @@ alias l8='tree -N -L 8'
 alias l9='tree -N -L 9'
 alias findsl='find . -type l  -exec ls -l {} \;'
 alias 'o'='nautilus'
-alias gsm='nohup gnome-system-monitor &'
+alias gsm='nohup gnome-system-monitor > ~/nohupall.out &'
 # open pdf
-#evince xx.pdf
+alias pdf='evince'
 
 
 # complex cmd
@@ -1205,7 +1209,7 @@ alias adbn51='adb -s 03be21df437dc6a3'
 alias adben7='adb -s emulator-5554'
 alias jadx='/home/fhc/Downloads/jadx-0.6.1/bin/jadx-gui'
 
-alias as='nohup ~/android-studio/bin/studio.sh &'
+alias as='nohup ~/android-studio/bin/studio.sh > ~/nohupall.out &'
 
 function getsigninfo()
 {
@@ -2403,13 +2407,37 @@ EOF
 echo ------todo list:
 echo bin tool func
 echo system.map func
-echo show sig number
 echo dexparse cmd use dextra ... 
 echo elfparse cmd use bintool, angr and so on
 echo v1v2sign code
 echo
 
+alias cvtsystem='simg2img system.img system.img.ext4; mkdir system'
+alias mntlsystem='sudo mount -t ext4 -o loop system.img.ext4 ./system; cd system'
+alias umntlsystem='sudo umount ./system'
+# in recovery
+alias mntsystem='adb shell mount -o rw /dev/block/bootdevice/by-name/system /system'
+alias umntsystem='adb shell umount /system'
+apkpath=/home/fhc/ext800/makerom/rootstuff
+supersu=$apkpath/SuperSU-v2.82-201705271822.zip
+busybox=$apkpath/stericson.busybox-51@APK4Fun.com.apk
+rootexplorer=$apkpath/com.speedsoftware.rootexplorer-4.1.6-129_Signed.apk
+ssr=$apkpath/ssr-android.apk
+twrpimg=$apkpath/twrp-2.8.7.1-hammerhead.img
+function flashtwrpand6(){
+    sudo fastboot flash recovery $twrpimg
+}
+function rootand(){
+    adb push $supersu /sdcard/
+    adb shell twrp install /sdcard/$supersu
+}
 
+function installandtools(){
+    adb install -r $busybox
+    adb install -r $rootexplorer
+    adb install -r $ssr
+    adb push $apkpath/ssr-export.txt /sdcard/
+}
 
 
 
