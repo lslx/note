@@ -1,0 +1,32 @@
+
+
+
+
+
+
+
+https://www.linkedin.com/pulse/quick-tips-mount-vmware-vmdk-file-linux-using-saeed-khodor-mba
+
+tar xzvf VMware-vix-disklib-5.1.0-774844.x86_64.tar.gz
+
+cd vmware-vix-disklib-distrib/
+./vmware-install.pl 
+sudo ./vmware-install.pl
+
+
+#must use sudo (use mntvm and umntvm instead which is alias)
+sudo vmware-mount -p /home/fhc/win/VM/ubt64bit/ubt64bit.vmdk 
+Nr      Start       Size Type Id Sytem                   
+-- ---------- ---------- ---- -- ------------------------
+ 1       2048   39940096 BIOS 83 Linux
+ 2   39944190    1996802 BIOS  5 Extended
+ 5   39944192    1996800 BIOS 82 Linux swap
+
+sudo mkdir /mnt/vmwaremount
+sudo vmware-mount /home/fhc/win/VM/ubt64bit/ubt64bit.vmdk 1 /mnt/vmwaremount;cd /mnt/vmwaremount
+
+ls /mnt/vmwaremount
+#cd xxx, and copy file...
+
+#unmount all partitions and close disk
+sudo vmware-mount -k /home/fhc/win/VM/ubt64bit/ubt64bit.vmdk

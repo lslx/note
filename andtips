@@ -1,0 +1,30 @@
+
+andtips:
+
+download apk from google play:
+http://apps.evozi.com/apk-downloader/
+
+unlock:
+https://blog.csdn.net/zx_android/article/details/71405882
+　　1、打开手机 设置-关于手机-点击版本号7次，以打开“开发者选项”
+　　2、返回上一步，开发者选项-打开USB 调试，打开“启用OEM解锁”
+　　3、将手机关机
+　　4、同时按住电源键&音量减键，进入fastboot(bootloader界面)
+　　5、用USB-A数据线连接手机
+　　6、打开DOS窗口输入：回车 fastboot oem unlock
+
+
+
+
+insufficientpermissions for device
+su 
+adb kill-server
+adb start-server
+^d
+adb devices
+adb shell
+
+
+
+https://source.android.com/source/building-kernels
+https://blog.csdn.net/sunao2002002/article/details/53057374

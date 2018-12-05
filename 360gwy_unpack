@@ -1,0 +1,71 @@
+自动脱壳360         (录屏工具：kazam)
+1. 创建工作目录
+mkdir 360unpack && cd 360unpack
+
+2. 拿到加固包，并查看基本信息：md5, 包名，主active
+http://app.www.gov.cn/download/Chinese.html
+wget https://app.www.gov.cn/govdata/StateCouncil_v3.0.0.apk
+APK=$(ls | grep apk$ | head -1) md5sum $APK
+PKG=`aapt d badging $APK | grep package: | grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2`
+echo $PKG
+ACT=`aapt d badging $APK | grep activity:| grep -o "name='[^']*'" | tr "'" " " | cut -d ' ' -f 2`
+echo $ACT
+
+3. 查看保护措施概况
+prefix=gwy
+apktool d -o ${prefix}dirnrs -s -f $APK >${prefix}unpack.log 2>&1
+
+3.1  dex保护查看
+l1 ${prefix}dirnrs
+find ${prefix}dirnrs | grep dex$
+jadx ${prefix}dirnrs/classes.dex
+由此可知原始的dex文件被隐藏，仅壳的dex文件可见
+3.2  so保护查看
+#列出单一平台so
+find ${prefix}dirnrs | grep so$ | xargs -I % md5sum % | grep armeabi-v7a
+#so保护方案查看
+ida ${prefix}dirnrs/lib/armeabi-v7a/libpl_droidsonroids_gif.so
+ida ${prefix}dirnrs/lib/armeabi-v7a/libweibosdkcore.so
+ida ${prefix}dirnrs/lib/armeabi-v7a/libtnet-3.1.11.so
+ida ${prefix}dirnrs/lib/armeabi-v7a/libHFKey.so
+ida ${prefix}dirnrs/lib/armeabi-v7a/libmp3lame.so
+ida ${prefix}dirnrs/lib/armeabi-v7a/libcocklogic-1.1.3.so
+#结论：so未保护
+3.3  资源保护
+3.3.1 枚举资源类型
+find ${prefix}dirnrs/res ${prefix}dirnrs/assets -type f | perl -ne 'print $1 if m/\.([^.\/]+)$/' | sort -u
+#所有资源包含的文件类型： appkey cer channel html jpg js json mp3 ogg png so ttf xml
+3.3.2 查看资源保护情况(以js文件为例子，其他类同)
+find ${prefix}dirnrs/res ${prefix}dirnrs/assets -type f | grep js$ | xargs -I % file %
+find ${prefix}dirnrs/res ${prefix}dirnrs/assets -type f | grep js$ | xargs -I % cat %
+
+重要的文件类型：js 没有保护，json是明文，xml是明文
+次要的文件类型：html,jpg,mp3,ogg,png,ttf文件为明文
+其他：appkey, cer, channel,so, 除了so为壳文件，其他都为明文
+
+4. 安装到nexus
+adb install -r $APK
+
+5. 替换rom中的libdvm.so为脱壳专用的版本
+chgerom2
+
+6. 打开脱壳开关
+adb root
+sleep 5s
+adb shell chmod 777 /data/local/tmp
+
+7. 启动自动脱壳过程 
+adb shell am start $PKG/$ACT
+adb shell /system/bin/screencap -p /sdcard/scr.png
+adb pull /sdcard/scr.png
+eog scr.png
+
+8. 拉取脱壳结果，并查看主包代码
+adb pull /data/local/tmp/com.gov.cn com.gov.cn
+find . | grep DexFile.dex$ | xargs -I % md5sum %
+jadx $(find . | grep DexFile.dex$ | head -1)
+
+9. 综述：
+加固保护不完整，so和资源部分保护缺失，dex整体加固容易脱壳破解，内部函数保护数量很少。
+
+

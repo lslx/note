@@ -1,0 +1,49 @@
+
+
+
+
+
+setprop persist.debug.trace 1
+ulimit -c unlimited
+
+echo /data/local/tmp/core.%e.%p > /proc/sys/kernel/core_pattern
+
+confirm:
+ps aux | grep ucar
+ps | grep ucar
+mypid=11587
+getprop | grep persist.debug.trace
+getenforce
+cat /proc/$mypid/coredump_filter
+cat /proc/$mypid/limits | grep "core file"
+cat /proc/sys/kernel/core_pattern
+
+kill -6 pid
+
+
+gdb --core=core.9128
+
+core_pattern:
+core_pattern is used to specify a core dumpfile pattern name.
+. max length 128 characters; default value is "core"
+. core_pattern is used as a pattern template for the output filename;
+  certain string patterns (beginning with '%') are substituted with
+  their actual values.
+. backward compatibility with core_uses_pid:
+    If core_pattern does not include "%p" (default does not)
+    and core_uses_pid is set, then .PID will be appended to
+    the filename.
+. corename format specifiers:
+    %<NUL>  '%' is dropped
+    %%  output one '%' 
+    %p  pid 
+    %u  uid 
+    %g  gid 
+    %d  dump mode, matches PR_SET_DUMPABLE and                                                                                                                                                              
+        /proc/sys/fs/suid_dumpable
+    %s  signal number
+    %t  UNIX time of dump
+    %h  hostname
+    %e  executable filename (may be shortened)
+    %E  executable path
+    %<OTHER> both are dropped

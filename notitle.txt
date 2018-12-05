@@ -1,0 +1,49 @@
+ dump binary memory ss 0x75e18000 0x75e23000
+
+
+ 16 if(9==
+ 17 printk(KERN_INFO "kill cmd ignore: pid: %d\n", (int) pid);
+ 18 return 0;
+.text:00021958                 EXPORT kill
+.text:00021958 kill                                    ; DATA XREF: j_kill+4o
+.text:00021958                                         ; .text:off_3D588o
+.text:00021958                 STMFD           SP!, {R4-R7,R12,LR}
+.text:0002195C                 MOV             R7, #0x25
+.text:00021960                 SVC             0
+.text:00021964                 LDMFD           SP!, {R4-R7,R12,LR}
+.text:00021968                 CMN             R0, #0x1000
+.text:0002196C                 BXLS            LR
+.text:00021970                 RSB             R0, R0, #0
+.text:00021974                 B               j___set_errno
+.text:00021974 ; End of function kill
+.text:00021974
+
+
+
+
+
+https://www.linaro.org/blog/running-64bit-android-l-qemu/
+
+
+https://github.com/jarsonfang/devkmem/blob/master/devkmem.c
+https://reverseengineering.stackexchange.com/questions/1922/locating-linux-kernel-symbols-on-arm
+https://gist.github.com/ilammy/f39b7366f9dd2f15479d
+
+
+
+
+lime: version magic '3.4.0-g2f6be71-00003-gecfe2e1 SMP preempt mod_unload ARMv7 ' should be '3.4.0-g2f6be71-00002-g204a39d-dirty SMP preempt mod_unload ARMv7 '
+
+
+06-23 05:06:54.563 12087 12087 D INJECT  : [+] get_remote_addr: local[0xb6f62000], remote[0xb6f5b000]
+06-23 05:06:54.570 12087 12087 D INJECT  : [+] get_remote_addr: local[0xb6f62000], remote[0xb6f5b000]
+06-23 05:06:54.586 12087 12087 D INJECT  : [+] get_remote_addr: local[0xb6f62000], remote[0xb6f5b000]
+06-23 05:06:54.607 12087 12087 D INJECT  : [+] get_remote_addr: local[0xb6f62000], remote[0xb6f5b000]
+06-23 05:06:54.607 12087 12087 D INJECT  : [+] G
+et imports: 
+dlopen: 0xb6f5cc81, 
+dlsym: 0xb6f5cb61, 
+dlclose: 0xb6f5caa9, 
+dlerror: 0xb6f5ca0d
+
+

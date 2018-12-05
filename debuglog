@@ -1,0 +1,88 @@
+#ijm , new nexus5 ---------------------------------------------
+
+b4a99b18==0xb47e5000+0x2b4b18
+DexFile_openDexFileNative
+dd 0xb4a99b18
+disas 0xb4a99b18
+
+116a40
+b48fba40=0xb47e5000+0x116a40
+158c30
+=0xb47e5000+0x158c30
+DexFile::Open(const char* filename, const char* location, std::string* error_msg,std::vector<std::unique_ptr<const DexFile>>* dex_files)
+v2:
+0xb47e5000+0x11288
+art::ClassLinker::LoadMethod
+hooked target addr:
+pwndbg> dd 0xb48f7188
+b48f7188     46c04778 e51ff004 a1c42c71 9a05e9cd
+b48f7198     e9d34692 e9cd4200 6b1d7803 be07e9cd
+b48f71a8     447eb089 f8dd6836 68309048 42914422
+b48f71b8     2030f8da 90079c13 6918bf34 44286998
+
+libexec.so + 0x40c71
+pwndbg> x/30i 0xa1c42c71
+   0xa1c42c71:	push	{r4, r5, r6, r7, lr}
+   0xa1c42c73:	sub	sp, #12
+   0xa1c42c75:	mov	r4, r2
+   0xa1c42c77:	ldr	r2, [pc, #60]	; (0xa1c42cb4)
+   0xa1c42c79:	add	r2, pc
+
+
+a1bc0000-a1c00000 rw-p 00000000 00:00 0          [anon:libc_malloc]
+a1c00000-a1c02000 rw-p 00000000 00:04 30996      /dev/ashmem/dalvik-indirect ref table (deleted)
+a1c02000-a1c0a000 r-xp 00000000 b3:1c 81761      /data/data/com.saic.roewe.iov/files/libexec.so
+a1c0a000-a1d3f000 r-xp 00000000 00:00 0 
+a1d3f000-a1d40000 ---p 00000000 00:00 0 
+a1d40000-a1d42000 r--p 000c2000 b3:1c 81761      /data/data/com.saic.roewe.iov/files/libexec.so
+a1d42000-a1d43000 rw-p 000c4000 b3:1c 81761      /data/data/com.saic.roewe.iov/files/libexec.so
+a1d43000-a1d49000 rw-p 00000000 00:00 0 
+a1d49000-a1d4a000 ---p 00000000 00:00 0 
+a1d4a000-a1d4b000 ---p 00000000 00:00 0 
+a1d4b000-a1e4e000 rw-p 00000000 00:00 0          [stack:5937]
+a1e4e000-a264e000 rw-p 00000000 00:04 8885       /dev/ashmem/dalvik-allocspace main rosalloc space mark-bitmap 3 (deleted)
+
+^^^^
+0xb47e5000+0x2dc4c8
+art::OatFile::OatMethod::LinkMethod
+
+libc.so
+__openat: 0xb6c5d000+0x40a24
+read:   0xb6c5d000+0x41864
+write:   0xb6c5d000+0x42158
+__mmap2: 0xb6c5d000+0x409fc
+
+#bangcle , old nexus5 ---------------------------------------------
+libart.so
+0xb4865000+0x2b4b18
+0xb4865000+0x116a40
+0xb4865000+0x158c30
+
+libc.so
+__openat: 0xb6cbe000+0x40a24
+read:   0xb6cbe000+0x41864
+write:   0xb6cbe000+0x42158
+
+
+
+af005000-af01a000 rw-p 00000000 00:04 25604      /dev/ashmem/dalvik-large object space allocation (deleted)
+af01a000-af02f000 rw-p 00000000 00:04 25603      /dev/ashmem/dalvik-large object space allocation (deleted)
+af02f000-af04a000 r-xp 00000000 b3:1c 162888     /data/app/com.yimq.testactivity-1/lib/arm/libnative-lib.so
+af04a000-af04c000 r--p 0001a000 b3:1c 162888     /data/app/com.yimq.testactivity-1/lib/arm/libnative-lib.so
+af04c000-af04d000 rw-p 0001c000 b3:1c 162888     /data/app/com.yimq.testactivity-1/lib/arm/libnative-lib.so
+af04d000-af051000 rw-p 00000000 00:00 0 
+af051000-af079000 r-xp 00000000 b3:1c 162889     /data/app/com.yimq.testactivity-1/lib/arm/libDexHelper.so
+af079000-af07a000 ---p 00000000 00:00 0 
+af07a000-af07b000 r--p 00028000 b3:1c 162889     /data/app/com.yimq.testactivity-1/lib/arm/libDexHelper.so
+af07b000-af07f000 rw-p 00029000 b3:1c 162889     /data/app/com.yimq.testactivity-1/lib/arm/libDexHelper.so
+af07f000-af080000 rw-p 00000000 00:00 0 
+af080000-af0c0000 rw-p 00000000 00:00 0          [anon:libc_malloc]
+af0c0000-af0c5000 r--p 00000000 b3:1c 162892     /data/app/com.yimq.testactivity-1/oat/arm/base.odex
+af0c5000-af0c6000 rw-p 00005000 b3:1c 162892     /data/app/com.yimq.testactivity-1/oat/arm/base.odex
+af0c6000-af0c7000 rw-s 64250000 00:08 5457       anon_inode:dmabuf
+af0c7000-af0c8000 r--s 00029000 b3:1c 162885     /data/app/com.yimq.testactivity-1/base.apk
+af0c8000-af0ca000 r--s 00064000 b3:1c 162885     /data/app/com.yimq.testactivity-1/base.apk
+af0ca000-af0ea000 rw-p 00000000 00:04 25317      /dev/ashmem/dalvik-LinearAlloc (deleted)
+af0ea000-af10a000 rw-p 00000000 00:04 11615      /dev/ashmem/dalvik-rosalloc page map (deleted)
+
+

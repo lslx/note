@@ -73,15 +73,58 @@ emu2.6,emu2.7,emu2.8
 
 https://android.googlesource.com/platform/external/qemu/+/emu-2.5-release
 
+useful url:
+https://www.jianshu.com/p/7eaaa99c2cb9
+https://blog.csdn.net/tq08g2z/article/details/77932200
+https://blog.csdn.net/wangkai0681080/article/details/79523003
+
+getandcode emu-2.5-release
+^C
+file fix:  (backup to /home/fhc/bin/manifest.xml)
+.repo/manifest.xml中<project clone-depth="1"改为<project
+<!--project name="platform/external/angle" path="external/angle" revision="0c24ce27e7d322cf08a20e2f3d4c906090141273" /-->
+./loopsync
+cd;cd ext800/src-android-local/
+mkdir emu-2.5-release;cd mkdir emu-2.5-release
+mv /home/fhc/ext800/repo-android-local/* .
+
+compile:
+cd /home/fhc/ext800/src-android-local/emu-2.5-release/external/qemu/android
+./rebuild.sh --no-tests
+
+run:
+export ANDROID_SDK_ROOT=/home/fhc/Android/Sdk 
+# or export ANDROID_HOME=/home/fhc/Android/Sdk
+/home/fhc/ext800/src-android-local/emu-2.5-release/external/qemu/objs/emulator  -avd n5a26x86a80
+
+run sdk emulator:
+/home/fhc/Android/Sdk/emulator/emulator -avd n5a26x86a80
 
 
+chgejava2 8
+android list avd
 
 
+sudo add-apt-repository ppa:phulin/panda
+sudo apt-get update
+sudo apt-get build-dep qemu
+sudo apt-get install python-pip git protobuf-compiler protobuf-c-compiler \
+  libprotobuf-c0-dev libprotoc-dev python-protobuf libelf-dev \
+  libcapstone-dev libdwarf-dev python-pycparser llvm-3.3 clang-3.3 libc++-dev
+git clone https://github.com/panda-re/panda
+cd panda2;git submodule update --init dtc
+cd ..;mkdir -p build && cd build
+../panda/build.sh
 
-后面联系清华的管理员，问题是清华的镜像 @huiyiqun 服务器上 git 需要更新到 2.5 以上，他打开 uploadpack.allowReachableSHA1InWant 这个选项后即可。
+
+callPostForkChildHooks
+
+VM_HOOKS.postForkChild
+
+SetJdwpAllowed
 
 
-
+grep -ir IntentSender --exclude-dir=out --exclude-dir=cts --exclude-dir=external --exclude-dir=prebuilts
 
 
 

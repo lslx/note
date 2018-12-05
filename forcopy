@@ -1,20 +1,9 @@
 forcopy
 
-git clone http://android.googlesource.com/kernel/goldfish.git
-git branch -a
-git checkout android-goldfish-3.4
-git reset --hard d3ffcc7
-
-
-# android less 4.0 (will cause blackscreen)
-make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_defconfig
-# android above 4.0
-make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_armv7_defconfig
-make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm -j4
-
 panda1 compile:
+cd /home/fhc/panda1dev/panda
 sudo panda_install2.bash
-cd panda/qemu
+cd qemu
 chge build.sh content: (for android support)
 
  36 #./configure --target-list=x86_64-softmmu,i386-softmmu,arm-softmmu \
@@ -62,6 +51,12 @@ qemu-img amend -f qcow2 -o compat=0.10 system.qcow2
 qemu-img amend -f qcow2 -o compat=0.10 userdata.qcow2 
 qemu-img amend -f qcow2 -o compat=0.10 cache.qcow2 
 qemu-img amend -f qcow2 -o compat=0.10 sdcard.qcow2 
+
+--- bigger:
+in telnet:
+delvm xxx
+qemu-img resize userdata.qcow2 +10G
+---
 
 use avd ctreate vm and convert
 python ~/oldpanda/panda/scripts/pandroidConverter.py Nexus_5_API_19_2
@@ -158,19 +153,7 @@ qok2re
 the result in:stringsearch_string_matches.txt
 
 -------------------- use vol
-compile android kernel: version 3.4.67-01422-gd3ffcc7-dirty
-
-kernel：
-参考：http://blog.csdn.net/qiaowei020/article/details/50312311
-git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6 ~/bin/crossgcc4.6
-git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 ~/bin/crossgcc4.7
-git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8 ~/bin/crossgcc4.8
-
-git clone http://android.googlesource.com/kernel/goldfish.git
-git branch -a
-git checkout remotes/origin/android-goldfish-3.4
-git reset --hard d3ffcc7
-git clean  -d  -fx ""
+compile kernel see:note/andkn
 
 **************************
 create profile for vol

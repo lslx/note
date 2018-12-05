@@ -1,0 +1,387 @@
+/home/fhc/Dev/ndksrc2/prebuilts/ndk/current/toolchains/linux-x86_64/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-gcc 
+--sysroot=/home/fhc/Dev/ndksrc2/out/gdbserver/arm/build/sysroot  -x c++ -std=gnu++11 -g -O2    
+-I. 
+-I/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver 
+-I/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../common -I/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../regformats 
+-I/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/.. -I/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../../include 
+-I/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../gnulib/import 
+-Ibuild-gnulib-gdbserver/import  
+
+
+-Wall -Wpointer-arith -Wno-unused -Wunused-value -Wunused-function -Wno-switch -Wno-char-subscripts -Wempty-body -Wunused-but-set-parameter -Wunused-but-set-variable -Wno-sign-compare -Wno-narrowing -Wno-error=maybe-uninitialized  -DGDBSERVER -c -o agent.o -MT agent.o -MMD -MP -MF 
+
+./.deps/agent.Tpo /home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../common/agent.c
+
+
+In file included from /home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../common/common-defs.h:78:0,
+                 from /home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../common/agent.c:20:
+/home/fhc/Dev/ndksrc2/toolchain/gdb/gdb-8.1/gdb/gdbserver/../common/common-utils.h:23:18: fatal error: string: No such file or directory
+ #include <string>
+           
+
+
+
+
+adb shell ps | tr -d '\r' | grep kworker | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'
+
+
+./gdbserver --multi :5040
+
+adb forward --remove tcp:5040
+adb forward tcp:5040 tcp:5040
+
+
+gdb-multiarch
+target extended-remote :5040
+set remote exec-file /data/local/tmp/hi
+file ./hi
+start
+
+-------------------------------------------
+
+
+gdb remote debug arm ok:
+
+使用newname711, newname81 均可，（均对应gdb81）
+使用gdb81  (py:2.7.12) ,  不用ndk/gdb (py:2.7.5)
+先加载，后连接：
+source /home/fhc/.gdbinit-gef.py
+target extended-remote :5040
+
+
+
+
+
+
+
+可行组合：
+
+----------------------------
+
+Command 
+"/data/data/com.termux/files/usr/bin/python2 -u -c "import setuptools, tokenize;
+__file__='/data/data/com.termux/files/usr/tmp/pip-build-DMVmCY/capstone/setup.py';
+f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');
+f.close();
+exec(compile(code, __file__, 'exec'))" install --record /data/data/com.termux/files/usr/tmp/pip-YEjijS-record/install-record.txt --single-version-externally-managed --compile" failed with error code 1 in /data/data/com.termux/files/usr/tmp/pip-build-DMVmCY/capstone/
+
+
+
+gef> gef missing 
+[*] Command `capstone-disassemble` is missing, reason -> Missing `capstone` package for Python2. Install with `pip2 install capstone`.
+[*] Command `assemble` is missing, reason -> Missing `keystone-engine` package for Python2, install with: `pip2 install keystone-engine`.
+[*] Command `ropper` is missing, reason -> Missing `ropper` package for Python2, install with: `pip2 install ropper`.
+[*] Command `set-permission` is missing, reason -> Missing `keystone-engine` package for Python2, install with: `pip2 install keystone-engine`.
+[*] Command `unicorn-emulate` is missing, reason -> Missing `unicorn` package for Python2. Install with `pip2 install unicorn`.
+
+--------------------------------------------
+ 1866  pwd
+ 1867  ls
+ 1868  cd sysroot/
+ 1869  ls
+ 1870  rm include/ lib/ -fr
+ 1871  cd ..
+ 1872  ls
+ 1873  vi Makefile 
+ 1874  pwd
+ 1875  ls
+ 1876  cd sysroot/
+ 1877  ls
+ 1878  cp -r /home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/include .
+ 1879  ls
+ 1880  cp -r /home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/libs .
+ 1881  ls
+ 1882  vi Makefile 
+ 1883  cd .
+ 1884  cd ..
+ 1885  ls
+ 1886  vi Makefile 
+ 1887  make
+ 1888  vi Makefile 
+ 1889  make
+ 1890  vi Makefile 
+ 1891  ccc
+ 1892  make
+ 1893  pwd
+ 1894  ls
+ 1895  rm sysroot/libs/* -fr
+ 1896  make
+ 1897  rm sysroot/include/* -fr
+ 1898  make
+ 1899  ls
+ 1900  ls sysroot/
+ 1901  ls sysroot/include/
+ 1902  ls sysroot/libs/
+ 1903  vi Makefile 
+ 1904  make
+ 1905  make clean
+ 1906  make 
+ 1907  history 
+ 1908  cp -r /home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/include sysroot/
+ 1909  make
+ 1910  vi Makefile 
+ 1911  find . | grep sysroot/
+ 1912  find  sysroot/ | grep string$
+ 1913  vi Makefile 
+ 1914  make
+ 1915  find  sysroot/ | grep c++config.h$
+ 1916  history 60
+ 1917  find /home/fhc/Dev/ndksrc2/prebuilts | grep c++config.h$
+ 1918  cp -r /home/fhc/Dev/ndksrc2/prebuilts/ndk/gnu-libstdc++/libs sysroot/
+ 1919  vi Makefile 
+ 1920  make
+ 1921  pwd
+ 1922  vi Makefile 
+ 1923  make
+ 1924  vi Makefile 
+ 1925  make
+ 1926  strace -h
+ 1927  ccc
+
+#######################
+ 1949  pwd
+ 1950  vi Makefile 
+ 1951  make
+ 1952  ls
+ 1953  file gdbserver_fuck 
+ 1954  adb push gdbserver_fuck /data/local/tmp/
+ 1955  adb shell
+ 1956  ee
+ 1957  adb shell
+ 1958  cd
+ 1959  cd devcode/
+ 1960  ls
+ 1961  cd autorev/
+ 1962  ls
+ 1963  cd test360/
+ 1964  ls
+ 1965  history | grep sign
+ 1966  apkinstall sign3.apk 
+ 1967  adb install -t sign3.apk 
+ 1968  apkdbg sign3.apk 
+ 1969  ls
+ 1970  unzip -l 3601381.apk
+ 1971  apkuninstall sign3.apk 
+ 1972  apkinstall 3601381.apk 
+ 1973  adb install -t 3601381.apk
+ 1974  apkdbg 3601381.apk
+ 1975  ee
+ 1976  bb
+ 1977  apkdbg 3601381.apk
+ 1978  ee
+ 1979  ccc
+ 1980  apkdbg 3601381.apk
+ 1981  /home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb
+ 1982  ccc
+ 1983  /home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb
+ 1984  ccc
+ 1985  /home/fhc/gdb81/gdb-install/bin/arm-linux-androideabi-gdb
+ 1986  ccc
+ 1987  bb
+ 1988  pwd
+ 1989  cd devcode/autorev/test360/
+ 1990  ls
+ 1991  apkdbg 3601381.apk
+ 1992  ee
+ 1993  sudo pip2 install --install-option="--prefix=/home/fhc/.local/lib/python2.7/site-packages" keystone-engine
+ 1994  python
+ 1995  sudo pip2 install --install-option="--prefix=/home/fhc/.local/lib/python2.7/site-packages" keystone
+ 1996  sudo pip2 install --install-option="--prefix=/home/fhc/.local/lib/python2.7/site-packages" keystone-engine
+ 1997  python
+ 1998  ls /home/fhc/.local/lib/python2.7/site-packages
+ 1999  ls cr*
+ 2000  ls /home/fhc/.local/lib/python2.7/site-packages | grep cr
+ 2001  ls /home/fhc/.local/lib/python2.7/site-packages | grep c
+ 2002  ls /home/fhc/.local/lib/python2.7/site-packages | grep ^c
+ 2003  rm -fr /home/fhc/.local/lib/python2.7/site-packages/*
+ 2004  sudo rm -fr /home/fhc/.local/lib/python2.7/site-packages/*
+ 2005  ls
+ 2006  ls /home/fhc/.local/lib/python2.7/site-packages/[2~
+ 2007  ls /home/fhc/.local/lib/python2.7/site-packages
+ 2008  sudo pip2 install --install-option="--prefix=/home/fhc/.local/lib/python2.7/site-packages" keystone-engine
+ 2009  ls /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages
+ 2010  l2 /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages
+ 2011  l5 /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages
+ 2012  ccc
+ 2013  l5 /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages
+ 2014  ccc
+ 2015  l5 /home/fhc/.local/lib/python2.7/site-packages
+ 2016  ls /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages
+ 2017  cat /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages/README 
+ 2018  rm /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages/lib -fr
+ 2019  sudo rm /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages/lib -fr
+ 2020  sudo rm /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages/ropper* -fr
+ 2021  ls
+ 2022  ls /home/fhc/Android/Sdk/ndk-bundle/prebuilt/linux-x86_64/lib/python2.7/site-packages/
+ 2023  ls /home/fhc/.local/lib/python2.7/site-packages
+ 2024  cd /home/fhc/.local/lib/python2.7/site-packages
+ 2025  ls
+ 2026  l2
+ 2027  l3
+ 2028  l4
+ 2029  pwd
+ 2030  ls
+ 2031  rm -fr *
+ 2032  sudo rm -fr *
+ 2033  sudo pip2 install --install-option="--prefix=/home/fhc/.local" keystone-engine
+ 2034  ls
+ 2035  sudo pip2 install --install-option="--prefix=/home/fhc/.local" ropper
+ 2036  sudo pip2 install --install-option="--prefix=/home/fhc/.local" filebytes
+ 2037  sudo pip2 uninstall ropper
+ 2038  sudo pip2 install --install-option="--prefix=/home/fhc/.local" ropper
+ 2039  sudo pip2 uninstall ropper
+ 2040  sudo pip2 uninstall filebytes
+ 2041  sudo pip2 install --install-option="--prefix=/home/fhc/.local" filebytes
+ 2042  sudo pip2 install --install-option="--prefix=/home/fhc/.local" ropper
+ 2043  vi /home/fhc/.local/lib/python2.7/site-packages/keystone/__init__.py
+ 2044  ls /home/fhc/.local/lib/python2.7/site-packages/keystone/
+ 2045  vi arm_const.py
+ 2046  cd /home/fhc/.local/lib/python2.7/site-packages/keystone/
+ 2047  vi arm_const.py
+ 2048  sudo pip2 install --install-option="--prefix=/home/fhc/.local" capstone
+ 2049  sudo pip2 uninstall capstone
+ 2050  sudo pip2 install --install-option="--prefix=/home/fhc/.local" capstone
+ 2051  sudo pip2 install --install-option="--prefix=/home/fhc/.local" unicorn
+ 2052  sudo pip2 uninstall angr
+ 2053  sudo pip2 install --install-option="--prefix=/home/fhc/.local" unicorn
+ 2054  sudo pip2 uninstall unicorn
+ 2055  sudo pip2 install --install-option="--prefix=/home/fhc/.local" unicorn
+
+-----------------------------------------------
+^CD$:sudo  snap install --classic anbox-installer && anbox-installer
+snap "anbox-installer" is already installed, see "snap refresh --help"
+Anbox (Android in a Box) - Installer
+
+
+IMPORTANT: THIS IS ALPHA LEVEL SOFTWARE. EXPECT INSTABILITY AND
+           BUGS !!!!!
+
+IMPORTANT: ALSO PLEASE BE AWARE THAT WE DON'T PROVIDE FULL
+           CONFINEMENT FOR THE SNAP YET !!!!
+
+
+PLEASE NOTE: This script will require root access on your system
+to install all necessary things. It will prompt you to enter your
+password when required.
+
+
+
+What do you want to do?
+
+ 1. Install Anbox
+ 2. Uninstall Anbox
+
+Please enter your choice [1-2]: 
+1
+
+
+This is the installer for the anbox runtime environment. It will
+install certain things on your system to ensure all requirements
+are available for anbox to work correctly.
+
+In summary we will install the following things:
+
+ * Add the anbox-support ppa ppa:morphis/anbox-support to the
+   host system
+ * Install the anbox-modules-dkms deb package from the ppa
+   which will add kernel modules for ashmem and binder which are
+   required for the Android container to work.
+ * Configure binder and ashmem kernel modules to be loaded
+   automatically on boot.
+ * Install the anbox-common package from the ppa which will
+   - Add an upstart job for the current user fhc which will
+     start the anbox runtime on login.
+   - Add a X11 session configuration file to allow the system
+     application launcher (Unity7, Gnome Shell, ..) to find
+     available Android applications.
+
+Please type 'I AGREE' followed by pressing ENTER to continue
+or type anything else to abort:
+I AGREE
+
+
+Starting installation process ...
+
++ sudo add-apt-repository -y ppa:morphis/anbox-support
+gpg: 钥匙环‘/tmp/tmpjyxfd64v/secring.gpg’已建立
+gpg: 钥匙环‘/tmp/tmpjyxfd64v/pubring.gpg’已建立
+gpg: 下载密钥‘875B67B7’，从 hkp 服务器 keyserver.ubuntu.com
+gpg: /tmp/tmpjyxfd64v/trustdb.gpg：建立了信任度数据库
+gpg: 密钥 875B67B7：公钥“Launchpad PPA for morphis”已导入
+gpg: 合计被处理的数量：1
+gpg:               已导入：1  (RSA: 1)
+OK
++ sudo apt update
+获取:1 http://archive.ubuntukylin.com:10006/ubuntukylin xenial InRelease [18.1 kB]                      
+忽略:2 http://dl.google.com/linux/chrome/deb stable InRelease                                           
+命中:3 http://mirrors.aliyun.com/ubuntu xenial InRelease                                                
+命中:4 http://mirrors.aliyun.com/ubuntu xenial-updates InRelease                                        
+命中:5 http://mirrors.aliyun.com/ubuntu xenial-backports InRelease                                      
+命中:6 http://mirrors.aliyun.com/ubuntu xenial-security InRelease                                       
+命中:7 http://dl.google.com/linux/chrome/deb stable Release                                             
+命中:9 http://archive.canonical.com/ubuntu xenial InRelease                                             
+命中:10 https://packages.microsoft.com/repos/vscode stable InRelease                                    
+命中:11 http://ppa.launchpad.net/hzwhuang/ss-qt5/ubuntu xenial InRelease                                
+命中:12 http://archive.ubuntu.com/ubuntu xenial InRelease                                               
+忽略:13 http://www.scootersoftware.com bcompare4 InRelease                                              
+命中:14 https://deb.nodesource.com/node_8.x xenial InRelease                                       
+命中:15 https://dl.yarnpkg.com/debian stable InRelease                                                  
+命中:16 http://www.scootersoftware.com bcompare4 Release                                                
+命中:17 http://ppa.launchpad.net/morphis/anbox-support/ubuntu xenial InRelease                          
+命中:19 http://ppa.launchpad.net/openjdk-r/ppa/ubuntu xenial InRelease                                  
+命中:20 http://ppa.launchpad.net/phulin/panda/ubuntu xenial InRelease                                   
+命中:21 http://download.virtualbox.org/virtualbox/debian xenial InRelease                               
+已下载 18.1 kB，耗时 1分 5秒 (278 B/s)                   
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树       
+正在读取状态信息... 完成       
+有 208 个软件包可以升级。请执行 ‘apt list --upgradable’ 来查看它们。
++ sudo apt install -y anbox-common
+正在读取软件包列表... 完成
+正在分析软件包的依赖关系树       
+正在读取状态信息... 完成       
+anbox-common 已经是最新版 (9~xenial1)。
+下列软件包是自动安装的并且现在不需要了：
+  linux-headers-4.13.0-38 linux-headers-4.13.0-38-generic linux-headers-4.13.0-39
+  linux-headers-4.13.0-39-generic linux-image-4.13.0-38-generic linux-image-4.13.0-39-generic
+  linux-image-extra-4.13.0-38-generic linux-image-extra-4.13.0-39-generic
+使用'sudo apt autoremove'来卸载它(它们)。
+升级了 0 个软件包，新安装了 0 个软件包，要卸载 0 个软件包，有 208 个软件包未被升级。
++ '[' -c /dev/binder ']'
++ '[' -c /dev/ashmem ']'
++ echo 'Android binder and ashmem seems to be already enabled in kernel.'
+Android binder and ashmem seems to be already enabled in kernel.
++ snap info anbox
++ grep -q installed:
++ sudo snap install --edge --devmode anbox
+anbox (edge) 3-9e93eb4 from 'morphis' installed
++ set +x
+
+Done!
+
+To ensure all changes made to your system you should now reboot
+your system. If you don't do this no Android applications will
+show up in the system application launcher.
+
+
+---------------------
+ 1992  apkinstall mobileqq_android.apk 
+ 1993  initctl start anbox
+ 1994  sudo  snap install --classic anbox-installer && anbox-installer
+ 1995  shutdown -r now
+ 1996  initctl start anbox
+ 1997  sudo initctl start anbox
+ 1998  ls
+ 1999  cd /var/
+ 2000  ls
+ 2001  cd log
+ 2002  ls
+ 2003  adb devices
+ 2004  sudo initctl start anbox
+ 2005  systemctl start puma
+ 2006  systemctl stop puma
+ 2007  systemctl status puma
+ 2008  sudo initctl start anbox
+ 2009  history 
+
+

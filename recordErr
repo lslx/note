@@ -1,0 +1,134 @@
+问题记录
+
+*当android线接触不良：
+1. gdb(with xx) 调试（apkattach）demo apk时，系统重启
+2. 刷机出现协议错误(protocol err)
+#解决：换线
+
+*ADB not responding. If you'd like to retry, then please manually kill "adb.exe" and click 'Restart
+关闭　demsgand
+
+
+
+
+
+todo:
+----custom kernel
+kill
+gettimeofday
+clone 参数细化
+
+----源码调试：
+方案1 vs
+方案2 as
+
+
+
+gettimeofday ignore:
+sh
+SensorService
+RenderThread
+launcher-loader
+droid.launcher3
+
+Binder_1
+Binder_A
+BUGLY_THREAD
+AlarmManager
+ActivityManager
+system_server
+NetworkTimeUpda
+InputReader
+PowerManagerSer
+ndroid.systemui
+WifiStateMachin
+
+AsyncTask #1
+IntentService[A
+EmailNotificati
+MediaScannerSer
+ContactsProvide
+ExecutorUtils
+
+
+
+
+[   89.013923] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> start
+[   89.014186] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   89.109453] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   89.153767] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   89.209195] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   89.266507] ffkk:gettimeofday:libfakedyn.so : 2091 --> 
+[   90.014340] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   90.014584] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   90.154253] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   90.212942] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   90.270485] ffkk:gettimeofday:libfakedyn.so : 2091 --> 
+[   91.014845] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   91.015927] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   91.110329] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   91.155960] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   91.231530] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   91.285237] ffkk:gettimeofday:libfakedyn.so : 2091 --> 
+[   92.016527] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   92.017516] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   92.111024] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   92.157721] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   92.246599] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   92.300812] ffkk:gettimeofday:libfakedyn.so : 2091 --> 
+[   93.017910] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   93.018908] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   93.159614] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   93.265783] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   93.317059] ffkk:gettimeofday:libfakedyn.so : 2091 --> 
+[   94.019233] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   94.019493] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   94.111760] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   94.160446] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   94.269721] ffkk:gettimeofday:.saic.roewe.iov : 2041 --> 
+[   94.321152] ffkk:gettimeofday:libfakedyn.so : 2091 --> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

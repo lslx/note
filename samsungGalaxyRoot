@@ -1,0 +1,62 @@
+
+samsung Galaxy root:
+
+
+prepare flash rom tool:
+(Heimdall1.4.1 has bug of usb, 1.4.2 is ok),
+(odin is close source and only on windows)
+git clone https://gitlab.com/BenjaminDobell/Heimdall.git
+cd Heimdall
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+make
+cd bin
+
+(enter bootloader:)
+reboot download
+
+get twrp for sm-n9009:
+https://pan.baidu.com/disk/home?#/all?vmode=list&path=%2Fdaniu
+
+tar -xf N9009-TWRP-2.8.6.0-LL-CN%280422%29.tar
+sudo heimdall flash --RECOVERY recovery.img
+wait for reboot...
+adb reboot recovery
+
+cd /home/fhc/ext800/makerom
+supersu=SuperSU-v2.82-201705271822.zip
+adb push rootstuff/$supersu /sdcard/
+adb shell twrp install /sdcard/$supersu
+adb shell reboot
+wait for reboot...
+adb install -r rootstuff/stericson.busybox-51@APK4Fun.com.apk
+(set busybox,and su,grant root )
+
+
+
+cd /home/fhc/devcode/rootadb/libs/armeabi-v7a
+adb push setpropex-pie /data/local/tmp/
+adb shell
+cd /data/local/tmp
+./setpropex-pie ro.debuggable 1
+exit
+exit
+adb root
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------
+网盘搜索：
+		http://m.uzi8.cn/

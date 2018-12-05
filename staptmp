@@ -1,0 +1,50 @@
+
+
+
+probe kernel.function("sys_openat").call 
+{ 
+    filename = user_string_quoted($filename)
+    printf("pid: %d filename: %s, execname: %s\n", pid(),filename, execname()); 
+}
+
+probe kernel.function("sys_exit").call 
+{ 
+   printf("pid: %d exit !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", pid()); 
+}
+
+
+
+probe begin {
+    printf("start moniting clone syscall...\n")
+}
+
+probe kernel.function("sys_clone") {
+    printf("sys_clone : %s\n", execname())
+}
+
+probe kernel.function("sys_clone").return {
+    if (execname() == "qemu-system-x86") {
+        printf("sys_clone_return : %s, %d\n", execname(), $return)
+        if ($return < 0)
+            printf("[error]sys_clone_return : %s, %d\n", execname(), $return)
+    }
+}
+
+
+stap -v strace.stp -c /path/to/command
+
+stap -v strace.stp -x pid
+
+stap -ve 'probe syscall.open{printf("filename is %s, name is %s, flags is 0x%x, mode is 0x%x\n", filename, name, flags, mode)}' 
+
+
+stap -ve 'probe syscall.open{printf("argstr is %s, __nr is %d\n", argstr, __nr)}'
+
+
+
+
+
+
+
+
+

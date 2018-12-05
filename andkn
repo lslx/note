@@ -1,0 +1,65 @@
+
+download:
+in china:
+https://blog.csdn.net/sunao2002002/article/details/53057374
+or use proxychains:
+
+proxychains git clone http://android.googlesource.com/kernel/goldfish.git
+
+https://blog.csdn.net/qiaowei020/article/details/50312311
+下载预编译gcc
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6 ~/bin/crossgcc4.6
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7 ~/bin/crossgcc4.7
+git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8 ~/bin/crossgcc4.8
+
+
+
+compile android kernel: version 3.4.67-01422-gd3ffcc7-dirty
+
+
+git clone http://android.googlesource.com/kernel/goldfish.git
+git branch -a
+git checkout remotes/origin/android-goldfish-3.4
+git reset --hard d3ffcc7
+git clean  -d  -fx ""
+
+编译:
+. ../../kernel444.sh
+make goldfish_armv7_defconfig
+make menuconfig
+make -j9
+------- note: -----------------
+
+# android less 4.0 (will cause blackscreen)
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_defconfig
+# android above 4.0
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm goldfish_armv7_defconfig
+make CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm -j4
+
+-------------------------------
+
+
+
+cp /home/fhc/pandaimg/n5a19arma44/kernel-qemu /home/fhc/pandaimg/n5a19arma44/kernel-qemu_bk
+cp /home/fhc/ext800/kernel/panda44/goldfish/arch/arm/boot/zImage /home/fhc/pandaimg/n5a19arma44/kernel-qemu
+
+install supersu on emulator:
+cd ext800/makerom/
+cd rootstuff/
+mkdir supersu
+cd supersu
+unzip ../SuperSU-v2.82-201705271822.zip 
+adb install common/Superuser.apk
+adb shell mount -o rw,remount /system
+adb push arm/su /system/bin/su
+adb push arm/su /system/xbin/su
+adb shell chmod 06755 /system/bin/su
+adb shell chmod 06755 /system/xbin/su
+adb shell su --install
+adb shell su --daemon&
+
+adb install linuxdeploy-2.1.0-237.apk
+
+/data/data/ru.meefik.linuxdeploy/bin/linuxdeploy shell -u root
+
+
